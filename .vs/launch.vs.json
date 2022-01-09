@@ -1,0 +1,90 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab01.exe (Lab01\\Lab01.exe)",
+      "name": "Lab01.exe (Lab01\\Lab01.exe)",
+      "currentDir": "${workspaceRoot}/Lab01"
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab02.exe (Lab02\\Lab02.exe)",
+      "name": "Lab02.exe (Lab02\\Lab02.exe)",
+      "currentDir": "${workspaceRoot}/Lab02"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab03.exe (Lab03\\Lab03.exe)",
+      "name": "Lab03.exe (Lab03\\Lab03.exe)",
+      "currentDir": "${workspaceRoot}/Lab03"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab04.exe (Lab04\\Lab04.exe)",
+      "name": "Lab04.exe (Lab04\\Lab04.exe)",
+      "currentDir": "${workspaceRoot}/Lab04"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab05.exe (Lab05\\Lab05.exe)",
+      "name": "Lab05.exe (Lab05\\Lab05.exe)",
+      "currentDir": "${workspaceRoot}/Lab05"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab06.exe (Lab06\\Lab06.exe)",
+      "name": "Lab06.exe (Lab06\\Lab06.exe)",
+      "currentDir": "${workspaceRoot}/Lab06"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab07.exe (Lab07\\Lab07.exe)",
+      "name": "Lab07.exe (Lab07\\Lab07.exe)",
+      "currentDir": "${workspaceRoot}/Lab07"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab08.exe (Lab08\\Lab08.exe)",
+      "name": "Lab08.exe (Lab08\\Lab08.exe)",
+      "currentDir": "${workspaceRoot}/Lab08"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab09.exe (Lab09\\Lab09.exe)",
+      "name": "Lab09.exe (Lab09\\Lab09.exe)",
+      "currentDir": "${workspaceRoot}/Lab09"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab10.exe (Lab10\\Lab10.exe)",
+      "name": "Lab10.exe (Lab10\\Lab10.exe)",
+      "currentDir": "${workspaceRoot}/Lab10"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab11.exe (Lab11\\Lab11.exe)",
+      "name": "Lab11.exe (Lab11\\Lab11.exe)",
+      "currentDir": "${workspaceRoot}/Lab11"
+    },
+	{
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "Lab12.exe (Lab12\\Lab12.exe)",
+      "name": "Lab12.exe (Lab12\\Lab12.exe)",
+      "currentDir": "${workspaceRoot}/Lab12"
+    }
+  ]
+}

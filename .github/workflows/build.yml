@@ -1,0 +1,35 @@
+name: build
+on: [push]
+jobs:
+  build-mac:
+    runs-on: macos-11
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Building for Mac
+        run: bash buildMac.sh -xe
+      - name: Annotations
+        if: always()
+        uses: yuzutech/annotations-action@v0.3.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          title: annotations (build-mac)
+          input: diagnostics.json
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Building for Windows
+        run: bash buildWin.sh -xe
+      - name: Annotations
+        if: always()
+        uses: yuzutech/annotations-action@v0.3.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          title: annotations (build-windows)
+          input: diagnostics.json

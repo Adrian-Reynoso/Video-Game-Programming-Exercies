@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Lab09" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="file://$PROJECT_DIR$/Lab09" PASS_PARENT_ENVS_2="true" PROJECT_NAME="itp380labs" TARGET_NAME="Lab09" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="itp380labs" RUN_TARGET_NAME="Lab09">
+    <envs>
+      <env name="DYLD_LIBRARY_PATH" value="." />
+    </envs>
+    <method v="2">
+      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+    </method>
+  </configuration>
+</component>
