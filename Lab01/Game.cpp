@@ -85,9 +85,19 @@ void Game::ProcessInput()
         {
             //If the user wants to quit
             case SDL_QUIT:
+                //Switch the gameIsRunnig bool value to false
                 gameIsRunning = false;
                 break;
         }
+    }
+    
+    //Grab the state of the entire Keyboard
+    const Uint8 *keyboardState = SDL_GetKeyboardState(NULL);
+    
+    //Check if escape was pressed. If so, set gameIsRunning to false
+    if (keyboardState[SDL_SCANCODE_ESCAPE])
+    {
+        gameIsRunning = false;
     }
     
 }
@@ -101,6 +111,39 @@ void Game::UpdateGame()
 //Implements GenerateOuput function
 void Game::GenerateOuput()
 {
+    //Set the render draw color to blue
+    SDL_SetRenderDrawColor(rendererPtr, 0, 0, 255, 255);
     
+    //Clear the backbuffer
+    SDL_RenderClear(rendererPtr);
+    
+    //DRAW YOUR GAME OBJECTS:
+    //1. Three White Walls
+    //Create the 3 rectangles
+    SDL_Rect gameWallTop {0, 0, 1024, wallThickness};
+    SDL_Rect gameWallBottom {0, 768 - wallThickness, 1024, wallThickness};
+    SDL_Rect gameWallRight {1024 - wallThickness, 0, wallThickness, 768};
+    
+    SDL_SetRenderDrawColor(rendererPtr, 255, 255, 255, 255); //Set Render Color to White
+    SDL_RenderFillRect(rendererPtr, &gameWallTop); //Draw Walls
+    SDL_RenderFillRect(rendererPtr, &gameWallBottom);
+    SDL_RenderFillRect(rendererPtr, &gameWallRight);
+    
+    //2. Game Paddle
+    //Create an SDL_Rect with the Paddles dimensions so that it's x/y coordinates
+    // are its center and not top right
+    SDL_Rect gamePaddleRect {gamePaddle.x - paddleWidth/2, gamePaddle.y - paddleHeight/2, paddleWidth, paddleHeight};
+    //Fill in the rectangle
+    SDL_RenderFillRect(rendererPtr, &gamePaddleRect);
+    
+    //3. Game Ball
+    //Create an SDL_Rect with the balls dimensions so that it's x/y coordinates
+    // are its center and not top right
+    SDL_Rect gameBallRect {gameBall.x - ballWidth/2, gameBall.y - ballWidth/2, ballWidth, ballWidth};
+    //Fill in the rectangle
+    SDL_RenderFillRect(rendererPtr, &gameBallRect);
+    
+    //Present the render
+    SDL_RenderPresent(rendererPtr);
 }
 
