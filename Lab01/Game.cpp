@@ -121,7 +121,7 @@ void Game::UpdateGame()
     }
     
     //2) Calculate delta time (as a float in seconds)
-    float currentTime = SDL_GetTicks();
+    float currentTime = (float) SDL_GetTicks();
     deltaTime = currentTime - previousFrameTime;
     //Update previousFrameTime
     previousFrameTime = currentTime;
