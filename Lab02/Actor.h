@@ -49,6 +49,13 @@ public:
 		
 		return nullptr;
 	}
+    
+    //Getters and Setters
+    ActorState actorStateGetter()
+    {
+        return mState;
+    }
+    
 protected:
 	// Any actor-specific update code (overridable)
 	virtual void OnUpdate(float deltaTime);
