@@ -49,20 +49,27 @@ bool Game::Initialize()
         return false;
     }
     
-    //Past this point, we know initialization works
-    return true;
-    
     //Initialize SDL Image with IMG_Init
-    int imageInitialize = IMG_Init(IMG_INIT_PNG);
+//    int imageInitialize = IMG_Init(IMG_INIT_PNG);
+//
+//    //If function returns 0, that means it failed to initialize
+//    if (imageInitialize == 0)
+//    {
+//        return false;
+//    }
     
-    //If function returns 0, that means it failed to initialize
-    if (imageInitialize == 0)
+    int initted = IMG_Init(IMG_INIT_PNG);
+    if ((initted & IMG_INIT_PNG) != IMG_INIT_PNG)
     {
-        return false;
+        printf("IMG_Init: Failed to init required jpg and png support!\n");
+        printf("IMG_Init: %s\n", IMG_GetError());
     }
     
     //Call LoadData
     LoadData();
+    
+    //Past this point, we know initialization works
+    return true;
 }
 
 //Implements Shutdown function
@@ -239,23 +246,28 @@ void Game::LoadData()
     //Load in the individual sprites
     //FOR SHIP
     Actor* test1 = new Actor(this);
-    SpriteComponent* sc = new SpriteComponent(test1, 100);
+    SpriteComponent* sc = new SpriteComponent(test1);
     sc->SetTexture(GetTexture("Assets/Ship.png"));
     
     //For laser
     Actor* test2 = new Actor(this);
     SpriteComponent* sc2 = new SpriteComponent(test2);
     sc2->SetTexture(GetTexture("Assets/Laser.png"));
-    
+    test2->SetPosition(Vector2(200.0f, 100.0f));
+
     //For ship thrust
     Actor* test3 = new Actor(this);
     SpriteComponent* sc3 = new SpriteComponent(test3);
     sc3->SetTexture(GetTexture("Assets/ShipThrust.png"));
-    
+    test3->SetPosition(Vector2(200.0f, 200.0f));
+    test3->SetScale(0.75f);
+    test3->SetRotation(Math::PiOver2);
+
     //For stars
     Actor* test4 = new Actor(this);
-    SpriteComponent* sc4 = new SpriteComponent(test4, 1);
+    SpriteComponent* sc4 = new SpriteComponent(test4, 5);
     sc4->SetTexture(GetTexture("Assets/Stars.png"));
+    test4->SetPosition(Vector2(512.0f, 384.0f));
     
 }
 
