@@ -9,6 +9,8 @@
 #include "Game.h"
 #include <algorithm>
 #include "Actor.h"
+#include <SDL2/SDL_image.h>
+#include "SpriteComponent.h"
 
 // TODO
 //Implementation for the functions in our Game class
@@ -30,7 +32,7 @@ bool Game::Initialize()
     }
     
     //Create a window: 1024x768 pixels
-    windowPtr = SDL_CreateWindow("Pong Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 768, SDL_WINDOW_OPENGL);
+    windowPtr = SDL_CreateWindow("Asteroids Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 768, SDL_WINDOW_OPENGL);
     
     //Check if the window could open, if not return false
     if (windowPtr == NULL)
@@ -50,6 +52,15 @@ bool Game::Initialize()
     //Past this point, we know initialization works
     return true;
     
+    //Initialize SDL Image with IMG_Init
+    int imageInitialize = IMG_Init(IMG_INIT_PNG);
+    
+    //If function returns 0, that means it failed to initialize
+    if (imageInitialize == 0)
+    {
+        return false;
+    }
+    
     //Call LoadData
     LoadData();
 }
@@ -59,6 +70,9 @@ void Game::Shutdown()
 {
     //Call UnloadData
     UnloadData();
+    
+    //Call Image Quit
+    IMG_Quit();
     
     //Destroy renderer, window, and quit SDL
     SDL_DestroyRenderer(rendererPtr);
@@ -184,6 +198,15 @@ void Game::GenerateOuput()
     SDL_RenderClear(rendererPtr);
     
     //DRAW YOUR GAME OBJECTS:
+    //loop over the sprite component vector. If visible, call Draw on it
+    for (unsigned long i = 0; i < spriteCompVector.size(); i++)
+    {
+        if (spriteCompVector[i]->IsVisible())
+        {
+            //Call Draw
+            spriteCompVector[i]->Draw(rendererPtr);
+        }
+    }
     
     //Present the render
     SDL_RenderPresent(rendererPtr);
@@ -213,6 +236,26 @@ void Game::RemoveActor(Actor* actor)
 //DATA FUNCTIONS
 void Game::LoadData()
 {
+    //Load in the individual sprites
+    //FOR SHIP
+    Actor* test1 = new Actor(this);
+    SpriteComponent* sc = new SpriteComponent(test1, 100);
+    sc->SetTexture(GetTexture("Assets/Ship.png"));
+    
+    //For laser
+    Actor* test2 = new Actor(this);
+    SpriteComponent* sc2 = new SpriteComponent(test2);
+    sc2->SetTexture(GetTexture("Assets/Laser.png"));
+    
+    //For ship thrust
+    Actor* test3 = new Actor(this);
+    SpriteComponent* sc3 = new SpriteComponent(test3);
+    sc3->SetTexture(GetTexture("Assets/ShipThrust.png"));
+    
+    //For stars
+    Actor* test4 = new Actor(this);
+    SpriteComponent* sc4 = new SpriteComponent(test4, 1);
+    sc4->SetTexture(GetTexture("Assets/Stars.png"));
     
 }
 
@@ -222,6 +265,81 @@ void Game::UnloadData()
     while(mActors.size() > 0)
     {
         delete mActors.back();
+    }
+    
+    //call SDL_DestroyTexture on every texture in the textures map, and then clear the map.
+    for (auto it = mHashmap.begin(); it != mHashmap.end(); it++)
+    {
+        SDL_DestroyTexture(it->second);
+    }
+    mHashmap.clear();
+}
+
+//SPRITE FUNCTIONS
+//takes in a file name and returns an SDL_Texture*
+SDL_Texture* Game::GetTexture(std::string fileName)
+{
+    //first check if a file by that name is in the hash map
+    std::unordered_map<std::string,SDL_Texture*>::iterator it;
+    it = mHashmap.find(fileName);
+    
+    //If the texture IS in the Hashmap
+    if (it != mHashmap.end())
+    {
+        return mHashmap.find(fileName)->second;
+    }
+    
+    //If the texture IS NOT in the Hashmap
+    //load the texture with that file name.
+    SDL_Surface *image;
+    image = IMG_Load(fileName.c_str());
+    
+    //If the image failed to load
+    if (image == nullptr)
+    {
+        //SDL_Log message that says which texture file it tried to load, and that it failed to load it
+        SDL_Log("Tried to but failed to load %s ", fileName.c_str());
+        return 0;
+    }
+    //If it didn't fail to load
+    else
+    {
+        //to convert the SDL_Surface* to an SDL_Texture*
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(rendererPtr, image);
+        
+        //Free the SDL_Surface* using SDL_FreeSurface
+        SDL_FreeSurface(image);
+        
+        //Add an entry to the map for that file, so subsequent calls to GetTexture will find the file in the map
+        mHashmap.insert(std::pair<std::string,SDL_Texture*>(fileName, texture));
+        
+        //Return the texture pointer variable
+        return texture;
+    }
+}
+
+//Adds the sprite to the vector and then sorts the vector by draw order
+void Game::AddSprite(class SpriteComponent* sprite)
+{
+    //Add sprite to vector
+    spriteCompVector.push_back(sprite);
+    
+    //Sort the vector in draw order
+    std::sort(spriteCompVector.begin(), spriteCompVector.end(),
+        [](SpriteComponent* a, SpriteComponent* b) {
+            return a->GetDrawOrder() < b->GetDrawOrder();
+    });
+}
+
+void Game::RemoveSprite(class SpriteComponent* sprite)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Actor*
+    auto it = std::find(spriteCompVector.begin(), spriteCompVector.end(), sprite);
+    
+    //then erase to remove the element the iterator points to
+    if (it != spriteCompVector.end())
+    {
+        spriteCompVector.erase(it);
     }
 }
 
