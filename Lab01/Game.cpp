@@ -153,9 +153,9 @@ void Game::UpdateGame()
     {
         gamePaddle.y = wallThickness + (paddleHeight/2);
     }
-    else if (gamePaddle.y >= 768 - (wallThickness + (paddleHeight/2)))
+    else if (gamePaddle.y >= SCREENHEIGHT - (wallThickness + (paddleHeight/2)))
     {
-        gamePaddle.y = 768 - (wallThickness + (paddleHeight/2));
+        gamePaddle.y = SCREENHEIGHT - (wallThickness + (paddleHeight/2));
     }
     
     //For ball
@@ -171,16 +171,16 @@ void Game::UpdateGame()
         gameBall.y = wallThickness + (ballWidth/2);
     }
     //2. For bottom wall
-    if (gameBall.y >= 768 - (wallThickness + (ballWidth/2)))
+    if (gameBall.y >= SCREENHEIGHT - (wallThickness + (ballWidth/2)))
     {
         ballVelocity.y *= -1;
-        gameBall.y = 768 - (wallThickness + (ballWidth/2));
+        gameBall.y = SCREENHEIGHT - (wallThickness + (ballWidth/2));
     }
     //3. For Right Wall
-    if (gameBall.x >= 1024 - (wallThickness + (ballWidth/2)))
+    if (gameBall.x >= SCREENWIDTH - (wallThickness + (ballWidth/2)))
     {
         ballVelocity.x *= -1;
-        gameBall.x = 1024 - (wallThickness + (ballWidth/2));
+        gameBall.x = SCREENWIDTH - (wallThickness + (ballWidth/2));
     }
     
     //Check if the ball hits the paddle. If so, make correct adjustments
@@ -209,9 +209,9 @@ void Game::GenerateOuput()
     //DRAW YOUR GAME OBJECTS:
     //1. Three White Walls
     //Create the 3 rectangles
-    SDL_Rect gameWallTop {0, 0, 1024, wallThickness};
-    SDL_Rect gameWallBottom {0, 768 - wallThickness, 1024, wallThickness};
-    SDL_Rect gameWallRight {1024 - wallThickness, 0, wallThickness, 768};
+    SDL_Rect gameWallTop {0, 0, SCREENWIDTH, wallThickness};
+    SDL_Rect gameWallBottom {0, SCREENHEIGHT - wallThickness, SCREENWIDTH, wallThickness};
+    SDL_Rect gameWallRight {SCREENWIDTH - wallThickness, 0, wallThickness, SCREENHEIGHT};
     
     SDL_SetRenderDrawColor(rendererPtr, 255, 255, 255, 255); //Set Render Color to White
     SDL_RenderFillRect(rendererPtr, &gameWallTop); //Draw Walls

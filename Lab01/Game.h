@@ -21,8 +21,10 @@ class Game
         SDL_Renderer* rendererPtr;
         bool gameIsRunning = true;
         int paddleDistance = 20;
-        SDL_Point gamePaddle {paddleDistance, 384}; //Center coordinates
-        SDL_Point gameBall {512, 384}; //Center coordinates
+        int SCREENHEIGHT = 768;
+        int SCREENWIDTH = 1024;
+        SDL_Point gamePaddle {paddleDistance, SCREENHEIGHT/2}; //Center coordinates
+        SDL_Point gameBall {SCREENWIDTH/2, SCREENHEIGHT/2}; //Center coordinates
     
         //Drawing constants
         const int wallThickness = 15;
