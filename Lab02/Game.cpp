@@ -11,6 +11,8 @@
 #include "Actor.h"
 #include <SDL2/SDL_image.h>
 #include "SpriteComponent.h"
+#include "Ship.hpp"
+#include "MoveComponent.h"
 
 // TODO
 //Implementation for the functions in our Game class
@@ -48,15 +50,6 @@ bool Game::Initialize()
     {
         return false;
     }
-    
-    //Initialize SDL Image with IMG_Init
-//    int imageInitialize = IMG_Init(IMG_INIT_PNG);
-//
-//    //If function returns 0, that means it failed to initialize
-//    if (imageInitialize == 0)
-//    {
-//        return false;
-//    }
     
     int initted = IMG_Init(IMG_INIT_PNG);
     if ((initted & IMG_INIT_PNG) != IMG_INIT_PNG)
@@ -244,30 +237,16 @@ void Game::RemoveActor(Actor* actor)
 void Game::LoadData()
 {
     //Load in the individual sprites
-    //FOR SHIP
-    Actor* test1 = new Actor(this);
-    SpriteComponent* sc = new SpriteComponent(test1);
-    sc->SetTexture(GetTexture("Assets/Ship.png"));
-    
-    //For laser
-    Actor* test2 = new Actor(this);
-    SpriteComponent* sc2 = new SpriteComponent(test2);
-    sc2->SetTexture(GetTexture("Assets/Laser.png"));
-    test2->SetPosition(Vector2(200.0f, 100.0f));
-
-    //For ship thrust
-    Actor* test3 = new Actor(this);
-    SpriteComponent* sc3 = new SpriteComponent(test3);
-    sc3->SetTexture(GetTexture("Assets/ShipThrust.png"));
-    test3->SetPosition(Vector2(200.0f, 200.0f));
-    test3->SetScale(0.75f);
-    test3->SetRotation(Math::PiOver2);
 
     //For stars
     Actor* test4 = new Actor(this);
     SpriteComponent* sc4 = new SpriteComponent(test4, 5);
     sc4->SetTexture(GetTexture("Assets/Stars.png"));
     test4->SetPosition(Vector2(512.0f, 384.0f));
+    
+    //For Ship
+    Ship* ship = new Ship(this);
+    ship->SetPosition(Vector2(SCREENWIDTH/2, SCREENHEIGHT/2));
     
 }
 

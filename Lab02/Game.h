@@ -23,12 +23,15 @@ class Game
         void RemoveActor(class Actor* actor);
         void AddSprite(class SpriteComponent* sprite);
         void RemoveSprite(class SpriteComponent* sprite);
+        SDL_Texture* GetTexture(std::string fileName);
     
     private:
         //Pointer to window and renderer
         SDL_Window* windowPtr;
         SDL_Renderer* rendererPtr;
         bool gameIsRunning = true;
+        int SCREENHEIGHT = 768;
+        int SCREENWIDTH = 1024;
         
         //For Update Game
         float previousFrameTime = 0.0;
@@ -44,6 +47,5 @@ class Game
         //Sprite Functions
         std::unordered_map<std::string, SDL_Texture*> mHashmap;
         std::vector<class SpriteComponent*> spriteCompVector;
-        SDL_Texture* GetTexture(std::string fileName);
 
 };
