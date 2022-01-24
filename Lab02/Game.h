@@ -18,20 +18,27 @@ class Game
         void ProcessInput();
         void UpdateGame();
         void GenerateOuput();
+        
         //Functions for Actors
         void AddActor(class Actor* actor);
         void RemoveActor(class Actor* actor);
         void AddSprite(class SpriteComponent* sprite);
         void RemoveSprite(class SpriteComponent* sprite);
         SDL_Texture* GetTexture(std::string fileName);
+        const float SCREENHEIGHT = 768.0;
+        const float SCREENWIDTH = 1024.0;
+        
+        //Functions for Asteroids
+        //Keep track of asteroids
+        std::vector<class Asteroid*> asteroidTracker;
+        void AddAsteroid(class Asteroid* actor);
+        void RemoveAsteroid(class Asteroid* actor);
     
     private:
         //Pointer to window and renderer
         SDL_Window* windowPtr;
         SDL_Renderer* rendererPtr;
         bool gameIsRunning = true;
-        const float SCREENHEIGHT = 768.0;
-        const float SCREENWIDTH = 1024.0;
         
         //For Update Game
         float previousFrameTime = 0.0;

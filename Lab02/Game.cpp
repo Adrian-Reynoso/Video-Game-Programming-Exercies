@@ -13,6 +13,8 @@
 #include "SpriteComponent.h"
 #include "Ship.hpp"
 #include "MoveComponent.h"
+#include "Random.h"
+#include "Asteroid.hpp"
 
 // TODO
 //Implementation for the functions in our Game class
@@ -24,6 +26,9 @@ Game::Game()
 //Implements Initialize function
 bool Game::Initialize()
 {
+    //Initialize the basic random library
+    Random::Init();
+    
     //First, call SDL function to see if game can initialize
     int initializeChecker = SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO);
     
@@ -173,7 +178,7 @@ void Game::UpdateGame()
     //Loop over the actor vector, and any actors which are in state ActorState::Destroy should be added to the temporary vector from step 3
     for (unsigned long i = 0; i < mActors.size(); i++)
     {
-        if (mActors[i]->actorStateGetter() == ActorState::Destroy)
+        if (mActors[i]->GetState() == ActorState::Destroy)
         {
             //Add to the tempActors vector
             tempActors.push_back(mActors[i]);
@@ -183,7 +188,7 @@ void Game::UpdateGame()
     //Loop over the vector from step 3 and delete each actor in it (this will automatically call the Actor destructor, which then calls RemoveActor, which removes the actor from the Game’s vector).
     for (unsigned long i = 0; i < tempActors.size(); i++)
     {
-        delete mActors[i];
+        delete tempActors[i];
     }
 
 }
@@ -247,6 +252,13 @@ void Game::LoadData()
     //For Ship
     Ship* ship = new Ship(this);
     ship->SetPosition(Vector2(SCREENWIDTH/2, SCREENHEIGHT/2));
+    
+    //Create 10 asteroids
+    Asteroid* asteroids[10];
+    for (int i = 0; i < 10; i++)
+    {
+        asteroids[i] = new Asteroid(this);
+    }
     
 }
 
@@ -334,3 +346,21 @@ void Game::RemoveSprite(class SpriteComponent* sprite)
     }
 }
 
+
+void Game::AddAsteroid(class Asteroid* actor)
+{
+    //Add asteroid to the asteroid vector
+    asteroidTracker.push_back(actor);
+}
+
+void Game::RemoveAsteroid(class Asteroid* actor)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Asteroid*
+    auto it = std::find(asteroidTracker.begin(), asteroidTracker.end(), actor);
+    
+    //then erase to remove the element the iterator points to
+    if (it != asteroidTracker.end())
+    {
+        asteroidTracker.erase(it);
+    }
+}

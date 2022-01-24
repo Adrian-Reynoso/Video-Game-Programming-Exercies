@@ -20,10 +20,14 @@ class Ship : public Actor
         class SpriteComponent* spriteComponent;
     
         void OnProcessInput(const Uint8* keyState);
+        void OnUpdate(float deltaTime);
     
     private:
         float forwardVelocity = 300.0;
         float angularVelocity = 4.0;
+        float coolDown = 0.0f;
+
+        void laserShot(const Uint8 *keyboardState);
 };
 
 #endif /* Ship_hpp */
