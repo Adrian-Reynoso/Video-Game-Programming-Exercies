@@ -30,8 +30,8 @@ class Game
         SDL_Window* windowPtr;
         SDL_Renderer* rendererPtr;
         bool gameIsRunning = true;
-        int SCREENHEIGHT = 768;
-        int SCREENWIDTH = 1024;
+        const float SCREENHEIGHT = 768.0;
+        const float SCREENWIDTH = 1024.0;
         
         //For Update Game
         float previousFrameTime = 0.0;
