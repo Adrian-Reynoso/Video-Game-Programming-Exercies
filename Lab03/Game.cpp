@@ -7,5 +7,395 @@
 //
 
 #include "Game.h"
+#include <algorithm>
+#include "Actor.h"
+#include <SDL2/SDL_image.h>
+#include "SpriteComponent.h"
+#include "MoveComponent.h"
+#include "Random.h"
+#include <fstream>
+#include "Frog.hpp"
+#include "Log.hpp"
+#include "Vehicle.hpp"
 
 // TODO
+//Implementation for the functions in our Game class
+//Constructor
+Game::Game()
+{
+}
+
+//Implements Initialize function
+bool Game::Initialize()
+{
+    //Initialize the basic random library
+    Random::Init();
+    
+    //First, call SDL function to see if game can initialize
+    int initializeChecker = SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO);
+    
+    //Return false if there was an error with Initialization
+    if (initializeChecker != 0)
+    {
+        return false;
+    }
+    
+    //Create a window:
+    windowPtr = SDL_CreateWindow("Frogger Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, (int)SCREENWIDTH/2, (int)SCREENHEIGHT/2, SDL_WINDOW_OPENGL);
+    
+    //Check if the window could open, if not return false
+    if (windowPtr == NULL)
+    {
+        return false;
+    }
+    
+    //Create a renderer
+    rendererPtr = SDL_CreateRenderer(windowPtr, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    
+    //To make the window a smaller size
+    SDL_RenderSetLogicalSize(rendererPtr, (int)SCREENWIDTH, (int)SCREENHEIGHT);
+    
+    //Check if the window could open, if not return false
+    if (rendererPtr == NULL)
+    {
+        return false;
+    }
+    
+    int initted = IMG_Init(IMG_INIT_PNG);
+    if ((initted & IMG_INIT_PNG) != IMG_INIT_PNG)
+    {
+        printf("IMG_Init: Failed to init required jpg and png support!\n");
+        printf("IMG_Init: %s\n", IMG_GetError());
+    }
+    
+    //Call LoadData
+    LoadData();
+    
+    //Past this point, we know initialization works
+    return true;
+}
+
+//Implements Shutdown function
+void Game::Shutdown()
+{
+    //Call UnloadData
+    UnloadData();
+    
+    //Call Image Quit
+    IMG_Quit();
+    
+    //Destroy renderer, window, and quit SDL
+    SDL_DestroyRenderer(rendererPtr);
+    SDL_DestroyWindow(windowPtr);
+    atexit(SDL_Quit);
+}
+
+//Implements RunLoop function
+void Game::RunLoop()
+{
+    //Run an inifnite loop, calling the respective functions needed IN ORDER
+    while (gameIsRunning)
+    {
+        ProcessInput();
+        UpdateGame();
+        GenerateOuput();
+    }
+}
+
+//Implements ProcessInput function
+void Game::ProcessInput()
+{
+    //Create an event variable
+    SDL_Event event;
+    
+    //Poll for events
+    while (SDL_PollEvent(&event))
+    {
+        
+        //Check what type of event it is
+        switch (event.type)
+        {
+            //If the user wants to quit
+            case SDL_QUIT:
+                //Switch the gameIsRunnig bool value to false
+                gameIsRunning = false;
+                break;
+        }
+    }
+    
+    //Grab the state of the entire Keyboard
+    const Uint8 *keyboardState = SDL_GetKeyboardState(NULL);
+    
+    //Make a copy of the actor vector.
+    std::vector<Actor*> mActorsCopy = mActors;
+    
+    //Loop over the copy of all actors and call ProcessInput on each
+    for (unsigned long i = 0; i < mActorsCopy.size(); i++)
+    {
+        mActorsCopy[i]->ProcessInput(keyboardState);
+    }
+    
+    //Check if escape, up, or down was pressed. If so, set gameIsRunning to false or its respective changes
+    if (keyboardState[SDL_SCANCODE_ESCAPE])
+    {
+        gameIsRunning = false;
+    }
+    
+}
+
+//Implements UpdateGame function
+void Game::UpdateGame()
+{
+    //1) Frame Limit with while loop
+    while (previousFrameTime + 16 > SDL_GetTicks())
+    {
+    }
+    
+    //2) Calculate delta time (as a float in seconds)
+    float currentTime = (float) SDL_GetTicks();
+    deltaTime = currentTime - previousFrameTime;
+    //Update previousFrameTime
+    previousFrameTime = currentTime;
+    //Convert the deltaTime milliseconds to seconds
+    deltaTime /= 1000;
+    
+    
+    //3) Cap to maximum delta time to no more than 0.033 seconds
+    if (deltaTime > 0.033)
+    {
+        deltaTime = float(0.033);
+    }
+    //SDL_Log("My deltaTime is %f", deltaTime);
+    
+    //4) Update all Actors by delta time
+    //Make a copy of the actors Vector
+    std::vector<Actor*> mActorsCopy = mActors;
+    
+    //Loop over the copy and call Update on each actor
+    for (unsigned long i = 0; i < mActorsCopy.size(); i++)
+    {
+        mActorsCopy[i]->Update(deltaTime);
+    }
+    
+    //Make a temporary Actor* vector for actors to destroy
+    std::vector<Actor*> tempActors;
+    
+    //Loop over the actor vector, and any actors which are in state ActorState::Destroy should be added to the temporary vector from step 3
+    for (unsigned long i = 0; i < mActors.size(); i++)
+    {
+        if (mActors[i]->GetState() == ActorState::Destroy)
+        {
+            //Add to the tempActors vector
+            tempActors.push_back(mActors[i]);
+        }
+    }
+    
+    //Loop over the vector from step 3 and delete each actor in it (this will automatically call the Actor destructor, which then calls RemoveActor, which removes the actor from the Game’s vector).
+    for (unsigned long i = 0; i < tempActors.size(); i++)
+    {
+        delete tempActors[i];
+    }
+
+}
+
+//Implements GenerateOuput function
+void Game::GenerateOuput()
+{
+    //Set the render draw color to blue
+    SDL_SetRenderDrawColor(rendererPtr, 0, 0, 0, 255);
+    
+    //Clear the backbuffer
+    SDL_RenderClear(rendererPtr);
+    
+    //DRAW YOUR GAME OBJECTS:
+    //loop over the sprite component vector. If visible, call Draw on it
+    for (unsigned long i = 0; i < spriteCompVector.size(); i++)
+    {
+        if (spriteCompVector[i]->IsVisible())
+        {
+            //Call Draw
+            spriteCompVector[i]->Draw(rendererPtr);
+        }
+    }
+    
+    //Present the render
+    SDL_RenderPresent(rendererPtr);
+}
+
+//ACTOR FUNCTIONS
+
+//Takes in an Actor* and adds it to the vector in Game
+void Game::AddActor(Actor* actor)
+{
+    mActors.push_back(actor);
+}
+
+//Takes in an Actor*, removes the actor from the vector
+void Game::RemoveActor(Actor* actor)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Actor*
+    auto it = std::find(mActors.begin(), mActors.end(), actor);
+    
+    //then erase to remove the element the iterator points to
+    if (it != mActors.end())
+    {
+        mActors.erase(it);
+    }
+}
+
+//DATA FUNCTIONS
+void Game::LoadData()
+{
+    //Load in the individual sprites
+    
+    //For background
+    Actor* background = new Actor(this);
+    SpriteComponent* sc4 = new SpriteComponent(background, 5);
+    sc4->SetTexture(GetTexture("Assets/Background.png"));
+    background->SetPosition(Vector2(SCREENWIDTH/2, SCREENHEIGHT/2));
+    
+    //Call the read file function to create the other actors
+    readFile("Assets/Level.txt");
+    
+}
+
+void Game::UnloadData()
+{
+    //Call delete on all the actors in the vector
+    while(mActors.size() > 0)
+    {
+        delete mActors.back();
+    }
+    
+    //call SDL_DestroyTexture on every texture in the textures map, and then clear the map.
+    for (auto it = mHashmap.begin(); it != mHashmap.end(); it++)
+    {
+        SDL_DestroyTexture(it->second);
+    }
+    mHashmap.clear();
+}
+
+//SPRITE FUNCTIONS
+//takes in a file name and returns an SDL_Texture*
+SDL_Texture* Game::GetTexture(std::string fileName)
+{
+    //first check if a file by that name is in the hash map
+    std::unordered_map<std::string,SDL_Texture*>::iterator it;
+    it = mHashmap.find(fileName);
+    
+    //If the texture IS in the Hashmap
+    if (it != mHashmap.end())
+    {
+        return mHashmap.find(fileName)->second;
+    }
+    
+    //If the texture IS NOT in the Hashmap
+    //load the texture with that file name.
+    SDL_Surface *image;
+    image = IMG_Load(fileName.c_str());
+    
+    //If the image failed to load
+    if (image == nullptr)
+    {
+        //SDL_Log message that says which texture file it tried to load, and that it failed to load it
+        SDL_Log("Tried to but failed to load %s ", fileName.c_str());
+        return 0;
+    }
+    //If it didn't fail to load
+    else
+    {
+        //to convert the SDL_Surface* to an SDL_Texture*
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(rendererPtr, image);
+        
+        //Free the SDL_Surface* using SDL_FreeSurface
+        SDL_FreeSurface(image);
+        
+        //Add an entry to the map for that file, so subsequent calls to GetTexture will find the file in the map
+        mHashmap.insert(std::pair<std::string,SDL_Texture*>(fileName, texture));
+        
+        //Return the texture pointer variable
+        return texture;
+    }
+}
+
+//Adds the sprite to the vector and then sorts the vector by draw order
+void Game::AddSprite(class SpriteComponent* sprite)
+{
+    //Add sprite to vector
+    spriteCompVector.push_back(sprite);
+    
+    //Sort the vector in draw order
+    std::sort(spriteCompVector.begin(), spriteCompVector.end(),
+        [](SpriteComponent* a, SpriteComponent* b) {
+            return a->GetDrawOrder() < b->GetDrawOrder();
+    });
+}
+
+void Game::RemoveSprite(class SpriteComponent* sprite)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Actor*
+    auto it = std::find(spriteCompVector.begin(), spriteCompVector.end(), sprite);
+    
+    //then erase to remove the element the iterator points to
+    if (it != spriteCompVector.end())
+    {
+        spriteCompVector.erase(it);
+    }
+}
+
+//readFile() function implementation
+void Game::readFile(std::string fileName)
+{
+    //Create your ifstream
+    std::ifstream filein(fileName);
+    
+    //Create Y position variable
+    int yPos = 160 - 64;
+    
+    //Make a for-loop that goes through the file and takes each line
+    for (std::string line; std::getline(filein, line); )
+    {
+        //X position for variable
+        int xPos = 0;
+        
+        //Add 64 to y position
+        yPos += 64;
+        
+        //goes through the string and, if there is an actor needed to be created, create it
+        for (unsigned long i = 0; i < line.size(); i++)
+        {
+            //Index through line and with if statements see if an actor needs to be created
+            
+            //Add 64 to x position
+            xPos += 64;
+            
+            //If frog needs to be created
+            if ((char)line[i] == 'F')
+            {
+                //Call frog constructor
+                Frog* frog = new Frog(this);
+                frog->SetPosition(Vector2(xPos, yPos));
+            }
+            
+            //If vehicle needs to be created
+            if ((char)line[i] == 'A' || (char)line[i] == 'B' || (char)line[i] == 'C' || (char)line[i] == 'D' || (char)line[i] == 'T')
+            {
+                //Call frog constructor
+                Vehicle* vehicle = new Vehicle(this, (char)line[i]);
+                vehicle->SetPosition(Vector2(xPos, yPos));
+            }
+            
+            //If Log needs to be created
+            if ((char)line[i] == 'X' || (char)line[i] == 'Y' || (char)line[i] == 'Z')
+            {
+                //Call frog constructor
+                Log* log = new Log(this, (char)line[i]);
+                log->SetPosition(Vector2(xPos, yPos));
+            }
+            
+            //If not above, that means its a period 
+        }
+    }
+    
+}
+
