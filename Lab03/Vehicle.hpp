@@ -15,8 +15,11 @@ class Vehicle : public Actor
 {
     public:
         //Constructor
-        Vehicle(class Game* game, char letter);
+        Vehicle(class Game* game, char letter, float dir);
         class SpriteComponent* spriteComponent;
+    
+    private:
+        class WrappingMove* wrappingMove;
 };
 
 #endif /* Vehicle_hpp */

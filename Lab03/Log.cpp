@@ -7,14 +7,19 @@
 
 #include "Log.hpp"
 #include "SpriteComponent.h"
+#include "WrappingMove.hpp"
 #include "Game.h"
 
-Log::Log(class Game* game, char letter)
+Log::Log(class Game* game, char letter, float dir)
 :Actor(game)
 {
     // TODO: Add code here
-    //Dynamically allocate a SpriteComponent and assign it to the member variables
+    //Dynamically allocate a SpriteComponent and WrappingComponentand assign it to the member variables
     spriteComponent = new SpriteComponent(this);
+    wrappingMove = new WrappingMove(this, dir);
+    
+    //Set a forward speed for WrappingMove
+    wrappingMove->SetForwardSpeed(75);
     
     //Judging by the character, see what texture we need to use
     if(letter == 'X')

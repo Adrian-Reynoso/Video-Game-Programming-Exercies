@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include "SDL2/SDL.h"
 #include "Actor.h"
+#include "Math.h"
 
 class Frog : public Actor
 {
@@ -23,7 +24,11 @@ class Frog : public Actor
     
     private:
         //Map to detect leading edges
-        std::unordered_map<SDL_Scancode, bool> leadingEdgesMap;
+        std::unordered_map<SDL_Scancode, bool> lastFrame;
+        float screenWidth;
+        float screenHeight;
+        float maxHeight;
+        float minHeight = 128.0;
 
 };
 

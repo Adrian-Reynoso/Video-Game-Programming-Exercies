@@ -352,6 +352,9 @@ void Game::readFile(std::string fileName)
     //Create Y position variable
     int yPos = 160 - 64;
     
+    //Create a line number variable for each line
+    int lineNum = -1;
+    
     //Make a for-loop that goes through the file and takes each line
     for (std::string line; std::getline(filein, line); )
     {
@@ -360,6 +363,20 @@ void Game::readFile(std::string fileName)
         
         //Add 64 to y position
         yPos += 64;
+        
+        //Add to lineNum
+        lineNum++;
+        
+        //Based on the row (If it's even or odd) pass in 1 or -1
+        float dir;
+        if (lineNum % 2 == 0)
+        {
+            dir = 1.0;
+        }
+        else
+        {
+            dir = -1.0;
+        }
         
         //goes through the string and, if there is an actor needed to be created, create it
         for (unsigned long i = 0; i < line.size(); i++)
@@ -381,7 +398,7 @@ void Game::readFile(std::string fileName)
             if ((char)line[i] == 'A' || (char)line[i] == 'B' || (char)line[i] == 'C' || (char)line[i] == 'D' || (char)line[i] == 'T')
             {
                 //Call frog constructor
-                Vehicle* vehicle = new Vehicle(this, (char)line[i]);
+                Vehicle* vehicle = new Vehicle(this, (char)line[i], dir);
                 vehicle->SetPosition(Vector2(xPos, yPos));
             }
             
@@ -389,7 +406,7 @@ void Game::readFile(std::string fileName)
             if ((char)line[i] == 'X' || (char)line[i] == 'Y' || (char)line[i] == 'Z')
             {
                 //Call frog constructor
-                Log* log = new Log(this, (char)line[i]);
+                Log* log = new Log(this, (char)line[i], dir);
                 log->SetPosition(Vector2(xPos, yPos));
             }
             

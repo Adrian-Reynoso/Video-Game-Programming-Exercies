@@ -15,8 +15,11 @@ class Log : public Actor
 {
     public:
         //Constructor
-        Log(class Game* game, char letter);
+        Log(class Game* game, char letter, float dir);
         class SpriteComponent* spriteComponent;
+    
+    private:
+        class WrappingMove* wrappingMove;
 };
 
 #endif /* Log_hpp */
