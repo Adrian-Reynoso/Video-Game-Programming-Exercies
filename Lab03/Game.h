@@ -28,6 +28,10 @@ class Game
         const float SCREENHEIGHT = 1024.0;
         const float SCREENWIDTH = 896.0;
     
+        //Vector of vehicles to check collisions
+        std::vector<class Vehicle*> vehicles;
+        class Frog* mFrog;
+    
     
     private:
         //Pointer to window and renderer

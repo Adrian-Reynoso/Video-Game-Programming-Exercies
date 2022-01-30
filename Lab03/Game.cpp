@@ -390,8 +390,9 @@ void Game::readFile(std::string fileName)
             if ((char)line[i] == 'F')
             {
                 //Call frog constructor
-                Frog* frog = new Frog(this);
+                Frog* frog = new Frog(this, xPos, yPos);
                 frog->SetPosition(Vector2(xPos, yPos));
+                mFrog = frog;
             }
             
             //If vehicle needs to be created
@@ -400,6 +401,9 @@ void Game::readFile(std::string fileName)
                 //Call frog constructor
                 Vehicle* vehicle = new Vehicle(this, (char)line[i], dir);
                 vehicle->SetPosition(Vector2(xPos, yPos));
+                
+                //Add vehicle to the vehicles vector
+                vehicles.push_back(vehicle);
             }
             
             //If Log needs to be created

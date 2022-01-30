@@ -19,7 +19,9 @@ void WrappingMove::Update(float deltaTime)
 {
     //Updates the owning actor’s position based on the owning actor’s forward vector
     //find velocity
-    Vector2 velocity = mOwner->GetForward() * mForwardSpeed * direction;
+    direction = direction * mOwner->GetForward();
+    
+    Vector2 velocity = mForwardSpeed * direction;
     mOwner->SetPosition(mOwner->GetPosition() + (velocity * deltaTime));
     
     //If position is passed screen edges, wrap the sprite

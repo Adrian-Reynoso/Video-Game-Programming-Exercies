@@ -18,9 +18,11 @@ class Frog : public Actor
 {
     public:
         //Constructor
-        Frog(class Game* game);
+        Frog(class Game* game, float xPosition, float yPosition);
         void OnProcessInput(const Uint8* keyState);
         class SpriteComponent* spriteComponent;
+        class CollisionComponent* collisionComponent;
+        void OnUpdate(float deltaTime);
     
     private:
         //Map to detect leading edges
@@ -29,6 +31,10 @@ class Frog : public Actor
         float screenHeight;
         float maxHeight;
         float minHeight = 128.0;
+        Game* mGame;
+        float xPos;
+        class DeadFrog* deadFrog;
+        float yPos;
 
 };
 

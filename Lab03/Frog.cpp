@@ -9,13 +9,20 @@
 #include "SpriteComponent.h"
 #include "Game.h"
 #include "Math.h"
+#include "CollisionComponent.h"
+#include "Vehicle.hpp"
+#include "DeadFrog.hpp"
 
-Frog::Frog(class Game* game)
+Frog::Frog(class Game* game, float xPosition, float yPosition)
 :Actor(game)
 {
     // TODO: Add code here
     //Dynamically allocate a SpriteComponent and assign it to the member variables
     spriteComponent = new SpriteComponent(this);
+    
+    //Dynamically allocate a collisionComponent and set width/height to 50
+    collisionComponent = new CollisionComponent(this);
+    collisionComponent->SetSize(50.0f, 50.0f);
     
     //Assign ship texture to sprite component
     spriteComponent->SetTexture(game->GetTexture("Assets/Frog.png"));
@@ -26,6 +33,11 @@ Frog::Frog(class Game* game)
     
     //Define max height so the frog doesn't go backward when game starts
     maxHeight = game->SCREENHEIGHT - 64;
+    
+    //Assign the game to the private member variable mGame
+    mGame = game;
+    xPos = xPosition;
+    yPos = yPosition;
 }
 
 //Override of OnProcessInput
@@ -98,4 +110,23 @@ void Frog::OnProcessInput(const Uint8* keyState)
     lastFrame[SDL_SCANCODE_DOWN] = keyboardState[SDL_SCANCODE_DOWN];
     lastFrame[SDL_SCANCODE_LEFT] = keyboardState[SDL_SCANCODE_LEFT];
     lastFrame[SDL_SCANCODE_RIGHT] = keyboardState[SDL_SCANCODE_RIGHT];
+}
+
+void Frog::OnUpdate(float deltaTime)
+{
+    //Check if frog collides with a vehicle
+    for (unsigned long i = 0; i < mGame->vehicles.size(); i++)
+    {
+        bool collides = collisionComponent->Intersect(mGame->vehicles[i]->collisionComponent);
+        
+        //check if the frog collides, if so move the frog back to starting position
+        if (collides == true)
+        {
+            //Create a DeadFrog actor at the spot where this frog died
+            deadFrog = new DeadFrog(mGame, GetPosition().x, GetPosition().y);
+            
+            //Reset the position of the frog
+            SetPosition(Vector2(xPos, yPos));
+        }
+    }
 }

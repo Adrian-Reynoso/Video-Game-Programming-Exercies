@@ -16,7 +16,9 @@ class Vehicle : public Actor
     public:
         //Constructor
         Vehicle(class Game* game, char letter, float dir);
+        void OnUpdate(float deltaTime);
         class SpriteComponent* spriteComponent;
+        class CollisionComponent* collisionComponent;
     
     private:
         class WrappingMove* wrappingMove;

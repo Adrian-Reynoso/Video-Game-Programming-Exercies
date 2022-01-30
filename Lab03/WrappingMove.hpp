@@ -18,10 +18,10 @@ class WrappingMove : public MoveComponent
         //Constructor
         WrappingMove(class Actor* owner, float dir);
         void Update(float deltaTime) override;
-    
-    private:
         //Direction owner should move in
         Vector2 direction{1.0, 1.0};
+    
+    private:
         float screenWidth = 896.0;
         
 };
