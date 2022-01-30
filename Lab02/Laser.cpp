@@ -16,7 +16,6 @@
 Laser::Laser(class Game* game)
 :Actor(game)
 {
-    // TODO: Add code here
     //Dynamically allocate a SpriteComponent and a MoveComponent, and assign them to the member variables
     spriteComponent = new SpriteComponent(this);
     moveComponent = new MoveComponent(this);
@@ -34,17 +33,20 @@ void Laser::OnUpdate(float deltaTime)
     //Add to the laser lifetime
     lifeTime += deltaTime;
     
+    //Use the asteroid vector getter to get the available asteroids
+    std::vector<Asteroid*> asteroidTracker = mGame->GetAsteroidTracker();
+    
     //Loop over the asteroid vector to see if a laser hit one
-    for (unsigned long i = 0; i < mGame->asteroidTracker.size(); i++)
+    for (Asteroid* asteroid : asteroidTracker)
     {
         //If distance between laser and asteroid is <= 70, then set both the laser and asteroid to ActorState::Destroy and break out of the loop
-        if (Vector2::Distance(GetPosition(), mGame->asteroidTracker[i]->GetPosition()) <= 70.0f)
+        if (Vector2::Distance(GetPosition(), asteroid->GetPosition()) <= 70.0f)
         {
             //For Laser
             SetState(ActorState::Destroy);
             
             //For Asteroid
-            mGame->asteroidTracker[i]->SetState(ActorState::Destroy);
+            asteroid->SetState(ActorState::Destroy);
         }
     }
     

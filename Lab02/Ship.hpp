@@ -19,8 +19,8 @@ class Ship : public Actor
         class MoveComponent* moveComponent;
         class SpriteComponent* spriteComponent;
     
-        void OnProcessInput(const Uint8* keyState);
-        void OnUpdate(float deltaTime);
+        void OnProcessInput(const Uint8* keyState) override;
+        void OnUpdate(float deltaTime) override;
     
     private:
         float forwardVelocity = 300.0;

@@ -15,7 +15,6 @@
 Ship::Ship(class Game* game)
 :Actor(game)
 {
-    // TODO: Add code here
     //Dynamically allocate a SpriteComponent and a MoveComponent, and assign them to the member variables
     spriteComponent = new SpriteComponent(this);
     moveComponent = new MoveComponent(this);
@@ -27,13 +26,25 @@ Ship::Ship(class Game* game)
 void Ship::OnProcessInput(const Uint8* keyState)
 {
     //Grab the state of the entire Keyboard
-    const Uint8 *keyboardState = SDL_GetKeyboardState(NULL);
+    const Uint8 *keyboardState = SDL_GetKeyboardState(nullptr);
     
     //Check If the arrow keys were pressed, if so do the required actions
     if (keyboardState[SDL_SCANCODE_UP] && keyboardState[SDL_SCANCODE_DOWN])
     {
         //Nothing happens
         moveComponent->SetForwardSpeed(0.0f);
+        
+        //Call laser shot function
+        laserShot(keyboardState);
+        
+        //Assign ship texture to sprite component
+        spriteComponent->SetTexture(mGame->GetTexture("Assets/Ship.png"));
+    }
+    
+    else if (keyboardState[SDL_SCANCODE_LEFT] && keyboardState[SDL_SCANCODE_RIGHT])
+    {
+        //Nothing happens
+        moveComponent->SetAngularSpeed(0.0f);
         
         //Call laser shot function
         laserShot(keyboardState);
@@ -166,7 +177,7 @@ void Ship::laserShot(const Uint8 *keyboardState)
         if (coolDown <= 0.0f)
         {
             //Allocate a new laser
-            Laser* laser = new Laser(this->mGame);
+            Laser* laser = new Laser(mGame);
             
             //Set the position of the laser to the ship’s position
             laser->SetPosition(GetPosition());

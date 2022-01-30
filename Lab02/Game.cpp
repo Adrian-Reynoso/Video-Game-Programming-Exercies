@@ -16,7 +16,6 @@
 #include "Random.h"
 #include "Asteroid.hpp"
 
-// TODO
 //Implementation for the functions in our Game class
 //Constructor
 Game::Game()
@@ -42,7 +41,7 @@ bool Game::Initialize()
     windowPtr = SDL_CreateWindow("Asteroids Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 768, SDL_WINDOW_OPENGL);
     
     //Check if the window could open, if not return false
-    if (windowPtr == NULL)
+    if (windowPtr == nullptr)
     {
         return false;
     }
@@ -51,7 +50,7 @@ bool Game::Initialize()
     rendererPtr = SDL_CreateRenderer(windowPtr, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     
     //Check if the window could open, if not return false
-    if (rendererPtr == NULL)
+    if (rendererPtr == nullptr)
     {
         return false;
     }
@@ -119,15 +118,15 @@ void Game::ProcessInput()
     }
     
     //Grab the state of the entire Keyboard
-    const Uint8 *keyboardState = SDL_GetKeyboardState(NULL);
+    const Uint8 *keyboardState = SDL_GetKeyboardState(nullptr);
     
     //Make a copy of the actor vector.
     std::vector<Actor*> mActorsCopy = mActors;
     
     //Loop over the copy of all actors and call ProcessInput on each
-    for (unsigned long i = 0; i < mActorsCopy.size(); i++)
+    for (Actor* actor : mActorsCopy)
     {
-        mActorsCopy[i]->ProcessInput(keyboardState);
+        actor->ProcessInput(keyboardState);
     }
     
     //Check if escape, up, or down was pressed. If so, set gameIsRunning to false or its respective changes
@@ -167,28 +166,28 @@ void Game::UpdateGame()
     std::vector<Actor*> mActorsCopy = mActors;
     
     //Loop over the copy and call Update on each actor
-    for (unsigned long i = 0; i < mActorsCopy.size(); i++)
+    for (Actor* actor : mActorsCopy)
     {
-        mActorsCopy[i]->Update(deltaTime);
+        actor->Update(deltaTime);
     }
     
     //Make a temporary Actor* vector for actors to destroy
     std::vector<Actor*> tempActors;
     
     //Loop over the actor vector, and any actors which are in state ActorState::Destroy should be added to the temporary vector from step 3
-    for (unsigned long i = 0; i < mActors.size(); i++)
+    for (Actor* actor : mActorsCopy)
     {
-        if (mActors[i]->GetState() == ActorState::Destroy)
+        if (actor->GetState() == ActorState::Destroy)
         {
             //Add to the tempActors vector
-            tempActors.push_back(mActors[i]);
+            tempActors.push_back(actor);
         }
     }
     
     //Loop over the vector from step 3 and delete each actor in it (this will automatically call the Actor destructor, which then calls RemoveActor, which removes the actor from the Game’s vector).
-    for (unsigned long i = 0; i < tempActors.size(); i++)
+    for (Actor* actor : tempActors)
     {
-        delete tempActors[i];
+        delete actor;
     }
 
 }
@@ -204,12 +203,12 @@ void Game::GenerateOuput()
     
     //DRAW YOUR GAME OBJECTS:
     //loop over the sprite component vector. If visible, call Draw on it
-    for (unsigned long i = 0; i < spriteCompVector.size(); i++)
+    for (SpriteComponent* spriteComponent : spriteCompVector)
     {
-        if (spriteCompVector[i]->IsVisible())
+        if (spriteComponent->IsVisible())
         {
             //Call Draw
-            spriteCompVector[i]->Draw(rendererPtr);
+            spriteComponent->Draw(rendererPtr);
         }
     }
     

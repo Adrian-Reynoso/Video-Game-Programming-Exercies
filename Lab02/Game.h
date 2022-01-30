@@ -29,10 +29,12 @@ class Game
         const float SCREENWIDTH = 1024.0;
         
         //Functions for Asteroids
-        //Keep track of asteroids
-        std::vector<class Asteroid*> asteroidTracker;
         void AddAsteroid(class Asteroid* actor);
         void RemoveAsteroid(class Asteroid* actor);
+        const std::vector<class Asteroid*>& GetAsteroidTracker() const
+        {
+            return asteroidTracker;
+        }
     
     private:
         //Pointer to window and renderer
@@ -54,5 +56,8 @@ class Game
         //Sprite Functions
         std::unordered_map<std::string, SDL_Texture*> mHashmap;
         std::vector<class SpriteComponent*> spriteCompVector;
+    
+        //Keep track of asteroids
+        std::vector<class Asteroid*> asteroidTracker;
 
 };

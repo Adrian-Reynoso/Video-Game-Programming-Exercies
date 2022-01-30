@@ -15,8 +15,6 @@
 Asteroid::Asteroid(class Game* game)
 :Actor(game)
 {
-    // TODO: Add code here
-    
     //Asteroid needs to add itself to the game via AddActor
     game->AddAsteroid(this);
     
@@ -26,8 +24,7 @@ Asteroid::Asteroid(class Game* game)
     
     //Assign asteroid texture to sprite component
     spriteComponent->SetTexture(game->GetTexture("Assets/Asteroid.png"));
-    
-    //Hardcode the forward speed of the moveComponent to 150.0
+
     moveComponent->SetForwardSpeed(150.0f);
     
     //Set mRotation to a Random::GetFloatRange between 0.0f and Math::TwoPi

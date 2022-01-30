@@ -10,18 +10,19 @@
 
 int main(int argc, char** argv)
 {
-	// TODO
     //Create an instance of a game class
     Game gameVar;
     
     //Calling initialize
-    bool check = gameVar.Initialize();
+    bool gameInitialized = gameVar.Initialize();
     
     //Check if initialize returns true. If so, call RunLoop and Shutdown
-    if (check == true)
+    if (gameInitialized)
     {
         gameVar.RunLoop();
-        gameVar.Shutdown();
     }
+    
+    gameVar.Shutdown();
+    
 	return 0;
 }

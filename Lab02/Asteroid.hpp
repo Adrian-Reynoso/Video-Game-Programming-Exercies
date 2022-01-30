@@ -21,7 +21,7 @@ class Asteroid : public Actor
         class SpriteComponent* spriteComponent;
     
     protected:
-        void OnUpdate(float deltaTime);
+        void OnUpdate(float deltaTime) override;
         
     private:
         Vector2 topLeft{0.0f, 0.0f};
