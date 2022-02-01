@@ -11,7 +11,9 @@
 #include "Math.h"
 #include "CollisionComponent.h"
 #include "Vehicle.hpp"
+#include "Log.hpp"
 #include "DeadFrog.hpp"
+#include "WrappingMove.hpp"
 
 Frog::Frog(class Game* game, float xPosition, float yPosition)
 :Actor(game)
@@ -32,7 +34,7 @@ Frog::Frog(class Game* game, float xPosition, float yPosition)
     screenHeight = game->SCREENHEIGHT;
     
     //Define max height so the frog doesn't go backward when game starts
-    maxHeight = game->SCREENHEIGHT - 64;
+    maxHeight = game->SCREENHEIGHT - 32;
     
     //Assign the game to the private member variable mGame
     mGame = game;
@@ -53,13 +55,19 @@ void Frog::OnProcessInput(const Uint8* keyState)
     if (keyboardState[SDL_SCANCODE_UP] && lastFrame[SDL_SCANCODE_UP] == false)
     {
         //Edit the current position if the move doesn't go off screen
-        if (temp.y - 64 >= minHeight)
+        temp.y -= 64;
+            
+        if (temp.y < 32.0f)
         {
-            temp.y -= 64;
-
-            //move position 64 pixels
-            SetPosition(temp);
+            temp.y = 32.0f;
         }
+        else if (temp.y > maxHeight)
+        {
+            temp.y = maxHeight;
+        }
+
+        //move position 64 pixels
+        SetPosition(temp);
         
     }
     
@@ -67,13 +75,19 @@ void Frog::OnProcessInput(const Uint8* keyState)
     else if (keyboardState[SDL_SCANCODE_DOWN] && lastFrame[SDL_SCANCODE_DOWN] == false)
     {
         //Edit the current position if the move doesn't go off screen
-        if (temp.y + 64 <= maxHeight)
+        temp.y += 64;
+            
+        if (temp.y < 32.0f)
         {
-            temp.y += 64;
-
-            //move position 64 pixels
-            SetPosition(temp);
+            temp.y = 32.0f;
         }
+        else if (temp.y > maxHeight - 64)
+        {
+            temp.y = maxHeight - 64;
+        }
+
+        //move position 64 pixels
+        SetPosition(temp);
         
     }
     
@@ -81,7 +95,7 @@ void Frog::OnProcessInput(const Uint8* keyState)
     else if (keyboardState[SDL_SCANCODE_RIGHT] && lastFrame[SDL_SCANCODE_RIGHT] == false)
     {
         //Edit the current position if the move doesn't go off screen
-        if (temp.x + 64 < screenWidth)
+        if (temp.x + 96 < screenWidth)
         {
             temp.x += 64;
             
@@ -115,9 +129,9 @@ void Frog::OnProcessInput(const Uint8* keyState)
 void Frog::OnUpdate(float deltaTime)
 {
     //Check if frog collides with a vehicle
-    for (unsigned long i = 0; i < mGame->vehicles.size(); i++)
+    for (Vehicle* vehicle : mGame->vehicles)
     {
-        bool collides = collisionComponent->Intersect(mGame->vehicles[i]->collisionComponent);
+        bool collides = collisionComponent->Intersect(vehicle->collisionComponent);
         
         //check if the frog collides, if so move the frog back to starting position
         if (collides == true)
@@ -128,5 +142,90 @@ void Frog::OnUpdate(float deltaTime)
             //Reset the position of the frog
             SetPosition(Vector2(xPos, yPos));
         }
+    }
+    
+    //Check if frog collides with a log
+    CollSide onLog = CollSide::None;
+    bool collisionWithLog = false;
+    for (Log* log : mGame->logs)
+    {
+        Vector2 offSet {0.0f, 0.0f};
+        onLog = collisionComponent->GetMinOverlap(log->collisionComponent, offSet);
+        
+        //Check if there was a collision, if so make the frog ride the log
+        if (onLog != CollSide::None)
+        {
+            collisionWithLog = true;
+            //Make frog and logs y Position the same
+            SetPosition(Vector2 {GetPosition().x, log->GetPosition().y});
+            
+            //Move the position of the frog based on the log’s WrappingMove direction, forward speed, and delta time
+            //Updates the owning actor’s position based on the owning actor’s forward vector
+            Vector2 direction;
+            direction = log->wrappingMove->direction * log->GetForward();
+            
+            Vector2 velocity = log->wrappingMove->GetForwardSpeed() * direction;
+            SetPosition(GetPosition() + (velocity * deltaTime));
+            
+            //Check if CollSide is either left or right, additionally add offset.x + either positive or negative 32 (depending on Left or Right) to the frog’s x-position
+            if (onLog == CollSide::Left)
+            {
+                SetPosition(Vector2 {GetPosition().x + offSet.x + 32.0f, GetPosition().y});
+            }
+            else if (onLog == CollSide::Right)
+            {
+                SetPosition(Vector2 {GetPosition().x + offSet.x - 32.0f, GetPosition().y});
+            }
+
+        }
+        
+        //Check if frog position is outside of screen barrier and clamp the values
+        Vector2 temp (GetPosition());
+        
+        if (temp.y < 32.0f)
+        {
+            temp.y = 32.0f;
+            //move position 64 pixels
+            SetPosition(temp);
+        }
+        else if (temp.y > maxHeight)
+        {
+            temp.y = maxHeight;
+            //move position 64 pixels
+            SetPosition(temp);
+        }
+
+        if (temp.x > screenWidth)
+        {
+            temp.x = screenWidth - 32;
+            
+            //move position 64 pixels
+            SetPosition(temp);
+        }
+        else if (temp.x < 0)
+        {
+            temp.x = 0.0f;
+            
+            //move position 64 pixels
+            SetPosition(temp);
+        }
+    }
+    
+    //Check if frog collides with goal
+    if (collisionComponent->Intersect(mGame->goal->GetComponent<CollisionComponent>()))
+    {
+        //Set frogs position as the goals and SetState to ActorState::Paused
+        SetPosition(mGame->goal->GetPosition());
+        SetState(ActorState::Paused);
+    }
+    
+    //If frog is in y-position water area and not on a log, Kill it
+    if (collisionWithLog == false && GetPosition().y >= 0 && GetPosition().y <= 510)
+    {
+        //Create a DeadFrog actor at the spot where this frog died
+        deadFrog = new DeadFrog(mGame, GetPosition().x, GetPosition().y);
+        
+        //Reset the position of the frog
+        SetPosition(Vector2(xPos, yPos));
     }
 }

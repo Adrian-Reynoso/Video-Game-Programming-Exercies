@@ -14,6 +14,7 @@
 #include "MoveComponent.h"
 #include "Random.h"
 #include <fstream>
+#include "CollisionComponent.h"
 #include "Frog.hpp"
 #include "Log.hpp"
 #include "Vehicle.hpp"
@@ -412,6 +413,19 @@ void Game::readFile(std::string fileName)
                 //Call frog constructor
                 Log* log = new Log(this, (char)line[i], dir);
                 log->SetPosition(Vector2(xPos, yPos));
+                
+                //Add log to the logs vector
+                logs.push_back(log);
+            }
+            
+            //If Goal needs to be created
+            if ((char)line[i] == 'G')
+            {
+                //Create generic actor
+                goal = new Actor(this);
+                CollisionComponent* goalCollision = new CollisionComponent(goal);
+                goalCollision->SetSize(64.0f, 64.0f);
+                goal->SetPosition(Vector2(xPos, yPos));
             }
             
             //If not above, that means its a period 

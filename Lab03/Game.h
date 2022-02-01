@@ -30,7 +30,9 @@ class Game
     
         //Vector of vehicles to check collisions
         std::vector<class Vehicle*> vehicles;
+        std::vector<class Log*> logs;
         class Frog* mFrog;
+        class Actor* goal;
     
     
     private:
