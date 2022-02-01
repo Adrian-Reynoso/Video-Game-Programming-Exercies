@@ -351,7 +351,7 @@ void Game::readFile(std::string fileName)
     std::ifstream filein(fileName);
     
     //Create Y position variable
-    int yPos = 160 - 64;
+    float yPos = 160.0f - 64.0f;
     
     //Create a line number variable for each line
     int lineNum = -1;
@@ -360,7 +360,7 @@ void Game::readFile(std::string fileName)
     for (std::string line; std::getline(filein, line); )
     {
         //X position for variable
-        int xPos = 0;
+        float xPos = 0.0f;
         
         //Add 64 to y position
         yPos += 64;

@@ -219,13 +219,16 @@ void Frog::OnUpdate(float deltaTime)
         SetState(ActorState::Paused);
     }
     
-    //If frog is in y-position water area and not on a log, Kill it
-    if (collisionWithLog == false && GetPosition().y >= 0 && GetPosition().y <= 510)
+    else
     {
-        //Create a DeadFrog actor at the spot where this frog died
-        deadFrog = new DeadFrog(mGame, GetPosition().x, GetPosition().y);
-        
-        //Reset the position of the frog
-        SetPosition(Vector2(xPos, yPos));
+        //If frog is in y-position water area and not on a log, Kill it
+        if (collisionWithLog == false && GetPosition().y >= 0 && GetPosition().y <= 510)
+        {
+            //Create a DeadFrog actor at the spot where this frog died
+            deadFrog = new DeadFrog(mGame, GetPosition().x, GetPosition().y);
+            
+            //Reset the position of the frog
+            SetPosition(Vector2(xPos, yPos));
+        }
     }
 }
