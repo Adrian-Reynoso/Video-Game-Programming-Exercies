@@ -9,5 +9,16 @@
 #define Player_hpp
 
 #include <stdio.h>
+#include "Actor.h"
+
+class Player : public Actor
+{
+    public:
+        //Constructor
+        Player(class Game* game);
+        class SpriteComponent* spriteComponent;
+        class CollisionComponent* collisionComponent;
+    class PlayerMove* playerMove;
+};
 
 #endif /* Player_hpp */
