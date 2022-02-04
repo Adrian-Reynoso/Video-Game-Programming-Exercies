@@ -9,7 +9,10 @@
 #define PlayerMove_hpp
 
 #include <stdio.h>
+#include <vector>
 #include "MoveComponent.h"
+#include <unordered_map>
+#include <SDL2/SDL_image.h>
 
 class PlayerMove : public MoveComponent
 {
@@ -21,6 +24,14 @@ class PlayerMove : public MoveComponent
         void Update(float deltaTime) override;
         void ProcessInput(const Uint8* keyState) override;
     
+    private:
+        //Map to detect leading edges
+        void jump(const Uint8* keyState);
+        std::unordered_map<SDL_Scancode, bool> lastFrame;
+        float mYSpeed = 0.0f;
+        float mYAccel = 2000.0f;
+        bool mSpacePressed = false;
+        bool mInAir = false;
 };
 
 #endif /* PlayerMove_hpp */

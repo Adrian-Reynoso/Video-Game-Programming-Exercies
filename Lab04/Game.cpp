@@ -255,7 +255,7 @@ void Game::LoadData()
     background->SetPosition(Vector2 {3392.0f, 224.0f});
     
     //Call the read file function to create the other actors
-    readFile("Assets/Level0.txt");
+    readFile("Assets/Level1.txt");
     
 }
 
