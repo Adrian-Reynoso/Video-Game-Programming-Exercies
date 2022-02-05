@@ -18,7 +18,7 @@ class Player : public Actor
         Player(class Game* game);
         class SpriteComponent* spriteComponent;
         class CollisionComponent* collisionComponent;
-    class PlayerMove* playerMove;
+        class PlayerMove* playerMove;
 };
 
 #endif /* Player_hpp */

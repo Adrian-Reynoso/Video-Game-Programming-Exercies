@@ -75,8 +75,21 @@ void PlayerMove::Update(float deltaTime)
     }
     
     //Set the position to our tempPosition Vector2
-    mOwner->SetPosition(tempPos);
+    if (tempPos.x >= mOwner->GetGame()->cameraPosition.x + 16)
+    {
+        mOwner->SetPosition(tempPos);
+    }
+    else
+    {
+        mOwner->SetPosition(Vector2 {mOwner->GetGame()->cameraPosition.x + 16, tempPos.y});
+    }
     
+    //Checks for camera in reference to Mario
+    if (tempPos.x - (mOwner->GetGame()->SCREENWIDTH/2) > mOwner->GetGame()->cameraPosition.x)
+    {
+        //Update camera position
+        mOwner->GetGame()->cameraPosition.x = tempPos.x - (mOwner->GetGame()->SCREENWIDTH/2);
+    }
 }
 
 void PlayerMove::ProcessInput(const Uint8* keyState)

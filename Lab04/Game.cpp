@@ -17,6 +17,8 @@
 #include "CollisionComponent.h"
 #include "Block.hpp"
 #include "Player.hpp"
+#include "Goomba.hpp"
+#include "Spawner.hpp"
 
 // TODO
 //Implementation for the functions in our Game class
@@ -391,6 +393,13 @@ void Game::readFile(std::string fileName)
                 player = mPlayer;
             }
             
+            //For Spawning Spawners
+            if ((char)line[i] == 'Y')
+            {
+                //Call spawner constructor
+                Spawner* mSpawner = new Spawner(this);
+                mSpawner->SetPosition(Vector2(xPos, yPos));
+            }
             
             //If not above, that means its a period 
         }
@@ -398,7 +407,7 @@ void Game::readFile(std::string fileName)
     
 }
 
-//Block Functions
+//Block and Goomba Functions
 void Game::AddBlock(class Block* block)
 {
     //Add asteroid to the asteroid vector
@@ -414,5 +423,23 @@ void Game::RemoveBlock(class Block* block)
     if (it != blockVector.end())
     {
         blockVector.erase(it);
+    }
+}
+
+void Game::AddGoomba(class Goomba* goomba)
+{
+    //Add goomba to the goomba vector
+    goombaVector.push_back(goomba);
+}
+
+void Game::RemoveGoomba(class Goomba* goomba)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Goomba*
+    auto it = std::find(goombaVector.begin(), goombaVector.end(), goomba);
+    
+    //then erase to remove the element the iterator points to
+    if (it != goombaVector.end())
+    {
+        goombaVector.erase(it);
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "SDL2/SDL.h"
 #include <vector>
+#include "Math.h"
 #include <unordered_map>
 #include <string>
 
@@ -28,12 +29,25 @@ class Game
         const float SCREENHEIGHT = 448.0f;
         const float SCREENWIDTH = 600.0f;
     
-        //Public Functions for blocks
+        //Public Functions for blocks and Goombas
         void AddBlock(class Block* block);
         void RemoveBlock(class Block* block);
-        const std::vector<Block*> GetBlockVector()&
+        void AddGoomba(class Goomba* goomba);
+        void RemoveGoomba(class Goomba* goomba);
+        const std::vector<class Block*> GetBlockVector()&
         {
             return blockVector;
+        }
+        const std::vector<class Goomba*> GetGoombaVector()&
+        {
+            return goombaVector;
+        }
+        Vector2 cameraPosition {0.0f, 0.0f};
+    
+        //Public Functions for player
+        class Player* GetPlayer()
+        {
+            return player;
         }
     
     private:
@@ -60,10 +74,10 @@ class Game
         //Function to read in a text file
         void readFile(std::string fileName);
     
-        //Vector for Blocks
+        //Vector for Blocks and enemies
         std::vector<class Block*> blockVector;
+        std::vector<class Goomba*> goombaVector;
     
-        //Member variable for player
+        //Member variable for player and spawner
         class Player* player;
-    
 };
