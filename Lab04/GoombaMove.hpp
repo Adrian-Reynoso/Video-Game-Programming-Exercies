@@ -18,14 +18,16 @@ class GoombaMove : public MoveComponent
 {
     public:
         //Constructor
-        GoombaMove(class Actor* owner);
+        GoombaMove(class Goomba* owner);
         // Update the PlayerMove
         void Update(float deltaTime) override;
+        class Goomba* mGoomba;
     
     private:
         float speed = -100.0f;
         float mYSpeed = 0.0f;
         float mYAccel = 2000.0f;
+        float lifetime = 0.0f;
     
 };
 

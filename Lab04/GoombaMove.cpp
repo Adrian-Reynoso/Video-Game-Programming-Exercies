@@ -9,13 +9,15 @@
 #include "Goomba.hpp"
 #include "Actor.h"
 #include "CollisionComponent.h"
+#include "SpriteComponent.h"
 #include "Block.hpp"
 #include "Game.h"
 
-GoombaMove::GoombaMove(class Actor* owner)
+GoombaMove::GoombaMove(class Goomba* owner)
 :MoveComponent(owner)
 {
     SetForwardSpeed(speed);
+    mGoomba = owner;
 }
 
 void GoombaMove::Update(float deltaTime)
@@ -23,6 +25,18 @@ void GoombaMove::Update(float deltaTime)
     //Create temporary position
     Vector2 tempPos = mOwner->GetPosition();
     
+    //If Goomba has been stomped
+    if (mGoomba->stomp)
+    {
+        //Change its texture and speed and make it only last 0.25 seconds
+        SetForwardSpeed(0.0f);
+        mGoomba->spriteComponent->SetTexture(mGoomba->GetGame()->GetTexture("Assets/Goomba/Dead.png"));
+        lifetime += deltaTime;
+            if (lifetime >= 0.25f)
+            {
+                mGoomba->SetState(ActorState::Destroy);
+            }
+    }
     
     //Update the Goomba's position by its speed
     tempPos.x += (GetForwardSpeed() * deltaTime);

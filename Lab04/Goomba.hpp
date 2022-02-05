@@ -20,6 +20,7 @@ class Goomba : public Actor
         class SpriteComponent* spriteComponent;
         class CollisionComponent* collisionComponent;
         class GoombaMove* goombaMove;
+        bool stomp = false;
 };
 
 #endif /* Goomba_hpp */

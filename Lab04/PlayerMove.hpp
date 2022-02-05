@@ -18,7 +18,7 @@ class PlayerMove : public MoveComponent
 {
     public:
         //Constructor
-        PlayerMove(class Actor* owner);
+        PlayerMove(class Player* owner);
     
         // Update the PlayerMove
         void Update(float deltaTime) override;
@@ -32,6 +32,7 @@ class PlayerMove : public MoveComponent
         float mYAccel = 2000.0f;
         bool mSpacePressed = false;
         bool mInAir = false;
+        class Player* mPlayer;
 };
 
 #endif /* PlayerMove_hpp */

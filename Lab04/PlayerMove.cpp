@@ -7,13 +7,17 @@
 
 #include "PlayerMove.hpp"
 #include "Actor.h"
+#include "Player.hpp"
+#include "Goomba.hpp"
 #include "CollisionComponent.h"
+#include "SpriteComponent.h"
 #include "Block.hpp"
 #include "Game.h"
 
-PlayerMove::PlayerMove(class Actor* owner)
+PlayerMove::PlayerMove(class Player* owner)
 :MoveComponent(owner)
 {
+    mPlayer = owner;
 }
 
 void PlayerMove::Update(float deltaTime)
@@ -54,6 +58,35 @@ void PlayerMove::Update(float deltaTime)
                 mYSpeed = 0.0f;
             }
 
+        }
+    }
+    
+    //Check if Mario stomps Goombas
+    for (Goomba* goomba : mOwner->GetGame()->GetGoombaVector())
+    {
+        Vector2 offSet {0.0f, 0.0f};
+        onBlock = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(goomba->collisionComponent, offSet);
+
+        if (onBlock != CollSide::None && goomba->stomp == false)
+        {
+            //Add offset to temPos
+            tempPos += offSet;
+            
+            //Call setPosition
+            mOwner->SetPosition(tempPos);
+            
+            if (onBlock == CollSide::Top || ((onBlock == CollSide::Right || onBlock == CollSide::Left) && mInAir))
+            {
+                //Make stomp variable in Goomba true and give Mario a half jump
+                goomba->stomp = true;
+                mYSpeed = -350.0f;
+            }
+            else
+            {
+                //Mario should die
+                mPlayer->spriteComponent->SetTexture(mPlayer->GetGame()->GetTexture("Assets/Mario/Dead.png"));
+                mPlayer->SetState(ActorState::Paused);
+            }
         }
     }
     
