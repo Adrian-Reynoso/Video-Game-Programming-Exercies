@@ -86,7 +86,7 @@ void GoombaMove::Update(float deltaTime)
         Vector2 offSet {0.0f, 0.0f};
         onBlock2 = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(goomba->collisionComponent, offSet);
 
-        if (onBlock2 != CollSide::None)
+        if (onBlock2 != CollSide::None && this->mOwner != goomba)
         {
             //Add offset to temPos
             tempPos.x += offSet.x;
@@ -94,12 +94,12 @@ void GoombaMove::Update(float deltaTime)
             //Call setPosition
             mOwner->SetPosition(tempPos);
 
-            if (onBlock == CollSide::Right)
+            if (onBlock2 == CollSide::Right)
             {
                 //Send Goomba the opposite way
                 SetForwardSpeed(100.0f);
             }
-            else if (onBlock == CollSide::Left)
+            else if (onBlock2 == CollSide::Left)
             {
                 //Send Goomba the opposite way
                 SetForwardSpeed(-100.0f);
