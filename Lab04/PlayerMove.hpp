@@ -13,6 +13,7 @@
 #include "MoveComponent.h"
 #include <unordered_map>
 #include <SDL2/SDL_image.h>
+#include "SDL2/SDL_mixer.h"
 
 class PlayerMove : public MoveComponent
 {
@@ -33,6 +34,7 @@ class PlayerMove : public MoveComponent
         bool mSpacePressed = false;
         bool mInAir = false;
         class Player* mPlayer;
+        void setAnim();
 };
 
 #endif /* PlayerMove_hpp */
