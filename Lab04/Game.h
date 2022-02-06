@@ -2,6 +2,7 @@
 #include "SDL2/SDL.h"
 #include <vector>
 #include "Math.h"
+#include "SDL2/SDL_mixer.h"
 #include <unordered_map>
 #include <string>
 
@@ -34,6 +35,8 @@ class Game
         void RemoveBlock(class Block* block);
         void AddGoomba(class Goomba* goomba);
         void RemoveGoomba(class Goomba* goomba);
+        Mix_Chunk* GetSound(const std::string& filename);
+        int soundMusicLoop;
         const std::vector<class Block*> GetBlockVector()&
         {
             return blockVector;
@@ -80,4 +83,7 @@ class Game
     
         //Member variable for player and spawner
         class Player* player;
+    
+        //For sound effects
+        std::unordered_map<std::string, Mix_Chunk*> mSoundMap;
 };

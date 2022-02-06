@@ -17,7 +17,7 @@ class Goomba : public Actor
         //Constructor
         Goomba(class Game* game);
         ~Goomba();
-        class SpriteComponent* spriteComponent;
+        class AnimatedSprite* spriteComponent;
         class CollisionComponent* collisionComponent;
         class GoombaMove* goombaMove;
         bool stomp = false;

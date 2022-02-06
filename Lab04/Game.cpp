@@ -70,6 +70,9 @@ bool Game::Initialize()
         printf("IMG_Init: %s\n", IMG_GetError());
     }
     
+    //For sound effects
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    
     //Call LoadData
     LoadData();
     
@@ -80,6 +83,18 @@ bool Game::Initialize()
 //Implements Shutdown function
 void Game::Shutdown()
 {
+    //To close sound effects
+    Mix_CloseAudio();
+    
+    //Delete all the cached sounds with Mix_FreeChunk
+    std::unordered_map<std::string, Mix_Chunk*>::iterator it;
+
+    for (it = mSoundMap.begin(); it != mSoundMap.end(); it++)
+    {
+        Mix_FreeChunk(it->second);
+        it->second = nullptr;
+    }
+    
     //Call UnloadData
     UnloadData();
     
@@ -258,6 +273,9 @@ void Game::LoadData()
     
     //Call the read file function to create the other actors
     readFile("Assets/Level1.txt");
+    
+    //Play Music
+    soundMusicLoop = Mix_PlayChannel(-1, GetSound("Assets/Sounds/Music.ogg"), -1);
     
 }
 
@@ -442,4 +460,17 @@ void Game::RemoveGoomba(class Goomba* goomba)
     {
         goombaVector.erase(it);
     }
+}
+
+Mix_Chunk* Game::GetSound(const std::string& filename)
+{
+    //Check if sound is already in the map
+    if (mSoundMap.find(filename) != mSoundMap.end())
+    {
+        return mSoundMap.find(filename)->second;
+    }
+    
+    //If it's not in the map, add it in
+    mSoundMap[filename] = Mix_LoadWAV(filename.c_str());
+    return mSoundMap.find(filename)->second;
 }

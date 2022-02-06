@@ -11,6 +11,7 @@
 #include "Goomba.hpp"
 #include "CollisionComponent.h"
 #include "SpriteComponent.h"
+#include "AnimatedSprite.h"
 #include "Block.hpp"
 #include "Game.h"
 
@@ -56,6 +57,9 @@ void PlayerMove::Update(float deltaTime)
             {
                 //Mario hit his head on a block
                 mYSpeed = 0.0f;
+                
+                //Play sound effect
+                Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Bump.wav"), 0);
             }
 
         }
@@ -80,6 +84,9 @@ void PlayerMove::Update(float deltaTime)
                 //Make stomp variable in Goomba true and give Mario a half jump
                 goomba->stomp = true;
                 mYSpeed = -350.0f;
+                
+                //Play sound effect
+                Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Stomp.wav"), 0);
             }
             else
             {
@@ -100,11 +107,12 @@ void PlayerMove::Update(float deltaTime)
     tempPos.y += (mYSpeed * deltaTime);
     mYSpeed += mYAccel * deltaTime;
     
-    //Check if player if less greater than 448.0f, if so cap it there
-    if (tempPos.y > 448.0f)
+    //Check if player if less greater than 464.0f, if so cap it there
+    if (tempPos.y > 464.0f)
     {
-        tempPos.y = 448.0f;
-        mInAir = false;
+        //Mario Dies
+        mPlayer->spriteComponent->SetTexture(mPlayer->GetGame()->GetTexture("Assets/Mario/Dead.png"));
+        mPlayer->SetState(ActorState::Paused);
     }
     
     //Set the position to our tempPosition Vector2
@@ -122,6 +130,18 @@ void PlayerMove::Update(float deltaTime)
     {
         //Update camera position
         mOwner->GetGame()->cameraPosition.x = tempPos.x - (mOwner->GetGame()->SCREENWIDTH/2);
+    }
+    
+    //Call animation function to set the right animations
+    setAnim();
+    
+    //Check if Mario made it to the finish. If so, play victory music
+    if (tempPos.x > 6368.0f)
+    {
+        //Play sound effect
+        Mix_HaltChannel(mPlayer->GetGame()->soundMusicLoop);
+        Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/StageClear.wav"), 0);
+        mPlayer->SetState(ActorState::Paused);
     }
 }
 
@@ -178,5 +198,56 @@ void PlayerMove::jump(const Uint8 *keyState)
         mYSpeed = -700.0f;
         mInAir = true;
         mSpacePressed = true;
+        
+        //Play sound effect
+        Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Jump.wav"), 0);
     }
+}
+
+void PlayerMove::setAnim()
+{
+    //For Ground animations
+    if (mPlayer->GetState() == ActorState::Paused)
+    {
+        mPlayer->spriteComponent->SetAnimation("dead");
+        
+        //Play sound effect
+        Mix_HaltChannel(mPlayer->GetGame()->soundMusicLoop);
+        Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Dead.wav"), 0);
+        
+    }
+    else if (GetForwardSpeed() < 0 && mInAir == false)
+    {
+        mPlayer->spriteComponent->SetAnimation("runLeft");
+    }
+    else if (GetForwardSpeed() > 0 && mInAir == false)
+    {
+        mPlayer->spriteComponent->SetAnimation("runRight");
+    }
+    else if (GetForwardSpeed() == 0 && mInAir == false)
+    {
+        mPlayer->spriteComponent->SetAnimation("idle");
+    }
+    
+    //For Air animations
+    else if (GetForwardSpeed() < 0 && mInAir == true)
+    {
+        mPlayer->spriteComponent->SetAnimation("jumpLeft");
+    }
+    else if (GetForwardSpeed() > 0 && mInAir == true)
+    {
+        mPlayer->spriteComponent->SetAnimation("jumpRight");
+    }
+    else if (GetForwardSpeed() == 0 && mInAir == true)
+    {
+        if (mPlayer->spriteComponent->GetAnimName() == "runRight" || mPlayer->spriteComponent->GetAnimName() == "jumpRight" || mPlayer->spriteComponent->GetAnimName() == "idle")
+        {
+            mPlayer->spriteComponent->SetAnimation("jumpRight");
+        }
+        else
+        {
+            mPlayer->spriteComponent->SetAnimation("jumpLeft");
+        }
+    }
+
 }

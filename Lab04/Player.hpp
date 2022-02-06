@@ -16,7 +16,7 @@ class Player : public Actor
     public:
         //Constructor
         Player(class Game* game);
-        class SpriteComponent* spriteComponent;
+        class AnimatedSprite* spriteComponent;
         class CollisionComponent* collisionComponent;
         class PlayerMove* playerMove;
 };

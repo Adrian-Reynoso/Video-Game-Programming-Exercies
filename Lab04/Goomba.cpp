@@ -8,6 +8,7 @@
 #include "Goomba.hpp"
 #include "GoombaMove.hpp"
 #include "SpriteComponent.h"
+#include "AnimatedSprite.h"
 #include "CollisionComponent.h"
 #include "Game.h"
 
@@ -19,8 +20,22 @@ Goomba::Goomba(class Game* game)
     game->AddGoomba(this);
     
     //Dynamically allocate a SpriteComponent and assign it to the member variables
-    spriteComponent = new SpriteComponent(this, 150);
+    spriteComponent = new AnimatedSprite(this, 150);
     spriteComponent->SetTexture(game->GetTexture("Assets/Goomba/Walk0.png"));
+    
+    //To make Goombas have a walking animation and dead animation
+    std::vector<SDL_Texture*> walkAnim{
+        GetGame()->GetTexture("Assets/Goomba/Walk0.png"),
+        GetGame()->GetTexture("Assets/Goomba/Walk1.png")
+    };
+    std::vector<SDL_Texture*> deadAnim{
+        GetGame()->GetTexture("Assets/Goomba/Dead.png")
+    };
+    spriteComponent->AddAnimation("walk", walkAnim);
+    spriteComponent->AddAnimation("dead", deadAnim);
+    
+    //Set the current animation to walk
+    spriteComponent->SetAnimation("walk");
     
     //Dynamically allocate a collisionComponent
     collisionComponent = new CollisionComponent(this);

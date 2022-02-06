@@ -9,6 +9,7 @@
 #include "Goomba.hpp"
 #include "Actor.h"
 #include "CollisionComponent.h"
+#include "AnimatedSprite.h"
 #include "SpriteComponent.h"
 #include "Block.hpp"
 #include "Game.h"
@@ -30,7 +31,7 @@ void GoombaMove::Update(float deltaTime)
     {
         //Change its texture and speed and make it only last 0.25 seconds
         SetForwardSpeed(0.0f);
-        mGoomba->spriteComponent->SetTexture(mGoomba->GetGame()->GetTexture("Assets/Goomba/Dead.png"));
+        mGoomba->spriteComponent->SetAnimation("dead");
         lifetime += deltaTime;
             if (lifetime >= 0.25f)
             {
