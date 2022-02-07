@@ -18,7 +18,6 @@
 Frog::Frog(class Game* game, float xPosition, float yPosition)
 :Actor(game)
 {
-    // TODO: Add code here
     //Dynamically allocate a SpriteComponent and assign it to the member variables
     spriteComponent = new SpriteComponent(this);
     
@@ -129,9 +128,9 @@ void Frog::OnProcessInput(const Uint8* keyState)
 void Frog::OnUpdate(float deltaTime)
 {
     //Check if frog collides with a vehicle
-    for (Vehicle* vehicle : mGame->vehicles)
+    for (Vehicle* vehicle : mGame->GetVehicleVector())
     {
-        bool collides = collisionComponent->Intersect(vehicle->collisionComponent);
+        bool collides = collisionComponent->Intersect(vehicle->getCollisionComponent());
         
         //check if the frog collides, if so move the frog back to starting position
         if (collides == true)
@@ -147,10 +146,10 @@ void Frog::OnUpdate(float deltaTime)
     //Check if frog collides with a log
     CollSide onLog = CollSide::None;
     bool collisionWithLog = false;
-    for (Log* log : mGame->logs)
+    for (Log* log : mGame->GetLogVector())
     {
         Vector2 offSet {0.0f, 0.0f};
-        onLog = collisionComponent->GetMinOverlap(log->collisionComponent, offSet);
+        onLog = collisionComponent->GetMinOverlap(log->getCollisionComponent(), offSet);
         
         //Check if there was a collision, if so make the frog ride the log
         if (onLog != CollSide::None)
@@ -162,9 +161,9 @@ void Frog::OnUpdate(float deltaTime)
             //Move the position of the frog based on the log’s WrappingMove direction, forward speed, and delta time
             //Updates the owning actor’s position based on the owning actor’s forward vector
             Vector2 direction;
-            direction = log->wrappingMove->direction * log->GetForward();
+            direction = log->getWrappingMove()->direction * log->GetForward();
             
-            Vector2 velocity = log->wrappingMove->GetForwardSpeed() * direction;
+            Vector2 velocity = log->getWrappingMove()->GetForwardSpeed() * direction;
             SetPosition(GetPosition() + (velocity * deltaTime));
             
             //Check if CollSide is either left or right, additionally add offset.x + either positive or negative 32 (depending on Left or Right) to the frog’s x-position

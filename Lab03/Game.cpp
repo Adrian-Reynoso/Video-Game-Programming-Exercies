@@ -19,7 +19,6 @@
 #include "Log.hpp"
 #include "Vehicle.hpp"
 
-// TODO
 //Implementation for the functions in our Game class
 //Constructor
 Game::Game()

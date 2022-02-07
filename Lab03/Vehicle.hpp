@@ -17,11 +17,19 @@ class Vehicle : public Actor
         //Constructor
         Vehicle(class Game* game, char letter, float dir);
         void OnUpdate(float deltaTime);
-        class SpriteComponent* spriteComponent;
-        class CollisionComponent* collisionComponent;
+        class SpriteComponent* getSpriteComponent()
+        {
+            return spriteComponent;
+        }
+        class CollisionComponent* getCollisionComponent()
+        {
+            return collisionComponent;
+        }
     
     private:
         class WrappingMove* wrappingMove;
+        class SpriteComponent* spriteComponent;
+        class CollisionComponent* collisionComponent;
 };
 
 #endif /* Vehicle_hpp */

@@ -15,7 +15,6 @@
 Vehicle::Vehicle(class Game* game, char letter, float dir)
 :Actor(game)
 {
-    // TODO: Add code here
     //Dynamically allocate a SpriteComponent and assign it to the member variables
     spriteComponent = new SpriteComponent(this);
     wrappingMove = new WrappingMove(this, dir);
@@ -75,7 +74,8 @@ void Vehicle::OnUpdate(float deltaTime)
     Vector2 vehicleToFrog = mGame->mFrog->GetPosition() - GetPosition();
     
     //Calculate the angle from the vehicle direction to frog using dot product
-    float angle = Math::Acos((Vector2::Dot(wrappingMove->direction, vehicleToFrog)) / (Math::Sqrt(Vector2::Dot(wrappingMove->direction, wrappingMove->direction)) * Math::Sqrt(Vector2::Dot(vehicleToFrog, vehicleToFrog))));
+    vehicleToFrog.Normalize();
+    float angle = Math::Acos((Vector2::Dot(wrappingMove->direction, vehicleToFrog)));
     
     //See if angle is less than PI/6, if so slow down the car speed by half
     if (angle <= Math::Pi/6)

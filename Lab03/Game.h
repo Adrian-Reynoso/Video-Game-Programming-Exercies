@@ -29,8 +29,14 @@ class Game
         const float SCREENWIDTH = 896.0;
     
         //Vector of vehicles to check collisions
-        std::vector<class Vehicle*> vehicles;
-        std::vector<class Log*> logs;
+        const std::vector<class Vehicle*> GetVehicleVector()&
+        {
+            return vehicles;
+        }
+        const std::vector<class Log*> GetLogVector()&
+        {
+            return logs;
+        }
         class Frog* mFrog;
         class Actor* goal;
     
@@ -58,5 +64,7 @@ class Game
     
         //Function to read in a text file
         void readFile(std::string fileName);
+        std::vector<class Vehicle*> vehicles;
+        std::vector<class Log*> logs;
     
 };

@@ -14,7 +14,6 @@
 Log::Log(class Game* game, char letter, float dir)
 :Actor(game)
 {
-    // TODO: Add code here
     //Dynamically allocate a SpriteComponent and WrappingComponentand assign it to the member variables
     spriteComponent = new SpriteComponent(this);
     wrappingMove = new WrappingMove(this, dir);

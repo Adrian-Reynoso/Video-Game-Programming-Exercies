@@ -16,7 +16,6 @@ CollisionComponent::~CollisionComponent()
 
 bool CollisionComponent::Intersect(const CollisionComponent* other)
 {
-	// TODO: Implement
     //Go through the four conditions to prove there's no intersetions.
     //If neither of these conditons are true, then they objects DO intersect
     if (GetMax().x < other->GetMin().x)
@@ -42,7 +41,6 @@ bool CollisionComponent::Intersect(const CollisionComponent* other)
 
 Vector2 CollisionComponent::GetMin() const
 {
-	// TODO: Implement
     //Create vector2 to return
     Vector2 min;
     
@@ -55,7 +53,6 @@ Vector2 CollisionComponent::GetMin() const
 
 Vector2 CollisionComponent::GetMax() const
 {
-	// TODO: Implement
     //Create vector2 to return
     Vector2 max;
     
@@ -75,7 +72,7 @@ CollSide CollisionComponent::GetMinOverlap(
 	const CollisionComponent* other, Vector2& offset)
 {
 	offset = Vector2::Zero;
-	// TODO: Implement
+
     //If they do intersect, the function returns the CollSide that is the minimum overlap side.
     if (Intersect(other))
     {

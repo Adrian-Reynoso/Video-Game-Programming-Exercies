@@ -16,11 +16,23 @@ class Log : public Actor
     public:
         //Constructor
         Log(class Game* game, char letter, float dir);
+        class SpriteComponent* getSpriteComponent()
+        {
+            return spriteComponent;
+        }
+        class CollisionComponent* getCollisionComponent()
+        {
+            return collisionComponent;
+        }
+        class WrappingMove* getWrappingMove()
+        {
+            return wrappingMove;
+        }
+    
+    private:
         class SpriteComponent* spriteComponent;
         class CollisionComponent* collisionComponent;
         class WrappingMove* wrappingMove;
-    
-    private:
 };
 
 #endif /* Log_hpp */

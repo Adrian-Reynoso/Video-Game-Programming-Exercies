@@ -20,8 +20,14 @@ class Frog : public Actor
         //Constructor
         Frog(class Game* game, float xPosition, float yPosition);
         void OnProcessInput(const Uint8* keyState);
-        class SpriteComponent* spriteComponent;
-        class CollisionComponent* collisionComponent;
+        class SpriteComponent* getSpriteComponent()
+        {
+            return spriteComponent;
+        }
+        class CollisionComponent* getCollisionComponent()
+        {
+            return collisionComponent;
+        }
         void OnUpdate(float deltaTime);
     
     private:
@@ -35,6 +41,8 @@ class Frog : public Actor
         float xPos;
         class DeadFrog* deadFrog;
         float yPos;
+        class SpriteComponent* spriteComponent;
+        class CollisionComponent* collisionComponent;
 
 };
 
