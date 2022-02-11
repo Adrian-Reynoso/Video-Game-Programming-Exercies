@@ -28,6 +28,23 @@ public:
 	void SetScale(float scale) { mScale = scale; }
 	float GetRotation() const { return mRotation; }
 	void SetRotation(float rotation) { mRotation = rotation; }
+    
+    //Returns the forward direction vector
+    const Vector2 GetForward() const
+    {
+        //Get the rotation in radians
+        float rotation = GetRotation();
+        
+        //Calculate the x and y components of the vector
+        float vX = cos(rotation);
+        float vY = sin(rotation);
+        
+        //Negate the y component
+        vY *= -1;
+        
+        //Return vector
+        return Vector2(vX, vY);
+    }
 	
 	ActorState GetState() const { return mState; }
 	void SetState(ActorState state) { mState = state; }
@@ -49,6 +66,8 @@ public:
 		
 		return nullptr;
 	}
+    
+    
 protected:
 	// Any actor-specific update code (overridable)
 	virtual void OnUpdate(float deltaTime);

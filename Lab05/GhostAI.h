@@ -51,5 +51,10 @@ private:
 	// Save the owning actor (cast to a Ghost*)
 	class Ghost* mGhost;
 
-	// TODO: Add any member data/helper functions here!
+	// TODO: Add any member data/helper functions here!    
+    void changeStateTargetNode();
+    void updateNodes();
+    void calculateDirection();
+    Vector2 currDirection {0.0f, 0.0f};
+    
 };

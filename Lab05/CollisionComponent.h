@@ -41,6 +41,7 @@ public:
 	// Takes in by reference the offset to fix
 	// "this" so it no longer overlaps with "other"
 	CollSide GetMinOverlap(const CollisionComponent* other, Vector2& offset);
+    
 private:
 	float mWidth;
 	float mHeight;

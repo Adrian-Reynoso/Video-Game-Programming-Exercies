@@ -36,7 +36,7 @@ public:
     
 	// Start out supporting only ONE ghost (Blinky)
 	// Update this as the lab instructs you to
-    static const int GHOST_COUNT = 1;
+    static const int GHOST_COUNT = 4;
     class Ghost* mGhosts[GHOST_COUNT] = { nullptr };
 private:
 	void ProcessInput();
