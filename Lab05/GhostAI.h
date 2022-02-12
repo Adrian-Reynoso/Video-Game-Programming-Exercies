@@ -55,6 +55,8 @@ private:
     void changeStateTargetNode();
     void updateNodes();
     void calculateDirection();
+    void needToChangeState();
     Vector2 currDirection {0.0f, 0.0f};
+    float timeInState;
     
 };
