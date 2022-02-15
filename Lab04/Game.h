@@ -7,7 +7,6 @@
 #include <string>
 
 
-// TODO
 //Create a new Game class with respective public member functions
 class Game
 {
@@ -37,11 +36,11 @@ class Game
         void RemoveGoomba(class Goomba* goomba);
         Mix_Chunk* GetSound(const std::string& filename);
         int soundMusicLoop;
-        const std::vector<class Block*> GetBlockVector()&
+        const std::vector<class Block*> &GetBlockVector()
         {
             return blockVector;
         }
-        const std::vector<class Goomba*> GetGoombaVector()&
+        const std::vector<class Goomba*> &GetGoombaVector()
         {
             return goombaVector;
         }

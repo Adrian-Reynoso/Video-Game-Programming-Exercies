@@ -13,7 +13,6 @@
 Block::Block(class Game* game, char letter)
 :Actor(game)
 {
-    // TODO: Add code here
     //Block needs to add itself to the game via AddActor
     game->AddBlock(this);
     

@@ -15,7 +15,6 @@
 Goomba::Goomba(class Game* game)
 :Actor(game)
 {
-    // TODO: Add code here
     //Block needs to add itself to the game via AddActor
     game->AddGoomba(this);
     

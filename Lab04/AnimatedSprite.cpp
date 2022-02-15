@@ -9,7 +9,6 @@ AnimatedSprite::AnimatedSprite(Actor* owner, int drawOrder)
 
 void AnimatedSprite::Update(float deltaTime)
 {
-	// TODO: Implement
     //If mAnimName.empty() IS NOT empty
     if (!mAnimName.empty())
     {

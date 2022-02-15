@@ -19,6 +19,7 @@ PlayerMove::PlayerMove(class Player* owner)
 :MoveComponent(owner)
 {
     mPlayer = owner;
+    ownerCollisionComponent = mOwner->GetComponent<CollisionComponent>();
 }
 
 void PlayerMove::Update(float deltaTime)
@@ -35,7 +36,7 @@ void PlayerMove::Update(float deltaTime)
     for (Block* block : mOwner->GetGame()->GetBlockVector())
     {
         Vector2 offSet {0.0f, 0.0f};
-        onBlock = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(block->collisionComponent, offSet);
+        onBlock = ownerCollisionComponent->GetMinOverlap(block->collisionComponent, offSet);
 
         if (onBlock != CollSide::None)
         {
@@ -69,7 +70,7 @@ void PlayerMove::Update(float deltaTime)
     for (Goomba* goomba : mOwner->GetGame()->GetGoombaVector())
     {
         Vector2 offSet {0.0f, 0.0f};
-        onBlock = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(goomba->collisionComponent, offSet);
+        onBlock = ownerCollisionComponent->GetMinOverlap(goomba->collisionComponent, offSet);
 
         if (onBlock != CollSide::None && goomba->stomp == false)
         {
@@ -133,7 +134,7 @@ void PlayerMove::Update(float deltaTime)
     }
     
     //Call animation function to set the right animations
-    setAnim();
+    SetAnim();
     
     //Check if Mario made it to the finish. If so, play victory music
     if (tempPos.x > 6368.0f)
@@ -150,45 +151,27 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     //Grab the state of the entire Keyboard
     const Uint8 *keyboardState = SDL_GetKeyboardState(nullptr);
     
-    //Check If the arrow keys were pressed, if so do the required actions
-    if (keyboardState[SDL_SCANCODE_LEFT] && keyboardState[SDL_SCANCODE_RIGHT])
-    {
-        //Nothing happens
-        SetForwardSpeed(0.0f);
-        mSpacePressed = false;
-    }
-    
-    else if (keyboardState[SDL_SCANCODE_LEFT])
+    mSpacePressed = keyboardState[SDL_SCANCODE_DOWN];
+    Jump(keyState);
+    if (keyboardState[SDL_SCANCODE_LEFT] && !keyboardState[SDL_SCANCODE_RIGHT])
     {
         SetForwardSpeed(-300.0f);
-        mSpacePressed = false;
-        
-        jump(keyState);
     }
     
-    else if (keyboardState[SDL_SCANCODE_RIGHT])
+    else if (keyboardState[SDL_SCANCODE_RIGHT] && !keyboardState[SDL_SCANCODE_LEFT])
     {
         SetForwardSpeed(300.0f);
-        mSpacePressed = false;
-        
-        jump(keyState);
-    }
-    
-    else if (keyboardState[SDL_SCANCODE_SPACE] && mInAir == false && mSpacePressed == false)
-    {
-        jump(keyState);
     }
     
     else
     {
         //Revert speed back to zero
         SetForwardSpeed(0.0f);
-        mSpacePressed = false;
     }
     
 }
 
-void PlayerMove::jump(const Uint8 *keyState)
+void PlayerMove::Jump(const Uint8 *keyState)
 {
     //Grab the state of the entire Keyboard
     const Uint8 *keyboardState = SDL_GetKeyboardState(nullptr);
@@ -204,7 +187,7 @@ void PlayerMove::jump(const Uint8 *keyState)
     }
 }
 
-void PlayerMove::setAnim()
+void PlayerMove::SetAnim()
 {
     //For Ground animations
     if (mPlayer->GetState() == ActorState::Paused)

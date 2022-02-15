@@ -27,14 +27,15 @@ class PlayerMove : public MoveComponent
     
     private:
         //Map to detect leading edges
-        void jump(const Uint8* keyState);
+        void Jump(const Uint8* keyState);
         std::unordered_map<SDL_Scancode, bool> lastFrame;
         float mYSpeed = 0.0f;
         float mYAccel = 2000.0f;
         bool mSpacePressed = false;
         bool mInAir = false;
         class Player* mPlayer;
-        void setAnim();
+        void SetAnim();
+        class CollisionComponent* ownerCollisionComponent;
 };
 
 #endif /* PlayerMove_hpp */

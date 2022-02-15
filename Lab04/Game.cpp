@@ -20,7 +20,6 @@
 #include "Goomba.hpp"
 #include "Spawner.hpp"
 
-// TODO
 //Implementation for the functions in our Game class
 //Constructor
 Game::Game()

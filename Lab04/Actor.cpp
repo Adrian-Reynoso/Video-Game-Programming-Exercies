@@ -10,7 +10,6 @@ Actor::Actor(Game* game)
 	,mScale(1.0f)
 	,mRotation(0.0f)
 {
-	// TODO
     //Actor needs to add itself to the game via AddActor
     game->AddActor(this);
     //Assign the game input parameter to member variable mGame
@@ -19,7 +18,6 @@ Actor::Actor(Game* game)
 
 Actor::~Actor()
 {
-	// TODO
     //The Actor destructor should call RemoveActor
     mGame->RemoveActor(this);
     
@@ -35,7 +33,6 @@ Actor::~Actor()
 
 void Actor::Update(float deltaTime)
 {
-	// TODO
     //If Actor’s mState is ActorState::Active
     if (mState == ActorState::Active)
     {
@@ -56,7 +53,6 @@ void Actor::OnUpdate(float deltaTime)
 
 void Actor::ProcessInput(const Uint8* keyState)
 {
-	// TODO
     //If Actor’s mState is ActorState::Active
     if (mState == ActorState::Active)
     {

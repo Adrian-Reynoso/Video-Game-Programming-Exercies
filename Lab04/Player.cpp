@@ -15,7 +15,6 @@
 Player::Player(class Game* game)
 :Actor(game)
 {
-    // TODO: Add code here
     //Dynamically allocate a SpriteComponent and assign it to the member variables
     spriteComponent = new AnimatedSprite(this, 200);
     spriteComponent->SetTexture(game->GetTexture("Assets/Mario/Idle.png"));

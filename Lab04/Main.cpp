@@ -10,7 +10,6 @@
 
 int main(int argc, char** argv)
 {
-	// TODO
     //Create an instance of a game class
     Game gameVar;
     
