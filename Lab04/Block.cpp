@@ -23,59 +23,13 @@ Block::Block(class Game* game, char letter)
     collisionComponent = new CollisionComponent(this);
     collisionComponent->SetSize(32.0f, 32.0f);
     
+    std::string stringLetter(1, letter);
+    
     //Judging by the character, see what texture we need to use
-    if(letter == 'A')
+    if(letter == 'A' || letter == 'B' || letter == 'C'|| letter == 'D'|| letter == 'E'|| letter == 'F'|| letter == 'G'|| letter == 'H'|| letter == 'I')
     {
         //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockA.png"));
-    }
-    
-    else if(letter == 'B')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockB.png"));
-    }
-    
-    else if(letter == 'C')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockC.png"));
-    }
-    
-    else if(letter == 'D')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockD.png"));
-    }
-    
-    else if(letter == 'E')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockE.png"));
-    }
-    
-    else if(letter == 'F')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockF.png"));
-    }
-    
-    else if(letter == 'G')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockG.png"));
-    }
-    
-    else if(letter == 'H')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockH.png"));
-    }
-    
-    else if(letter == 'I')
-    {
-        //Assign texture to sprite component
-        spriteComponent->SetTexture(game->GetTexture("Assets/BlockI.png"));
+        spriteComponent->SetTexture(game->GetTexture("Assets/Block" + stringLetter + ".png"));
     }
 }
 
