@@ -22,7 +22,7 @@ private:
 	
 	const float MAX_SPEED = 100.0f;
 	const float RESPAWN_TIME = 1.1f;
-	const float INTRO_TIME = 0.1f;
+	const float INTRO_TIME = 4.0f;
 	const float CHOMP_TIME_PER = 0.2f;
 	
 	Vector2 mMoveDir = Vector2::Zero;

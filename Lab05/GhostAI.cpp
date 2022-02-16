@@ -193,6 +193,130 @@ void GhostAI::changeStateTargetNode()
         mTargetNode = mGhost->GetGame()->mGhostPen;
     }
     
+    if (mState == Chase)
+    {
+        //Set the target node for each of the four ghosts
+        if (mGhost->GetType() == Ghost::Blinky)
+        {
+            //Targets Pac-Man’s previous path node if its not a tunnel node
+            if (mOwner->GetGame()->mPlayer->GetPrevNode()->GetType() != PathNode::Tunnel)
+            {
+                 mTargetNode = mOwner->GetGame()->mPlayer->GetPrevNode();
+            }
+            else
+            {
+                //Iterate through the pathNodes and find a default closest to pacman
+                float minDistance = 100000.0f;
+                PathNode* desiredNode;
+                
+                for (PathNode* node : mOwner->GetGame()->mPathNodes)
+                {
+                    if (node->GetType() == PathNode::Default && Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition()) < minDistance)
+                    {
+                        desiredNode = node;
+                        minDistance = Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition());
+                    }
+                }
+                
+                mTargetNode = desiredNode;
+            }
+        }
+        
+        else if(mGhost->GetType() == Ghost::Pinky)
+        {
+            //Targets 80 units in front of Pac-Man
+            Vector2 inFrontOf = mOwner->GetGame()->mPlayer->GetPointInFrontOf(80.0f);
+            
+            //Iterate through the pathNodes and find a default closest to the point 80 units forward
+            float minDistance = 100000.0f;
+            PathNode* desiredNode;
+            
+            for (PathNode* node : mOwner->GetGame()->mPathNodes)
+            {
+                if (node->GetType() == PathNode::Default && Vector2::Distance(inFrontOf, node->GetPosition()) < minDistance)
+                {
+                    desiredNode = node;
+                    minDistance = Vector2::Distance(inFrontOf, node->GetPosition());
+                }
+            }
+            
+            mTargetNode = desiredNode;
+        }
+        
+        else if(mGhost->GetType() == Ghost::Inky)
+        {
+            //Targets 40 units in front of Pac-Man
+            Vector2 P = mOwner->GetGame()->mPlayer->GetPointInFrontOf(40.0f);
+            
+            //Make a vector V from Blinky to P and double the size of it
+            Vector2 blinkyPos;
+            for (Ghost* ghost : mOwner->GetGame()->mGhosts)
+            {
+                if (ghost->GetType() == Ghost::Blinky)
+                {
+                    blinkyPos = ghost->GetPosition();
+                }
+            }
+            
+            Vector2 V = P - blinkyPos;
+            V *= 2;
+            
+            //Add blinky's position and V
+            V += blinkyPos;
+            
+            //Get Pathnode of type Pathnode::Deafult closest to this point
+            float minDistance = 100000.0f;
+            PathNode* desiredNode;
+            
+            for (PathNode* node : mOwner->GetGame()->mPathNodes)
+            {
+                if (node->GetType() == PathNode::Default && Vector2::Distance(V, node->GetPosition()) < minDistance)
+                {
+                    desiredNode = node;
+                    minDistance = Vector2::Distance(V, node->GetPosition());
+                }
+            }
+            
+            mTargetNode = desiredNode;
+        }
+        
+        else
+        {
+            //If > 150 units from Pac-Man, same behavior as Blinky
+            if (Vector2::Distance(mGhost->GetPosition(), mOwner->GetGame()->mPlayer->GetPosition()) > 150)
+            {
+                //DO the same as Blinky
+                //Targets Pac-Man’s previous path node if its not a tunnel node
+                if (mOwner->GetGame()->mPlayer->GetPrevNode()->GetType() != PathNode::Tunnel)
+                {
+                     mTargetNode = mOwner->GetGame()->mPlayer->GetPrevNode();
+                }
+                else
+                {
+                    //Iterate through the pathNodes and find a default closest to pacman
+                    float minDistance = 100000.0f;
+                    PathNode* desiredNode;
+                    
+                    for (PathNode* node : mOwner->GetGame()->mPathNodes)
+                    {
+                        if (node->GetType() == PathNode::Default && Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition()) < minDistance)
+                        {
+                            desiredNode = node;
+                            minDistance = Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition());
+                        }
+                    }
+                    
+                    mTargetNode = desiredNode;
+                }
+            }
+            else
+            {
+                //Path toward the scatter home corner
+                mTargetNode = mGhost->GetScatterNode();
+            }
+        }
+    }
+    
 }
 
 void GhostAI::updateNodes()
@@ -350,5 +474,19 @@ void GhostAI::needToChangeState()
     if (mTargetNode == mNextNode && mState == Dead)
     {
         mState = Scatter;
+    }
+    
+    //Change state from scatter to chase or
+    if (GetState() == State::Scatter && timeInState >= 5.0f)
+    {
+        //Change to Chase state and reset timer
+        mState = Chase;
+        timeInState = 0.0f;
+    }
+    else if (GetState() == State::Chase && timeInState >= 20.0f)
+    {
+        //Change to scatter state and reset timer
+        mState = Scatter;
+        timeInState = 0.0f;
     }
 }
