@@ -81,9 +81,9 @@ void TiledBGComponent::LoadTileCSV(const std::string& fileName, int tileWidth, i
             std::vector<int> temp2;
             
             //Turn the string in each vector to an integer in the new temp2 vector
-            for (std::string line : temp)
+            for (std::string stringNum : temp)
             {
-                temp2.push_back(std::stoi(line));
+                temp2.push_back(std::stoi(stringNum));
             }
             
             //Push this vector into the intsFromCSV member variable vector
