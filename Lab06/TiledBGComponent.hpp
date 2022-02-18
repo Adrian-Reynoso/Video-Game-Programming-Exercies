@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <string>
 #include "SpriteComponent.h"
 
 class TiledBGComponent : public SpriteComponent
