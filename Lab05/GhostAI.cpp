@@ -20,23 +20,24 @@ GhostAI::GhostAI(class Actor* owner)
 
 void GhostAI::Update(float deltaTime)
 {
-	// TODO: Implement
     //Update the time in state variable with delta time
     timeInState += deltaTime;
     
     //Update the ghost’s position based on the movement direction, speed, and delta time
+    float speed;
     if (GetState() == State::Scatter || GetState() == State::Chase)
     {
-        mGhost->SetPosition(mGhost->GetPosition() + (currDirection * 90 * deltaTime));
+        speed = 90.0;
     }
     else if (GetState() == State::Frightened)
     {
-        mGhost->SetPosition(mGhost->GetPosition() + (currDirection * 65 * deltaTime));
+        speed = 65.0;
     }
     else
     {
-        mGhost->SetPosition(mGhost->GetPosition() + (currDirection * 125 * deltaTime));
+        speed = 125.0;
     }
+    mGhost->SetPosition(mGhost->GetPosition() + (currDirection * speed * deltaTime));
     
     
     //Check to see whether the ghost intersects with the next node
@@ -60,7 +61,6 @@ void GhostAI::Update(float deltaTime)
 
 void GhostAI::Frighten()
 {
-	// TODO: Implement
     //If ghost state is not dead
     if (GetState() != State::Dead)
     {
@@ -81,7 +81,6 @@ void GhostAI::Frighten()
 
 void GhostAI::Start(PathNode* startNode)
 {
-	// TODO: Implement
     //Set the position of the owner to the position of startNode
     mGhost->SetPosition(startNode->GetPosition());
     
@@ -95,7 +94,6 @@ void GhostAI::Start(PathNode* startNode)
 
 void GhostAI::Die()
 {
-	// TODO: Implement
     mState = Dead;
     timeInState = 0.0f;
     calculateDirection();
@@ -142,44 +140,45 @@ void GhostAI::changeStateTargetNode()
         //Set the target node by finding the random adjacent nodes that follow the restrictions
         PathNode* desiredNode = nullptr;
         Random rand;
-
-        for (unsigned long i = 0; i < mNextNode->mAdjacent.size(); i++)
+        
+        //Create a vector of all the nodes from the adjacency list that aren't PathNode::Ghost, PathNode::Tunnel, or previous Node
+        std::vector<PathNode*> availableNodes;
+        for (PathNode* node : mNextNode->mAdjacent)
         {
-            //Pick a random node from the adjacency list that will satisfy the if statement
-            int randNum = rand.GetIntRange(0, (int)mNextNode->mAdjacent.size()-1);
-            
-            if (mNextNode->mAdjacent[randNum]->GetType() != PathNode::Ghost && mNextNode->mAdjacent[randNum]->GetType() != PathNode::Tunnel && mNextNode->mAdjacent[randNum] != mPrevNode)
+            if (node->GetType() != PathNode::Ghost && node->GetType() != PathNode::Tunnel && node != mPrevNode)
             {
-                desiredNode = mNextNode->mAdjacent[randNum];
-                break;
+                availableNodes.push_back(node);
             }
         }
         
-        //Check to see if desired node is null. If so allow ghost nodes
-        if (desiredNode == nullptr)
+        //If the vector isn't empty, then pick a random node from that vector and go to it
+        if (availableNodes.empty() != true)
         {
-            for (unsigned long i = 0; i < mNextNode->mAdjacent.size(); i++)
+            int randNum = rand.GetIntRange(0, (int)availableNodes.size()-1);
+            desiredNode = availableNodes[randNum];
+        }
+        
+        //If vector is empty, then fill vector with nodes that could also be ghost nodes
+        else
+        {
+            for (PathNode* node : mNextNode->mAdjacent)
             {
-                //Pick a random node from the adjacency list that will satisfy the if statement
-                int randNum = rand.GetIntRange(0, (int)mNextNode->mAdjacent.size()-1);
-                
-                if (mNextNode->mAdjacent[randNum]->GetType() != PathNode::Tunnel && mNextNode->mAdjacent[randNum] != mPrevNode)
+                if (node->GetType() != PathNode::Tunnel && node != mPrevNode)
                 {
-                    desiredNode = mNextNode->mAdjacent[randNum];
-                    break;
+                    availableNodes.push_back(node);
                 }
             }
-        }
-        
-        //Check to see if desired node is still null one last time. If so allow all node options
-        if (desiredNode == nullptr)
-        {
-            for (unsigned long i = 0; i < mNextNode->mAdjacent.size(); i++)
+            
+            //Check once more if vector is empty, if not pick a random node from that vector, else pick any node in the adjacency list
+            if (availableNodes.empty() != true)
             {
-                //Pick a random node from the adjacency list that will satisfy the if statement
+                int randNum = rand.GetIntRange(0, (int)availableNodes.size()-1);
+                desiredNode = availableNodes[randNum];
+            }
+            else
+            {
                 int randNum = rand.GetIntRange(0, (int)mNextNode->mAdjacent.size()-1);
                 desiredNode = mNextNode->mAdjacent[randNum];
-                break;
             }
         }
         
@@ -206,19 +205,7 @@ void GhostAI::changeStateTargetNode()
             else
             {
                 //Iterate through the pathNodes and find a default closest to pacman
-                float minDistance = 100000.0f;
-                PathNode* desiredNode;
-                
-                for (PathNode* node : mOwner->GetGame()->mPathNodes)
-                {
-                    if (node->GetType() == PathNode::Default && Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition()) < minDistance)
-                    {
-                        desiredNode = node;
-                        minDistance = Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition());
-                    }
-                }
-                
-                mTargetNode = desiredNode;
+                mTargetNode = findClosestDefault(mOwner->GetGame()->mPlayer->GetPosition());
             }
         }
         
@@ -228,19 +215,7 @@ void GhostAI::changeStateTargetNode()
             Vector2 inFrontOf = mOwner->GetGame()->mPlayer->GetPointInFrontOf(80.0f);
             
             //Iterate through the pathNodes and find a default closest to the point 80 units forward
-            float minDistance = 100000.0f;
-            PathNode* desiredNode;
-            
-            for (PathNode* node : mOwner->GetGame()->mPathNodes)
-            {
-                if (node->GetType() == PathNode::Default && Vector2::Distance(inFrontOf, node->GetPosition()) < minDistance)
-                {
-                    desiredNode = node;
-                    minDistance = Vector2::Distance(inFrontOf, node->GetPosition());
-                }
-            }
-            
-            mTargetNode = desiredNode;
+            mTargetNode = findClosestDefault(inFrontOf);
         }
         
         else if(mGhost->GetType() == Ghost::Inky)
@@ -265,19 +240,7 @@ void GhostAI::changeStateTargetNode()
             V += blinkyPos;
             
             //Get Pathnode of type Pathnode::Deafult closest to this point
-            float minDistance = 100000.0f;
-            PathNode* desiredNode;
-            
-            for (PathNode* node : mOwner->GetGame()->mPathNodes)
-            {
-                if (node->GetType() == PathNode::Default && Vector2::Distance(V, node->GetPosition()) < minDistance)
-                {
-                    desiredNode = node;
-                    minDistance = Vector2::Distance(V, node->GetPosition());
-                }
-            }
-            
-            mTargetNode = desiredNode;
+            mTargetNode = findClosestDefault(V);
         }
         
         else
@@ -294,19 +257,7 @@ void GhostAI::changeStateTargetNode()
                 else
                 {
                     //Iterate through the pathNodes and find a default closest to pacman
-                    float minDistance = 100000.0f;
-                    PathNode* desiredNode;
-                    
-                    for (PathNode* node : mOwner->GetGame()->mPathNodes)
-                    {
-                        if (node->GetType() == PathNode::Default && Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition()) < minDistance)
-                        {
-                            desiredNode = node;
-                            minDistance = Vector2::Distance(mOwner->GetGame()->mPlayer->GetPosition(), node->GetPosition());
-                        }
-                    }
-                    
-                    mTargetNode = desiredNode;
+                    mTargetNode = findClosestDefault(mOwner->GetGame()->mPlayer->GetPosition());
                 }
             }
             else
@@ -396,17 +347,18 @@ void GhostAI::calculateDirection()
 {
     //Calculates the direction as the vector from mPrevNode to mNextNode
     Vector2 temp = mNextNode->GetPosition() - mPrevNode->GetPosition();
+    AnimatedSprite* animatedSprite = mGhost->GetComponent<AnimatedSprite>();
     if (temp.x < 0)
     {
         currDirection.x = -1.0f;
         currDirection.y = 0.0f;
         if (mState == Dead)
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deadleft");
+            animatedSprite->SetAnimation("deadleft");
         }
         else
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
+            animatedSprite->SetAnimation("left");
         }
     }
     else if (temp.x > 0)
@@ -415,11 +367,11 @@ void GhostAI::calculateDirection()
         currDirection.y = 0.0f;
         if (mState == Dead)
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deadright");
+            animatedSprite->SetAnimation("deadright");
         }
         else
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("right");
+            animatedSprite->SetAnimation("right");
         }
     }
     else if (temp.y < 0)
@@ -428,11 +380,11 @@ void GhostAI::calculateDirection()
         currDirection.x = 0.0f;
         if (mState == Dead)
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deadup");
+            animatedSprite->SetAnimation("deadup");
         }
         else
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("up");
+            animatedSprite->SetAnimation("up");
         }
     }
     else
@@ -441,52 +393,58 @@ void GhostAI::calculateDirection()
         currDirection.x = 0.0f;
         if (mState == Dead)
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deaddown");
+            animatedSprite->SetAnimation("deaddown");
         }
         else
         {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("down");
+            animatedSprite->SetAnimation("down");
         }
     }
     
     //For animation thats not in scatter
     //Set respective animations here depending on timeInState
-    if (timeInState <= 5.0f && mGhost->GetComponent<AnimatedSprite>()->GetAnimName() != "scared0" && mState == Frightened)
+    if (timeInState <= 5.0f && animatedSprite->GetAnimName() != "scared0" && mState == Frightened)
     {
-        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared0");
+        animatedSprite->SetAnimation("scared0");
     }
-    else if (mGhost->GetComponent<AnimatedSprite>()->GetAnimName() != "scared1" && mState == Frightened)
+    else if (animatedSprite->GetAnimName() != "scared1" && mState == Frightened)
     {
-        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared1");
+        animatedSprite->SetAnimation("scared1");
     }
 }
 
 void GhostAI::needToChangeState()
 {
     //If you've been in Frightened for 7seconds or more, change state back to scatter and reset timer
-    if (GetState() == State::Frightened && timeInState >= 7.0f)
+    if ((GetState() == State::Frightened && timeInState >= 7.0f) || (GetState() == State::Chase && timeInState >= 20.0f) || (mTargetNode == mNextNode && mState == Dead))
     {
         mState = Scatter;
         timeInState = 0.0f;
     }
-    
-    //Change state from Dead to Scatter if ghost reaches back to GhostPen
-    if (mTargetNode == mNextNode && mState == Dead)
-    {
-        mState = Scatter;
-    }
-    
-    //Change state from scatter to chase or
+
+    //Change state from scatter to chase
     if (GetState() == State::Scatter && timeInState >= 5.0f)
     {
         //Change to Chase state and reset timer
         mState = Chase;
         timeInState = 0.0f;
     }
-    else if (GetState() == State::Chase && timeInState >= 20.0f)
+}
+
+PathNode* GhostAI::findClosestDefault(Vector2 position)
+{
+    //Iterate through the pathNodes and find a default closest to pacman
+    float minDistance = 100000.0f;
+    PathNode* desiredNode;
+    
+    for (PathNode* node : mOwner->GetGame()->mPathNodes)
     {
-        //Change to scatter state and reset timer
-        mState = Scatter;
-        timeInState = 0.0f;
+        if (node->GetType() == PathNode::Default && Vector2::Distance(position, node->GetPosition()) < minDistance)
+        {
+            desiredNode = node;
+            minDistance = Vector2::Distance(position, node->GetPosition());
+        }
     }
+    
+    return desiredNode;
 }

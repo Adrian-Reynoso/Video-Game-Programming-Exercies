@@ -56,6 +56,7 @@ private:
     void updateNodes();
     void calculateDirection();
     void needToChangeState();
+    PathNode* findClosestDefault(Vector2 position);
     Vector2 currDirection {0.0f, 0.0f};
     float timeInState;
     
