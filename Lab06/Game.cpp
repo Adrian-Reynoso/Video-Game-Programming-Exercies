@@ -397,8 +397,8 @@ void Game::LoadInObjects()
             {
                 //Create an instance of type player and set it to the right position
                 player = new Player(this);
-                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
-                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
+                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
+                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
                 player->SetPosition(Vector2{tempX, tempY});
             }
             
@@ -406,10 +406,10 @@ void Game::LoadInObjects()
             else if (temp[0] == "Collider")
             {
                 //Gather the values necessary for collider and cast them as floating point numbers
-                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
-                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
-                float tempWidth = std::stoi(temp[3]);
-                float tempHeight = std::stoi(temp[4]);
+                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
+                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
+                float tempWidth = (float)std::stoi(temp[3]);
+                float tempHeight = (float)std::stoi(temp[4]);
                 
                 //Create an instance of type collider and set it to the right position
                 Collider* tempCollider = new Collider(this, tempWidth, tempHeight);
@@ -424,8 +424,8 @@ void Game::LoadInObjects()
             {
                 //Create an instance of type Bush and set it to the right position
                 Bush* bush = new Bush(this);
-                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
-                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
+                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
+                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
                 bush->SetPosition(Vector2{tempX, tempY});
             }
             
@@ -434,8 +434,8 @@ void Game::LoadInObjects()
             {
                 //Create an instance of type Bush and set it to the right position
                 Soldier* soldier = new Soldier(this);
-                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
-                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
+                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
+                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
                 soldier->SetPosition(Vector2{tempX, tempY});
             }
 
