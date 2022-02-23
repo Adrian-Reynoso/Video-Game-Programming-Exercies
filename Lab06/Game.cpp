@@ -17,6 +17,10 @@
 #include "CollisionComponent.h"
 #include "Player.hpp"
 #include "TiledBGComponent.hpp"
+#include "CSVHelper.h"
+#include "Collider.hpp"
+#include "Bush.hpp"
+#include "Soldier.hpp"
 
 //Implementation for the functions in our Game class
 //Constructor
@@ -268,6 +272,9 @@ void Game::LoadData()
     component->LoadTileCSV("Assets/Map/Tiles.csv", 32, 32);
     component->SetTexture(GetTexture("Assets/Map/Tiles.png"));
     
+    //Load in objects with the respective function
+    LoadInObjects();
+    
 }
 
 void Game::UnloadData()
@@ -365,4 +372,73 @@ Mix_Chunk* Game::GetSound(const std::string& filename)
     //If it's not in the map, add it in
     mSoundMap[filename] = Mix_LoadWAV(filename.c_str());
     return mSoundMap.find(filename)->second;
+}
+
+void Game::LoadInObjects()
+{
+    //Create your ifstream
+    std::ifstream filein("Assets/Map/ObjectsOneSoldier.csv");
+    
+    //Make a for-loop that goes through the file and takes each line
+    while (filein)
+    {
+        //Use the CSVHelper::split function to turn the
+        std::string line;
+        std::getline(filein, line);
+        std::vector<std::string> temp;
+        
+        //Check if string is empty, if so don't try to split it
+        if (!line.empty())
+        {
+            temp = CSVHelper::Split(line);
+            
+            //If the object is of type player
+            if (temp[0] == "Player")
+            {
+                //Create an instance of type player and set it to the right position
+                player = new Player(this);
+                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
+                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
+                player->SetPosition(Vector2{tempX, tempY});
+            }
+            
+            //If the object is of type Collider
+            else if (temp[0] == "Collider")
+            {
+                //Gather the values necessary for collider and cast them as floating point numbers
+                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
+                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
+                float tempWidth = std::stoi(temp[3]);
+                float tempHeight = std::stoi(temp[4]);
+                
+                //Create an instance of type collider and set it to the right position
+                Collider* tempCollider = new Collider(this, tempWidth, tempHeight);
+                tempCollider->SetPosition(Vector2{tempX, tempY});
+                
+                //Add this collider to our collider vector
+                colliderVector.push_back(tempCollider);
+            }
+            
+            //If the object is of type Bush
+            else if (temp[0] == "Bush")
+            {
+                //Create an instance of type Bush and set it to the right position
+                Bush* bush = new Bush(this);
+                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
+                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
+                bush->SetPosition(Vector2{tempX, tempY});
+            }
+            
+            //If the object is of type Soldier
+            else if (temp[0] == "Soldier")
+            {
+                //Create an instance of type Bush and set it to the right position
+                Soldier* soldier = new Soldier(this);
+                float tempX = std::stoi(temp[1]) + (std::stoi(temp[3])/2);
+                float tempY = std::stoi(temp[2]) + (std::stoi(temp[4])/2);
+                soldier->SetPosition(Vector2{tempX, tempY});
+            }
+
+        }
+    }
 }

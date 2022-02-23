@@ -26,8 +26,8 @@ class Game
         void AddSprite(class SpriteComponent* sprite);
         void RemoveSprite(class SpriteComponent* sprite);
         SDL_Texture* GetTexture(std::string fileName);
-        const float SCREENHEIGHT = 512.0f;
-        const float SCREENWIDTH = 448.0f;
+        const float SCREENHEIGHT = 448.0f;
+        const float SCREENWIDTH = 512.0f;
     
         Mix_Chunk* GetSound(const std::string& filename);
         int soundMusicLoop;
@@ -42,6 +42,10 @@ class Game
             return cameraPosition;
         }
         Vector2 cameraPosition {0.0f, 0.0f};
+        const std::vector<class Collider*> &GetColliderVector()
+        {
+            return colliderVector;
+        }
     
     private:
         //Pointer to window and renderer
@@ -70,4 +74,7 @@ class Game
         //For sound effects
         std::unordered_map<std::string, Mix_Chunk*> mSoundMap;
     
+        //For loading objects
+        void LoadInObjects();
+        std::vector<class Collider*> colliderVector;
 };

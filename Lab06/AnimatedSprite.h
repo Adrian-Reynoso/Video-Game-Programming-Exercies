@@ -38,6 +38,8 @@ public:
 	
 	// Use to get the total duration of the animation of he specified name
 	float GetAnimDuration(const std::string& name) { return mAnims[name].size() / mAnimFPS; }
+    
+    void LoadAnimations(const std::string& rootPath);
 protected:
 	// Map of animation name to vector of textures corresponding to the animation
 	std::unordered_map<std::string, std::vector<SDL_Texture*>> mAnims;

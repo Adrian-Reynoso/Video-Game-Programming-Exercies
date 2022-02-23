@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <SDL2/SDL_image.h>
 #include "SDL2/SDL_mixer.h"
+#include "Math.h"
 
 class PlayerMove : public MoveComponent
 {
@@ -30,8 +31,21 @@ class PlayerMove : public MoveComponent
         void Jump(const Uint8* keyState);
         std::unordered_map<SDL_Scancode, bool> lastFrame;
         class Player* mPlayer;
+        float mVelocity = 150.0f;
+        Vector2 playerDir {0.0f, 0.0f};
+        bool isMoving;
         void SetAnim();
         class CollisionComponent* ownerCollisionComponent;
+        
+        //For storing directions
+        enum Direction
+        {
+            up,
+            down,
+            left,
+            right
+        };
+        Direction playerState = Direction::down;
 };
 
 #endif /* PlayerMove_hpp */
