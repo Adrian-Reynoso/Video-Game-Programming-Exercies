@@ -41,4 +41,9 @@ private:
 	const float STUN_DURATION = 1.0f;
 	
 	// TODO: Add any private data/functions as needed
+    class PathFinder* pathFinder;
+    Vector2 currDirection {0.0f, 0.0f};
+    class Soldier* mSoldier;
+    
+    void calculateDirection();
 };

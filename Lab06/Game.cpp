@@ -21,6 +21,7 @@
 #include "Collider.hpp"
 #include "Bush.hpp"
 #include "Soldier.hpp"
+#include "PathFinder.h"
 
 //Implementation for the functions in our Game class
 //Constructor
@@ -272,6 +273,9 @@ void Game::LoadData()
     component->LoadTileCSV("Assets/Map/Tiles.csv", 32, 32);
     component->SetTexture(GetTexture("Assets/Map/Tiles.png"));
     
+    //Allocate an instance of the PathFinder actor
+    pathFinder = new PathFinder(this);
+    
     //Load in objects with the respective function
     LoadInObjects();
     
@@ -377,7 +381,7 @@ Mix_Chunk* Game::GetSound(const std::string& filename)
 void Game::LoadInObjects()
 {
     //Create your ifstream
-    std::ifstream filein("Assets/Map/ObjectsOneSoldier.csv");
+    std::ifstream filein("Assets/Map/Objects.csv");
     
     //Make a for-loop that goes through the file and takes each line
     while (filein)
@@ -433,7 +437,12 @@ void Game::LoadInObjects()
             else if (temp[0] == "Soldier")
             {
                 //Create an instance of type Bush and set it to the right position
-                Soldier* soldier = new Soldier(this);
+                //Use Pathfinder member function to get the two PathNodes* corresponding (rowStart, colStart) and (rowEnd, colEnd)
+                PathNode* start = pathFinder->GetPathNode(std::stoi(temp[5]), std::stoi(temp[6]));
+                PathNode* end = pathFinder->GetPathNode(std::stoi(temp[7]), std::stoi(temp[8]));
+                Soldier* soldier = new Soldier(this, start, end);
+                
+                //Fix positioning of the soldier
                 float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
                 float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
                 soldier->SetPosition(Vector2{tempX, tempY});

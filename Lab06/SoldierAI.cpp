@@ -5,21 +5,70 @@
 #include "PathNode.h"
 #include "AnimatedSprite.h"
 #include <algorithm>
+#include "Soldier.hpp"
 
 SoldierAI::SoldierAI(Actor* owner)
 :SpriteComponent(owner)
 {
 	//SetIsVisible(false); // Uncomment to hide debug paths
+    pathFinder = new PathFinder(mOwner->GetGame());
+    mSoldier = static_cast<Soldier*>(owner);
 }
 
 void SoldierAI::Setup(PathNode* start, PathNode* end)
 {
 	// TODO: Implement
+    //Set the mPatrolStart and mPatrolEnd member variables to start/end respectively
+    mPatrolStart = start;
+    mPatrolEnd = end;
+    
+    //Add a call to CalculatePath to compute the path from mPatrolStart to mPatrolEnd. For the outPath parameter, pass in mPath
+    pathFinder->CalculatePath(mPatrolStart, mPatrolEnd, mPath);
+    
+    //Initialize mPrev, mNext, and mPath
+    mPrev = mPatrolStart;
+    mNext = mPath.back();
+    mPath.pop_back();
+    
+    //Update direction vector
+    calculateDirection();
 }
 
 void SoldierAI::Update(float deltaTime)
 {
 	// TODO: Implement
+    
+    //Update the soldier's position based on the movement direction, speed, and delta time
+    mOwner->SetPosition(mOwner->GetPosition() + (currDirection * SOLDIER_SPEED * deltaTime));
+    
+    
+    //Check to see whether the soldier intersects with the next node
+    if (Vector2::Distance(mOwner->GetPosition(), mNext->GetPosition()) <= 1.0f)
+    {
+        //Set the ghost's position to next node's
+        mOwner->SetPosition(mNext->GetPosition());
+        
+        //If mPath is not empty
+        if (!mPath.empty())
+        {
+            //1. Set mPrev to mNext
+            mPrev = mNext;
+            
+            //2. Setting mNext to the last node in mPath
+            mNext = mPath.back();
+            
+            //3. Remove the last node in mPath
+            mPath.pop_back();
+        }
+        //Make the soldier to start a new path but in reverse
+        else
+        {
+            Setup(mPatrolEnd, mPatrolStart);
+        }
+    }
+    
+    //Update direction vector
+    calculateDirection();
 }
 
 // This helper is to just debug draw the soldier's path to visualize it
@@ -60,3 +109,35 @@ void SoldierAI::Draw(SDL_Renderer* renderer)
 		}
 	}
 }
+
+void SoldierAI::calculateDirection()
+{
+    //Calculates the direction as the vector from mPrevNode to mNextNode
+    Vector2 temp = mNext->GetPosition() - mPrev->GetPosition();
+
+    if (temp.x < 0)
+    {
+        currDirection.x = -1.0f;
+        currDirection.y = 0.0f;
+        mSoldier->spriteComponent->SetAnimation("WalkLeft");
+    }
+    else if (temp.x > 0)
+    {
+        currDirection.x = 1.0f;
+        currDirection.y = 0.0f;
+        mSoldier->spriteComponent->SetAnimation("WalkRight");
+    }
+    else if (temp.y < 0)
+    {
+        currDirection.y = -1.0f;
+        currDirection.x = 0.0f;
+        mSoldier->spriteComponent->SetAnimation("WalkUp");
+    }
+    else
+    {
+        currDirection.y = 1.0f;
+        currDirection.x = 0.0f;
+        mSoldier->spriteComponent->SetAnimation("WalkDown");
+    }
+}
+

@@ -15,9 +15,10 @@ class Soldier : public Actor
 {
     public:
         //Constructor
-        Soldier(class Game* game);
+        Soldier(class Game* game, class PathNode* start, class PathNode* end);
         class AnimatedSprite* spriteComponent;
         class CollisionComponent* collisionComponent;
+        class SoldierAI* soldierAI;
 };
 
 #endif /* Soldier_hpp */

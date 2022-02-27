@@ -9,8 +9,10 @@
 #include "CollisionComponent.h"
 #include "AnimatedSprite.h"
 #include "Game.h"
+#include "PathNode.h"
+#include "SoldierAI.h"
 
-Soldier::Soldier(class Game* game)
+Soldier::Soldier(class Game* game, class PathNode* start, class PathNode* end)
 :Actor(game)
 {
     //Allocate a new collision component and Animatedsprite component
@@ -21,4 +23,8 @@ Soldier::Soldier(class Game* game)
     spriteComponent->LoadAnimations("Assets/Soldier");
     spriteComponent->SetAnimation("WalkDown");
     spriteComponent->SetAnimFPS(5.0f);
+    
+    //Create a SoldierAI component and call the Setup function on it, passing in the start/end nodes respectively
+    soldierAI = new SoldierAI(this);
+    soldierAI->Setup(start, end);
 }

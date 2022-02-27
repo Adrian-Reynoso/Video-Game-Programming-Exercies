@@ -46,6 +46,10 @@ class Game
         {
             return colliderVector;
         }
+        class PathFinder* GetPathFinder()
+        {
+            return pathFinder;
+        }
     
     private:
         //Pointer to window and renderer
@@ -77,4 +81,6 @@ class Game
         //For loading objects
         void LoadInObjects();
         std::vector<class Collider*> colliderVector;
+    
+        class PathFinder* pathFinder;
 };

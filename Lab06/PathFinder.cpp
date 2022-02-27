@@ -12,7 +12,98 @@
 bool PathFinder::CalculatePath(class PathNode* start, class PathNode* end, std::vector<class PathNode*>& outPath)
 {
 	// TODO: Implement A* algorithm
-	return true;
+    
+    //Make a NodeInfo map that takes the PathNode as the key and the NodeInfo as value
+    //as well as an "Open Set" vector that holds all nodes that are open
+    std::vector<PathNode*> openSet;
+    std::unordered_map<PathNode*, NodeInfo> info;
+    
+    for (unsigned long i = 0; i < mPathNodeGrid.size(); i++)
+    {
+        for (unsigned long j = 0; j < mPathNodeGrid[i].size(); j++)
+        {
+            NodeInfo tempNode;
+            info.insert(std::make_pair(mPathNodeGrid[i][j], tempNode));
+        }
+    }
+    
+    PathNode* currentNode = start;
+    info[currentNode].IsClosed = true;
+    do{
+        //Foreach Node n adjacent to currentNode
+        for (PathNode* n : currentNode->mAdjacent)
+        {
+            if (!info[n].IsClosed)
+            {
+                if (std::find(openSet.begin(), openSet.end(), n) != openSet.end()) // Check for adoption
+                {
+                    float new_g = info[currentNode].g + Vector2::Distance(currentNode->GetPosition(), n->GetPosition());
+                    if (new_g < info[n].g)
+                    {
+                        info[n].parent = currentNode;
+                        info[n].g = new_g;
+                        info[n].f = info[n].g + info[n].h; // n.h was already calculated
+                    }
+                }
+                else
+                {
+                    //Caluclate h, g, and f
+                    info[n].parent = currentNode;
+                    info[n].h = Vector2::Distance(n->GetPosition(), end->GetPosition());
+                    info[n].g = info[currentNode].g + Vector2::Distance(currentNode->GetPosition(), n->GetPosition());
+                    info[n].f = info[n].g + info[n].h;
+                    
+                    //Add n to openSet
+                    openSet.push_back(n);
+                }
+            }
+        }
+        
+        //If openSet is empty
+        if (openSet.empty())
+        {
+            break;
+        }
+        
+        //Make the current node the Node with lowest f in openSet
+        float minF = 10000000.0f;
+        PathNode* desiredNode;
+        for (PathNode* n : openSet)
+        {
+            //See the info map to see if the f value of n is less than the current min
+            if (info[n].f < minF)
+            {
+                minF = info[n].f;
+                desiredNode = n;
+            }
+        }
+        currentNode = desiredNode;
+        
+        //Remove currentNode from openSet
+        for (unsigned long i = 0; i < openSet.size(); i++)
+        {
+            if (openSet[i] == currentNode)
+            {
+                openSet.erase(openSet.begin() + i);
+                break;
+            }
+        }
+        info[currentNode].IsClosed = true;
+        
+    } while (currentNode != end);
+    
+	//Store the nodes into the outPath vector starting from the end all the way to the start
+    //Making sure to follow the parent of the nodes
+    outPath.push_back(end);
+    PathNode* parentOfNode = info[end].parent;
+    while (parentOfNode != start)
+    {
+        //Add the node to the outPath vector
+        outPath.push_back(parentOfNode);
+        parentOfNode = info[parentOfNode].parent;
+    }
+    
+    return true;
 }
 
 // DANGER - DO NOT EDIT THE FUNCTIONS BELOW THIS!!

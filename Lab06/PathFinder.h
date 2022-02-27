@@ -30,4 +30,19 @@ private:
 	
 	// Helper function to generate the pathnodes from the map data
 	void InitializePathNodes();
+    
+    //To store temporary data per node
+    struct NodeInfo
+    {
+        // The parent is the node at "before" current node
+        PathNode* parent = nullptr;
+        // f(x) = g(x) + h(x)
+        float f = 0.0f;
+        // g(x) true cost from start to this node
+        float g = 0.0f;
+        // h(x) heuristic estimate from this node to goal
+        float h = 0.0f;
+        // Whether or not this node is "closed"
+        bool IsClosed = false;
+    };
 };
