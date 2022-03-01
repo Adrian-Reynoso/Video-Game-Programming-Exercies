@@ -19,6 +19,7 @@ class Soldier : public Actor
         class AnimatedSprite* spriteComponent;
         class CollisionComponent* collisionComponent;
         class SoldierAI* soldierAI;
+        class EnemyComponent* enemyComponent;
 };
 
 #endif /* Soldier_hpp */

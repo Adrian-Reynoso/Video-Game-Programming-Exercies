@@ -50,6 +50,15 @@ class Game
         {
             return pathFinder;
         }
+        const std::vector<class EnemyComponent*> &GetEnemyComponentVector()
+        {
+            return enemyComponentVector;
+        }
+        void AddEnemyComponent(class EnemyComponent* enemy)
+        {
+            enemyComponentVector.push_back(enemy);
+        }
+        void RemoveEnemyComponent(class EnemyComponent* enemy);
     
     private:
         //Pointer to window and renderer
@@ -83,4 +92,7 @@ class Game
         std::vector<class Collider*> colliderVector;
     
         class PathFinder* pathFinder;
+    
+        //For enemies
+        std::vector<class EnemyComponent*> enemyComponentVector;
 };

@@ -9,6 +9,7 @@
 #include "CollisionComponent.h"
 #include "SpriteComponent.h"
 #include "Game.h"
+#include "EnemyComponent.hpp"
 
 Bush::Bush(class Game* game)
 :Actor(game)
@@ -19,4 +20,13 @@ Bush::Bush(class Game* game)
     
     spriteComponent = new SpriteComponent(this);
     spriteComponent->SetTexture(game->GetTexture("Assets/Bush.png"));
+    
+    //Create the enemy component and set health points to 1
+    enemyComponent = new EnemyComponent(this);
+    enemyComponent->SetEnemyHitPoints(1);
+}
+
+Bush::~Bush()
+{
+    
 }

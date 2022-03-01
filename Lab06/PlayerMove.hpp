@@ -25,6 +25,7 @@ class PlayerMove : public MoveComponent
         // Update the PlayerMove
         void Update(float deltaTime) override;
         void ProcessInput(const Uint8* keyState) override;
+        void setSwordPos();
     
     private:
         //Map to detect leading edges
@@ -46,6 +47,10 @@ class PlayerMove : public MoveComponent
             right
         };
         Direction playerState = Direction::down;
+        bool isSpacePressed = false;
+        float attackCooldown = 1.0f;
+        class Sword* sword;
+        Vector2 posOfSword;
 };
 
 #endif /* PlayerMove_hpp */

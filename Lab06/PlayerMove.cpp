@@ -13,12 +13,17 @@
 #include "AnimatedSprite.h"
 #include "Game.h"
 #include "Collider.hpp"
+#include "EnemyComponent.hpp"
+#include "Sword.hpp"
 
 PlayerMove::PlayerMove(class Player* owner)
 :MoveComponent(owner)
 {
     mPlayer = owner;
     ownerCollisionComponent = mOwner->GetComponent<CollisionComponent>();
+    
+    //Create an instance of sword
+    sword = new Sword(owner->GetGame());
 }
 
 void PlayerMove::Update(float deltaTime)
@@ -29,9 +34,46 @@ void PlayerMove::Update(float deltaTime)
     //Update the players movement
     mPlayer->SetPosition(mPlayer->GetPosition() + (playerDir * mVelocity * deltaTime));
     
-    //Check if Link collides with objects
+    //Update Attack cooldown if attack is in progress
+    if (attackCooldown >= 0.0f)
+    {
+        attackCooldown += deltaTime;
+    }
+    
+    //Check the swords position and collision component
+    setSwordPos();
+    
+    //Check if Link collides with enemies
     Vector2 tempPos = mPlayer->GetPosition();
     CollSide onObject = CollSide::None;
+    for (EnemyComponent* enemy : mOwner->GetGame()->GetEnemyComponentVector())
+    {
+        //Check if the player has an active attack
+        if (attackCooldown < 0.25f)
+        {
+            //Test whether the Sword intersects with that enemy, and if it does, call TakeDamage
+            if (enemy->GetCollisionComponent()->Intersect(sword->collisionComponent))
+            {
+                enemy->TakeDamage();
+            }
+        }
+        
+        Vector2 offSet {0.0f, 0.0f};
+        onObject = ownerCollisionComponent->GetMinOverlap(enemy->GetCollisionComponent(), offSet);
+
+        if (onObject != CollSide::None)
+        {
+            //Add offset to temPos
+            tempPos += offSet;
+            
+            //Call setPosition
+            mOwner->SetPosition(tempPos);
+        }
+    }
+    
+    //Check if Link collides with objects
+    tempPos = mPlayer->GetPosition();
+    onObject = CollSide::None;
     for (Collider* collider : mOwner->GetGame()->GetColliderVector())
     {
         Vector2 offSet {0.0f, 0.0f};
@@ -58,25 +100,36 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     //Assume player is moving for right now (If one of the movement keys aren't pressed, then set to false)
     isMoving = true;
 
-    if (keyboardState[SDL_SCANCODE_DOWN])
+    if (keyboardState[SDL_SCANCODE_SPACE] && isSpacePressed == false && attackCooldown > 0.25)
+    {
+        playerDir.x = 0.0f;
+        playerDir.y = 0.0f;
+        
+        //Call ResetAnimTimer on the AnimatedSprite to ensure the attack animation will always start on the first frame
+        mPlayer->spriteComponent->ResetAnimTimer();
+        
+        //Set attack cooldown to 0 to start its phase
+        attackCooldown = 0.0f;
+    }
+    else if (keyboardState[SDL_SCANCODE_DOWN] && attackCooldown > 0.25f)
     {
         playerDir.x = 0.0f;
         playerDir.y = 1.0f;
         playerState = Direction::down;
     }
-    else if (keyboardState[SDL_SCANCODE_UP])
+    else if (keyboardState[SDL_SCANCODE_UP] && attackCooldown > 0.25f)
     {
         playerDir.x = 0.0f;
         playerDir.y = -1.0f;
         playerState = Direction::up;
     }
-    else if (keyboardState[SDL_SCANCODE_LEFT])
+    else if (keyboardState[SDL_SCANCODE_LEFT] && attackCooldown > 0.25f)
     {
         playerDir.x = -1.0f;
         playerDir.y = 0.0f;
         playerState = Direction::left;
     }
-    else if (keyboardState[SDL_SCANCODE_RIGHT])
+    else if (keyboardState[SDL_SCANCODE_RIGHT] && attackCooldown > 0.25f)
     {
         playerDir.x = 1.0f;
         playerDir.y = 0.0f;
@@ -91,6 +144,9 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     
     //Call SetAnim() to play the corresponding animation
     SetAnim();
+    
+    //For the leading edge of Pressing space bar
+    isSpacePressed = keyboardState[SDL_SCANCODE_SPACE];
 }
 
 void PlayerMove::SetAnim()
@@ -99,22 +155,45 @@ void PlayerMove::SetAnim()
     //first determine if player is moving or not
     if (playerDir.x == 0.0f && playerDir.y == 0.0f)
     {
-        //Determine the right animation based off the direction link is facing
-        if (playerState == Direction::up && mPlayer->spriteComponent->GetAnimName() != "StandUp")
+        if (attackCooldown < 0.25f && attackCooldown >= 0.0f)
         {
-            mPlayer->spriteComponent->SetAnimation("StandUp");
+            //Determine the right animation based off the direction link is facing
+            if (playerState == Direction::up && mPlayer->spriteComponent->GetAnimName() != "AttackUp")
+            {
+                mPlayer->spriteComponent->SetAnimation("AttackUp");
+            }
+            else if (playerState == Direction::down && mPlayer->spriteComponent->GetAnimName() != "AttackDown")
+            {
+                mPlayer->spriteComponent->SetAnimation("AttackDown");
+            }
+            else if (playerState == Direction::left && mPlayer->spriteComponent->GetAnimName() != "AttackLeft")
+            {
+                mPlayer->spriteComponent->SetAnimation("AttackLeft");
+            }
+            else if (playerState == Direction::right && mPlayer->spriteComponent->GetAnimName() != "AttackRight")
+            {
+                mPlayer->spriteComponent->SetAnimation("AttackRight");
+            }
         }
-        else if (playerState == Direction::down && mPlayer->spriteComponent->GetAnimName() != "StandDown")
+        else
         {
-            mPlayer->spriteComponent->SetAnimation("StandDown");
-        }
-        else if (playerState == Direction::left && mPlayer->spriteComponent->GetAnimName() != "StandLeft")
-        {
-            mPlayer->spriteComponent->SetAnimation("StandLeft");
-        }
-        else if (playerState == Direction::right && mPlayer->spriteComponent->GetAnimName() != "StandRight")
-        {
-            mPlayer->spriteComponent->SetAnimation("StandRight");
+            //Determine the right animation based off the direction link is facing
+            if (playerState == Direction::up && mPlayer->spriteComponent->GetAnimName() != "StandUp")
+            {
+                mPlayer->spriteComponent->SetAnimation("StandUp");
+            }
+            else if (playerState == Direction::down && mPlayer->spriteComponent->GetAnimName() != "StandDown")
+            {
+                mPlayer->spriteComponent->SetAnimation("StandDown");
+            }
+            else if (playerState == Direction::left && mPlayer->spriteComponent->GetAnimName() != "StandLeft")
+            {
+                mPlayer->spriteComponent->SetAnimation("StandLeft");
+            }
+            else if (playerState == Direction::right && mPlayer->spriteComponent->GetAnimName() != "StandRight")
+            {
+                mPlayer->spriteComponent->SetAnimation("StandRight");
+            }
         }
     }
     else
@@ -136,5 +215,31 @@ void PlayerMove::SetAnim()
         {
             mPlayer->spriteComponent->SetAnimation("WalkRight");
         }
+    }
+}
+
+void PlayerMove::setSwordPos()
+{
+    //Check the swords position and collision component
+    Vector2 tempPos = mPlayer->GetPosition();
+    if (playerState == up)
+    {
+        sword->SetPosition(tempPos + Vector2{0.0f, -40.0f});
+        sword->collisionComponent->SetSize(20.0f, 28.0f);
+    }
+    else if (playerState == down)
+    {
+        sword->SetPosition(tempPos + Vector2{0.0f, 40.0f});
+        sword->collisionComponent->SetSize(20.0f, 28.0f);
+    }
+    else if (playerState == left)
+    {
+        sword->SetPosition(tempPos + Vector2{-32.0f, 0.0f});
+        sword->collisionComponent->SetSize(28.0f, 20.0f);
+    }
+    else if (playerState == right)
+    {
+        sword->SetPosition(tempPos + Vector2{32.0f, 0.0f});
+        sword->collisionComponent->SetSize(28.0f, 20.0f);
     }
 }

@@ -38,15 +38,17 @@ void SoldierAI::Update(float deltaTime)
 {
 	// TODO: Implement
     
-    //Update the soldier's position based on the movement direction, speed, and delta time
-    mOwner->SetPosition(mOwner->GetPosition() + (currDirection * SOLDIER_SPEED * deltaTime));
+    //Make a temp variable for Soldier Position
+    Vector2 tempPos {mOwner->GetPosition()};
     
+    //Update Soldiers Position
+    tempPos += (currDirection * SOLDIER_SPEED * deltaTime);
     
     //Check to see whether the soldier intersects with the next node
-    if (Vector2::Distance(mOwner->GetPosition(), mNext->GetPosition()) <= 1.0f)
+    if (Vector2::Distance(tempPos, mNext->GetPosition()) <= 3.0f)
     {
-        //Set the ghost's position to next node's
-        mOwner->SetPosition(mNext->GetPosition());
+        //Set the Soldier's position to next node's
+        tempPos = mNext->GetPosition();
         
         //If mPath is not empty
         if (!mPath.empty())
@@ -65,10 +67,12 @@ void SoldierAI::Update(float deltaTime)
         {
             Setup(mPatrolEnd, mPatrolStart);
         }
+        
+        //Update direction vector
+        calculateDirection();
     }
-    
-    //Update direction vector
-    calculateDirection();
+
+    mOwner->SetPosition(tempPos);
 }
 
 // This helper is to just debug draw the soldier's path to visualize it

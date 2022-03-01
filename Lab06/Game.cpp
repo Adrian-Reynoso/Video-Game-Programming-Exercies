@@ -451,3 +451,15 @@ void Game::LoadInObjects()
         }
     }
 }
+
+void Game::RemoveEnemyComponent(class EnemyComponent *enemy)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Actor*
+    auto it = std::find(enemyComponentVector.begin(), enemyComponentVector.end(), enemy);
+    
+    //then erase to remove the element the iterator points to
+    if (it != enemyComponentVector.end())
+    {
+        enemyComponentVector.erase(it);
+    }
+}

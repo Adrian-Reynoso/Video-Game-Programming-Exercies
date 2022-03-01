@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "PathNode.h"
 #include "SoldierAI.h"
+#include "EnemyComponent.hpp"
 
 Soldier::Soldier(class Game* game, class PathNode* start, class PathNode* end)
 :Actor(game)
@@ -27,4 +28,8 @@ Soldier::Soldier(class Game* game, class PathNode* start, class PathNode* end)
     //Create a SoldierAI component and call the Setup function on it, passing in the start/end nodes respectively
     soldierAI = new SoldierAI(this);
     soldierAI->Setup(start, end);
+    
+    //Create the enemy component and set it's health to 2
+    enemyComponent = new EnemyComponent(this);
+    enemyComponent->SetEnemyHitPoints(2);
 }

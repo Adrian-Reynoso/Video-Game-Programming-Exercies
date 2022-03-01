@@ -16,8 +16,10 @@ class Bush : public Actor
     public:
         //Constructor
         Bush(class Game* game);
+        ~Bush();
         class SpriteComponent* spriteComponent;
         class CollisionComponent* collisionComponent;
+        class EnemyComponent* enemyComponent;
 };
 
 #endif /* Bush_hpp */
