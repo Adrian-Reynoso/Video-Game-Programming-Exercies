@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "Actor.h"
 #include "SDL2/SDL_mixer.h"
+#include <string>
 
 class Effect : public Actor
 {

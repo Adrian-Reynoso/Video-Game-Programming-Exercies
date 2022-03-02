@@ -10,7 +10,7 @@
 SoldierAI::SoldierAI(Actor* owner)
 :SpriteComponent(owner)
 {
-	
+	SetIsVisible(false); // Uncomment to hide debug paths
     pathFinder = new PathFinder(mOwner->GetGame());
     mSoldier = static_cast<Soldier*>(owner);
 }
