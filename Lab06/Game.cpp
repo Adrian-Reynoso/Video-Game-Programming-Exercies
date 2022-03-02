@@ -214,6 +214,12 @@ void Game::UpdateGame()
     {
         delete tempActors[i];
     }
+    
+    //Check to see if intro music has finished, if it has, then play the looping music
+    if (Mix_Playing(soundMusicLoop1) == false && Mix_Playing(soundMusicLoop2) == false)
+    {
+        soundMusicLoop2 = Mix_PlayChannel(-1, GetSound("Assets/Sounds/MusicLoop.ogg"), -1);
+    }
 
 }
 
@@ -279,6 +285,8 @@ void Game::LoadData()
     //Load in objects with the respective function
     LoadInObjects();
     
+    //"Assets/Sounds/MusicStart.ogg" should play initially (not looping)
+    soundMusicLoop1 = Mix_PlayChannel(-1, GetSound("Assets/Sounds/MusicStart.ogg"), 0);
 }
 
 void Game::UnloadData()

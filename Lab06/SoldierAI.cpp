@@ -10,7 +10,7 @@
 SoldierAI::SoldierAI(Actor* owner)
 :SpriteComponent(owner)
 {
-	//SetIsVisible(false); // Uncomment to hide debug paths
+	
     pathFinder = new PathFinder(mOwner->GetGame());
     mSoldier = static_cast<Soldier*>(owner);
 }
@@ -41,8 +41,26 @@ void SoldierAI::Update(float deltaTime)
     //Make a temp variable for Soldier Position
     Vector2 tempPos {mOwner->GetPosition()};
     
-    //Update Soldiers Position
-    tempPos += (currDirection * SOLDIER_SPEED * deltaTime);
+    //If Soldier is stunned, update stunned counter and set state to paused
+    if (isStunned == true)
+    {
+        stunCounter += deltaTime;
+        mSoldier->spriteComponent->SetIsPaused(true);
+        
+        //Check if stun counter is greateration. If so, reset stun counter, isStunned, and state
+        if (stunCounter > STUN_DURATION)
+        {
+            isStunned = false;
+            stunCounter = 0.0f;
+            mSoldier->spriteComponent->SetIsPaused(false);
+        }
+    }
+    
+    //Update Soldiers Position if not stunned
+    if (isStunned == false)
+    {
+        tempPos += (currDirection * SOLDIER_SPEED * deltaTime);
+    }
     
     //Check to see whether the soldier intersects with the next node
     if (Vector2::Distance(tempPos, mNext->GetPosition()) <= 3.0f)
@@ -143,5 +161,11 @@ void SoldierAI::calculateDirection()
         currDirection.x = 0.0f;
         mSoldier->spriteComponent->SetAnimation("WalkDown");
     }
+}
+
+void SoldierAI::StunSoldier()
+{
+    //Set isStunned to true
+    isStunned = true;
 }
 

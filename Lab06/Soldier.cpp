@@ -12,6 +12,7 @@
 #include "PathNode.h"
 #include "SoldierAI.h"
 #include "EnemyComponent.hpp"
+#include "Effect.hpp"
 
 Soldier::Soldier(class Game* game, class PathNode* start, class PathNode* end)
 :Actor(game)
@@ -32,4 +33,17 @@ Soldier::Soldier(class Game* game, class PathNode* start, class PathNode* end)
     //Create the enemy component and set it's health to 2
     enemyComponent = new EnemyComponent(this);
     enemyComponent->SetEnemyHitPoints(2);
+    
+    enemyComponent->SetOnDamage([this](){
+        //When Damage Occurs pause the movement for 1.0s
+        soldierAI->StunSoldier();
+        
+        //Set up effect with respective parameters
+        effect = new Effect(GetGame(), GetPosition(), "Hit", "Assets/Sounds/EnemyHit.wav");
+    });
+    
+    enemyComponent->SetOnDeath([this](){        
+        //Set up effect with respective parameters
+        effect = new Effect(GetGame(), GetPosition(), "Death", "Assets/Sounds/EnemyDie.wav");
+    });
 }

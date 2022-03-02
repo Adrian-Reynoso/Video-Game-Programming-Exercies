@@ -18,6 +18,8 @@ public:
 	void Update(float deltaTime) override;
 	
 	void Draw(SDL_Renderer* renderer) override;
+    
+    void StunSoldier();
 	
 	// TODO: Add any public functions as needed
 private:
@@ -46,4 +48,6 @@ private:
     class Soldier* mSoldier;
     
     void calculateDirection();
+    bool isStunned = false;
+    float stunCounter = 0.0f;
 };

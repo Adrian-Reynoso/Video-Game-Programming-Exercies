@@ -10,6 +10,8 @@
 #include "SpriteComponent.h"
 #include "Game.h"
 #include "EnemyComponent.hpp"
+#include "PathFinder.h"
+#include "Effect.hpp"
 
 Bush::Bush(class Game* game)
 :Actor(game)
@@ -24,9 +26,23 @@ Bush::Bush(class Game* game)
     //Create the enemy component and set health points to 1
     enemyComponent = new EnemyComponent(this);
     enemyComponent->SetEnemyHitPoints(1);
+    
+    enemyComponent->SetOnDeath([this](){
+        PushOnCallback();
+        
+        //Set up effect with respective parameters
+        effect = new Effect(GetGame(), GetPosition(), "BushDeath", "Assets/Sounds/BushDie.wav");
+    });
 }
 
 Bush::~Bush()
 {
     
+}
+
+void Bush::PushOnCallback()
+{
+    //Call the SetIsBlocked function on the PathFinder, passing in false as the 3rd parameter
+    //The row is the Bush position.y / 32 and the column is the Bush position.x / 32.
+    GetGame()->GetPathFinder()->SetIsBlocked((int)(mPosition.y / 32.0f), (int)(mPosition.x / 32.0f), false);
 }

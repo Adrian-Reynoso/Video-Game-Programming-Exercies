@@ -47,6 +47,21 @@ void EnemyComponent::TakeDamage()
         if (enemyHitPoints == 0)
         {
             mOwner->SetState(ActorState::Destroy);
+            
+            //Call the on death callback
+            if (OnDeath)
+            {
+                OnDeath();
+            }
+        }
+        else
+        {
+            //Call the on damage callback
+            if (OnDamage)
+            {
+                OnDamage();
+            }
         }
     }
 }
+

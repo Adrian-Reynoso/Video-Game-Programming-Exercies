@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "Component.h"
+#include <functional>
 
 class EnemyComponent : public Component
 {
@@ -30,12 +31,22 @@ class EnemyComponent : public Component
             return enemyHitPoints;
         }
         void TakeDamage();
+        void SetOnDamage(std::function<void()> value)
+        {
+            OnDamage = value;
+        }
+        void SetOnDeath(std::function<void()> value)
+        {
+            OnDeath = value;
+        }
     
         
     private:
         class CollisionComponent* collisionComponent;
         int enemyHitPoints;
         float takeDamageCooldown = 1.0f;
+        std::function<void()> OnDamage;
+        std::function<void()> OnDeath;
 };
 
 #endif /* EnemyComponent_hpp */

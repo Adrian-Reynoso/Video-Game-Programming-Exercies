@@ -30,7 +30,8 @@ class Game
         const float SCREENWIDTH = 512.0f;
     
         Mix_Chunk* GetSound(const std::string& filename);
-        int soundMusicLoop;
+        int soundMusicLoop1;
+        int soundMusicLoop2;
     
         //Public Functions for player and camera
         class Player* GetPlayer()

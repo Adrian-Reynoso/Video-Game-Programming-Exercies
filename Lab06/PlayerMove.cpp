@@ -110,6 +110,9 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
         
         //Set attack cooldown to 0 to start its phase
         attackCooldown = 0.0f;
+        
+        //Play Sound effect for attacking
+        Mix_PlayChannel(-1, mOwner->GetGame()->GetSound("Assets/Sounds/SwordSlash.wav"), 0);
     }
     else if (keyboardState[SDL_SCANCODE_DOWN] && attackCooldown > 0.25f)
     {

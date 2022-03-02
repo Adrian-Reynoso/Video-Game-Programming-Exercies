@@ -20,6 +20,7 @@ class Soldier : public Actor
         class CollisionComponent* collisionComponent;
         class SoldierAI* soldierAI;
         class EnemyComponent* enemyComponent;
+        class Effect* effect;
 };
 
 #endif /* Soldier_hpp */

@@ -20,6 +20,8 @@ class Bush : public Actor
         class SpriteComponent* spriteComponent;
         class CollisionComponent* collisionComponent;
         class EnemyComponent* enemyComponent;
+        void PushOnCallback();
+        class Effect* effect;
 };
 
 #endif /* Bush_hpp */
