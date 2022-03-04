@@ -12,6 +12,7 @@
 #include <fstream>
 #include "Renderer.h"
 #include "Random.h"
+#include "Player.hpp"
 
 Game::Game()
 :mIsRunning(true)
@@ -30,7 +31,13 @@ bool Game::Initialize()
 	}
 
 	// TODO: Create renderer
-
+    mRenderer = new Renderer(this);
+    if (!mRenderer->Initialize(WINDOW_WIDTH, WINDOW_HEIGHT))
+    {
+        SDL_Log("Renderer Failed to Initialize");
+        return false;
+    }
+    
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
 	LoadData();
@@ -119,11 +126,21 @@ void Game::UpdateGame()
 void Game::GenerateOutput()
 {
 	// TODO: tell renderer to draw
+    mRenderer->Draw();
 }
 
 void Game::LoadData()
 {
-
+    //Create a player
+    mPlayer = new Player(this);
+    
+    //Initialize the projection matrix and use it in renderer
+    Matrix4 projection = Matrix4::CreatePerspectiveFOV(1.22f, WINDOW_WIDTH, WINDOW_HEIGHT, 10.0f, 10000.0f);
+    mRenderer->SetProjectionMatrix(projection);
+    
+    //Initialize the view matrix and use it in renderer
+    Matrix4 view = Matrix4::CreateLookAt(Vector3{-300, 0, 0}, Vector3{20, 0, 0}, Vector3::UnitZ);
+    mRenderer->SetViewMatrix(view);
 }
 
 void Game::UnloadData()
@@ -170,6 +187,8 @@ void Game::Shutdown()
 	UnloadData();
 	Mix_CloseAudio();
 	// TODO: Delete renderer
+    mRenderer->Shutdown();
+    delete mRenderer;
 	SDL_Quit();
 }
 

@@ -5,7 +5,7 @@ class MoveComponent : public Component
 {
 public:
 	MoveComponent(class Actor* owner);
-
+    
 	// Update the move component
 	void Update(float deltaTime) override;
 	

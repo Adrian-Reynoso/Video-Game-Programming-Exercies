@@ -20,6 +20,16 @@ public:
 	Mix_Chunk* GetSound(const std::string& fileName);
 
 	class Renderer* GetRenderer() {	return mRenderer; }
+    
+    const float WINDOW_WIDTH = 1024.0f;
+    const float WINDOW_HEIGHT = 768.0f;
+    
+    //Getters/Setters
+    class Player* GetPlayer()
+    {
+        return mPlayer;
+    }
+    
 private:
 	void ProcessInput();
 	void UpdateGame();
@@ -36,4 +46,6 @@ private:
 
 	Uint32 mTicksCount = 0;
 	bool mIsRunning;
+    
+    class Player* mPlayer;
 };
