@@ -13,6 +13,7 @@
 #include "Renderer.h"
 #include "Random.h"
 #include "Player.hpp"
+#include "SideBlock.hpp"
 
 Game::Game()
 :mIsRunning(true)
@@ -141,6 +142,7 @@ void Game::LoadData()
     //Initialize the view matrix and use it in renderer
     Matrix4 view = Matrix4::CreateLookAt(Vector3{-300, 0, 0}, Vector3{20, 0, 0}, Vector3::UnitZ);
     mRenderer->SetViewMatrix(view);
+    
 }
 
 void Game::UnloadData()
