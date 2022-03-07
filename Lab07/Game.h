@@ -29,6 +29,18 @@ public:
     {
         return mPlayer;
     }
+    const std::vector<class Block*> &GetBlockVector()
+    {
+        return blockVector;
+    }
+    void AddBlock(class Block* block)
+    {
+        blockVector.push_back(block);
+    }
+    void RemoveBlock(class Block* block);
+    
+    //For loading blocks
+    void LoadBlocks(std::string fileName);
     
 private:
 	void ProcessInput();
@@ -41,6 +53,7 @@ private:
 
 	// All the actors in the game
 	std::vector<class Actor*> mActors;
+    std::vector<class Block*> blockVector;
 
 	class Renderer* mRenderer = nullptr;
 
@@ -48,4 +61,12 @@ private:
 	bool mIsRunning;
     
     class Player* mPlayer;
+    
+    float blockXPos = 1000.0f;
+    int blockFileNumber = 1;
+    std::string stringBlockFileNumber;
+    float spawnCheckpoint = 0.0f;
+    bool randomize = false;
+    
+    
 };

@@ -22,6 +22,7 @@ class PlayerMove : public MoveComponent
     float speed = 400.0f;
     Vector3 velocity {speed, 1.0f, 1.0f};
     Vector3 direction {1.0f, 0.0f, 0.0f};
+    void DestroyExplodingBlock(class Block* block);
     
     
     private:
@@ -34,6 +35,9 @@ class PlayerMove : public MoveComponent
     std::vector<int> sideIndexPattern {0, 1, 2, 0};
     std::vector<int> topIndexPattern {6, 7};
     int indexCounter = 0;
+    bool spaceIsPressed = false;
+    bool gotDamaged = false;
+    class Bullet* bullet;
 
 };
 #endif /* PlayerMove_hpp */

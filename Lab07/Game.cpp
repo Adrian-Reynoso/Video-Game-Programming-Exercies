@@ -14,6 +14,7 @@
 #include "Random.h"
 #include "Player.hpp"
 #include "SideBlock.hpp"
+#include "Block.hpp"
 
 Game::Game()
 :mIsRunning(true)
@@ -122,6 +123,30 @@ void Game::UpdateGame()
 	{
 		delete actor;
 	}
+    
+    //For continusously generating obstacles, check if player position is passed spawnCheckpoint. If so, increment the chekpoint and call loadBlocks
+    if (mPlayer->GetPosition().x >= spawnCheckpoint)
+    {
+        //Call load data with a correct fileName
+        stringBlockFileNumber = std::to_string(blockFileNumber);
+        blockFileNumber++;
+        LoadBlocks("Assets/Blocks/"+ stringBlockFileNumber +".txt");
+        
+        //Increment spawn checkpoint by 1000
+        spawnCheckpoint += 1000.0f;
+        
+        //If blockFileNumber is greater than 20, that means you went through the whole file, so therefore set randomize to true
+        if (blockFileNumber > 20)
+        {
+            randomize = true;
+        }
+        
+        //If randomize is true, do the random calculations here for the next spawned obstacle
+        if (randomize)
+        {
+            blockFileNumber = Random::GetIntRange(1, 20);
+        }
+    }
 }
 
 void Game::GenerateOutput()
@@ -143,6 +168,13 @@ void Game::LoadData()
     Matrix4 view = Matrix4::CreateLookAt(Vector3{-300, 0, 0}, Vector3{20, 0, 0}, Vector3::UnitZ);
     mRenderer->SetViewMatrix(view);
     
+    //Load the first few block obstacles
+    for (int i = 0; i < 3; i++)
+    {
+        stringBlockFileNumber = std::to_string(blockFileNumber);
+        blockFileNumber++;
+        LoadBlocks("Assets/Blocks/"+ stringBlockFileNumber +".txt");
+    }
 }
 
 void Game::UnloadData()
@@ -209,4 +241,67 @@ void Game::RemoveActor(Actor* actor)
 		std::iter_swap(iter, iter2);
 		mActors.pop_back();
 	}
+}
+
+void Game::RemoveBlock(class Block* block)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Actor*
+    auto it = std::find(blockVector.begin(), blockVector.end(), block);
+    
+    //then erase to remove the element the iterator points to
+    if (it != blockVector.end())
+    {
+        blockVector.erase(it);
+    }
+}
+
+//loadBlocks() function implementation
+void Game::LoadBlocks(std::string fileName)
+{
+    //Create your ifstream
+    std::ifstream filein(fileName);
+
+    //Create z position variable
+    float zPos = 237.5 + 25.0f;
+
+    //Make a for-loop that goes through the file and takes each line
+    for (std::string line; std::getline(filein, line); )
+    {
+        //y position for variable
+        float yPos = -237.5 - 25.0f;
+
+        //Add 25 to z position
+        zPos -= 25.0f;
+
+        //goes through the string and, if there is an actor needed to be created, create it
+        for (unsigned long i = 0; i < line.size(); i++)
+        {
+            //Index through line and with if statements see if an actor needs to be created
+
+            //Add 25 to y position
+            yPos += 25.0f;
+
+            //For spawning regular blocks
+            if ((char)line[i] == 'A')
+            {
+                //Call block constructor
+                Block* block = new Block(this, (char)line[i]);
+                block->SetPosition(Vector3(blockXPos, yPos, zPos));
+            }
+
+            //For Spawning Mario
+            if ((char)line[i] == 'B')
+            {
+                //Call block constructor
+                Block* block = new Block(this, (char)line[i]);
+                block->SetPosition(Vector3(blockXPos, yPos, zPos));
+            }
+
+            //If not above, that means its a period
+        }
+    }
+    
+    //Increment xPos by 1000 units to load next obstacle correctly
+    blockXPos += 1000.0f;
+
 }

@@ -21,6 +21,7 @@ class Player : public Actor
         return collisionComponent;
     }
     class PlayerMove* playerMove;
+    int shieldLevel = 3;
     
     private:
     class CollisionComponent* collisionComponent;

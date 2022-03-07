@@ -10,6 +10,9 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "SideBlock.hpp"
+#include "Bullet.hpp"
+#include "CollisionComponent.h"
+#include "Block.hpp"
 
 PlayerMove::PlayerMove(class Player* owner)
 : MoveComponent(owner)
@@ -79,8 +82,43 @@ void PlayerMove::Update(float deltaTime)
         SideBlock* side4 = new SideBlock(mPlayer->GetGame(), topIndexPattern[indexCounter % topIndexPattern.size()]);
         side4->SetPosition(Vector3{lastBlockPosition, 0.0f, 500.0f});
         
-        //Update the index counter
+        //Update the index counter to add variation to wall texture blocks
         indexCounter++;
+    }
+    
+    //Firstly, make gotDamaged == false before we check
+    gotDamaged = false;
+    
+    //If the player collides with any of the blocks, those blocks get destroyed (and exploded)
+    for (Block* block : mPlayer->GetGame()->GetBlockVector())
+    {
+        if (mPlayer->GetCollisionComponent()->Intersect(block->collisionComponent))
+        {
+            //Make gotDamaged == true
+            gotDamaged = true;
+            
+            //Check to see if block is of exploding type. Damage the block respectively
+            if (block->explodingType)
+            {
+                DestroyExplodingBlock(block);
+            }
+            else
+            {
+                block->SetState(ActorState::Destroy);
+            }
+        }
+    }
+    
+    //Check if damaged. If so, decrease shieldLevel
+    if (gotDamaged)
+    {
+        mPlayer->shieldLevel--;
+        
+        //Check if shield Level == 0. If so, pause ship.
+        if (mPlayer->shieldLevel == 0)
+        {
+            mPlayer->SetState(ActorState::Paused);
+        }
     }
 }
 
@@ -126,7 +164,41 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
         }
     }
     
+    //For shooting bullets
+    if (keyboardState[SDL_SCANCODE_SPACE] && !spaceIsPressed)
+    {
+        //Make a bullet set to the ships position
+        bullet = new Bullet(mPlayer->GetGame());
+        bullet->SetPosition(mPlayer->GetPosition());
+    }
+                      
+    //Update bool value for space to take into account lading edges
+    spaceIsPressed = keyboardState[SDL_SCANCODE_SPACE];
+}
+
+void PlayerMove::DestroyExplodingBlock(class Block* block)
+{
+    //Delete the exploding block and all others in a 50 unit radius
+    block->SetState(ActorState::Destroy);
     
+    //Remove the current block from the blockVector so it doesn't intersect with itself
+    mPlayer->GetGame()->RemoveBlock(block);
     
-    
+    //Check if the explosion collides with any other blocks. If so, destroy the blocks
+    for (Block* otherBlock : mPlayer->GetGame()->GetBlockVector())
+    {
+        if (Vector3::Distance(block->GetPosition(), otherBlock->GetPosition()) <= 50.0f)
+        {
+            //Check if the block explosion collided with another exploding type, if so, recurse with the new block
+            if (otherBlock->explodingType)
+            {
+                DestroyExplodingBlock(otherBlock);
+            }
+            else
+            {
+                //If it's not exploding type, then it's regular, so set the state to destroy
+                otherBlock->SetState(ActorState::Destroy);
+            }
+        }
+    }
 }
