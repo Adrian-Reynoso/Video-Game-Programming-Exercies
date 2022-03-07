@@ -42,8 +42,8 @@ class EnemyComponent : public Component
     
         
     private:
-        class CollisionComponent* collisionComponent;
-        int enemyHitPoints;
+        class CollisionComponent* collisionComponent = nullptr;
+        int enemyHitPoints = 0;;
         float takeDamageCooldown = 1.0f;
         std::function<void()> OnDamage;
         std::function<void()> OnDeath;

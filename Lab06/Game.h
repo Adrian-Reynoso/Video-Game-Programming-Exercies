@@ -30,8 +30,8 @@ class Game
         const float SCREENWIDTH = 512.0f;
     
         Mix_Chunk* GetSound(const std::string& filename);
-        int soundMusicLoop1;
-        int soundMusicLoop2;
+        int soundMusicLoop1 = 0;
+        int soundMusicLoop2 = 0;
     
         //Public Functions for player and camera
         class Player* GetPlayer()
@@ -63,13 +63,13 @@ class Game
     
     private:
         //Pointer to window and renderer
-        SDL_Window* windowPtr;
-        SDL_Renderer* rendererPtr;
+        SDL_Window* windowPtr = nullptr;
+        SDL_Renderer* rendererPtr = nullptr;
         bool gameIsRunning = true;
         
         //For Update Game
         float previousFrameTime = 0.0;
-        float deltaTime;
+        float deltaTime = 0;
     
         //Actors
         std::vector<class Actor*> mActors;
@@ -83,7 +83,7 @@ class Game
         std::vector<class SpriteComponent*> spriteCompVector;
     
         //Member variable for player and spawner
-        class Player* player;
+        class Player* player = nullptr;
     
         //For sound effects
         std::unordered_map<std::string, Mix_Chunk*> mSoundMap;
@@ -92,7 +92,7 @@ class Game
         void LoadInObjects();
         std::vector<class Collider*> colliderVector;
     
-        class PathFinder* pathFinder;
+        class PathFinder* pathFinder = nullptr;
     
         //For enemies
         std::vector<class EnemyComponent*> enemyComponentVector;

@@ -49,8 +49,8 @@ class PlayerMove : public MoveComponent
         Direction playerState = Direction::down;
         bool isSpacePressed = false;
         float attackCooldown = 1.0f;
-        class Sword* sword;
-        Vector2 posOfSword;
+        class Sword* sword = nullptr;
+        Vector2 posOfSword {0.0f, 0.0f};
 };
 
 #endif /* PlayerMove_hpp */

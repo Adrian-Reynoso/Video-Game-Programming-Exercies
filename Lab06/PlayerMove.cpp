@@ -100,10 +100,9 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     //Assume player is moving for right now (If one of the movement keys aren't pressed, then set to false)
     isMoving = true;
 
-    if (keyboardState[SDL_SCANCODE_SPACE] && isSpacePressed == false && attackCooldown > 0.25)
+    if (keyboardState[SDL_SCANCODE_SPACE] && !isSpacePressed && attackCooldown > 0.25)
     {
-        playerDir.x = 0.0f;
-        playerDir.y = 0.0f;
+        playerDir.Set(0.0f, 0.0f);
         
         //Call ResetAnimTimer on the AnimatedSprite to ensure the attack animation will always start on the first frame
         mPlayer->spriteComponent->ResetAnimTimer();
@@ -116,32 +115,27 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     }
     else if (keyboardState[SDL_SCANCODE_DOWN] && attackCooldown > 0.25f)
     {
-        playerDir.x = 0.0f;
-        playerDir.y = 1.0f;
+        playerDir.Set(0.0f, 1.0f);
         playerState = Direction::down;
     }
     else if (keyboardState[SDL_SCANCODE_UP] && attackCooldown > 0.25f)
     {
-        playerDir.x = 0.0f;
-        playerDir.y = -1.0f;
+        playerDir.Set(0.0f, -1.0f);
         playerState = Direction::up;
     }
     else if (keyboardState[SDL_SCANCODE_LEFT] && attackCooldown > 0.25f)
     {
-        playerDir.x = -1.0f;
-        playerDir.y = 0.0f;
+        playerDir.Set(-1.0f, 0.0f);
         playerState = Direction::left;
     }
     else if (keyboardState[SDL_SCANCODE_RIGHT] && attackCooldown > 0.25f)
     {
-        playerDir.x = 1.0f;
-        playerDir.y = 0.0f;
+        playerDir.Set(1.0f, 0.0f);
         playerState = Direction::right;
     }
     else
     {
-        playerDir.x = 0.0f;
-        playerDir.y = 0.0f;
+        playerDir.Set(0.0f, 0.0f);
         isMoving = false;
     }
     
@@ -156,65 +150,68 @@ void PlayerMove::SetAnim()
 {
     //Based off the velocity and playerState, play the right animation
     //first determine if player is moving or not
-    if (playerDir.x == 0.0f && playerDir.y == 0.0f)
+    if (!isMoving)
     {
+        //If link is attacking
         if (attackCooldown < 0.25f && attackCooldown >= 0.0f)
         {
             //Determine the right animation based off the direction link is facing
-            if (playerState == Direction::up && mPlayer->spriteComponent->GetAnimName() != "AttackUp")
+            if (playerState == Direction::up)
             {
                 mPlayer->spriteComponent->SetAnimation("AttackUp");
             }
-            else if (playerState == Direction::down && mPlayer->spriteComponent->GetAnimName() != "AttackDown")
+            else if (playerState == Direction::down)
             {
                 mPlayer->spriteComponent->SetAnimation("AttackDown");
             }
-            else if (playerState == Direction::left && mPlayer->spriteComponent->GetAnimName() != "AttackLeft")
+            else if (playerState == Direction::left)
             {
                 mPlayer->spriteComponent->SetAnimation("AttackLeft");
             }
-            else if (playerState == Direction::right && mPlayer->spriteComponent->GetAnimName() != "AttackRight")
+            else if (playerState == Direction::right)
             {
                 mPlayer->spriteComponent->SetAnimation("AttackRight");
             }
         }
+        //If Link is NOT attacking
         else
         {
             //Determine the right animation based off the direction link is facing
-            if (playerState == Direction::up && mPlayer->spriteComponent->GetAnimName() != "StandUp")
+            if (playerState == Direction::up)
             {
                 mPlayer->spriteComponent->SetAnimation("StandUp");
             }
-            else if (playerState == Direction::down && mPlayer->spriteComponent->GetAnimName() != "StandDown")
+            else if (playerState == Direction::down)
             {
                 mPlayer->spriteComponent->SetAnimation("StandDown");
             }
-            else if (playerState == Direction::left && mPlayer->spriteComponent->GetAnimName() != "StandLeft")
+            else if (playerState == Direction::left)
             {
                 mPlayer->spriteComponent->SetAnimation("StandLeft");
             }
-            else if (playerState == Direction::right && mPlayer->spriteComponent->GetAnimName() != "StandRight")
+            else if (playerState == Direction::right)
             {
                 mPlayer->spriteComponent->SetAnimation("StandRight");
             }
         }
     }
+    //If Link is walking
     else
     {
         //Determine the right animation based off the direction link is facing
-        if (playerState == Direction::up && mPlayer->spriteComponent->GetAnimName() != "WalkUp")
+        if (playerState == Direction::up)
         {
             mPlayer->spriteComponent->SetAnimation("WalkUp");
         }
-        else if (playerState == Direction::down && mPlayer->spriteComponent->GetAnimName() != "WalkDown")
+        else if (playerState == Direction::down)
         {
             mPlayer->spriteComponent->SetAnimation("WalkDown");
         }
-        else if (playerState == Direction::left && mPlayer->spriteComponent->GetAnimName() != "WalkLeft")
+        else if (playerState == Direction::left)
         {
             mPlayer->spriteComponent->SetAnimation("WalkLeft");
         }
-        else if (playerState == Direction::right && mPlayer->spriteComponent->GetAnimName() != "WalkRight")
+        else if (playerState == Direction::right)
         {
             mPlayer->spriteComponent->SetAnimation("WalkRight");
         }

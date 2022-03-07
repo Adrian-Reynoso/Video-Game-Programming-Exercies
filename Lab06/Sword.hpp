@@ -16,7 +16,7 @@ class Sword : public Actor
     public:
         //Constructor
         Sword(class Game* game);
-        class CollisionComponent* collisionComponent;
+        class CollisionComponent* collisionComponent = nullptr;
 };
 
 #endif /* Sword_hpp */

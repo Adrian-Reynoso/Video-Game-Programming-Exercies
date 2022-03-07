@@ -18,10 +18,10 @@ class Effect : public Actor
     public:
         //Constructor
         Effect(class Game* game, Vector2 position, std::string animName, std::string soundName);
-        class AnimatedSprite* animatedSprite;
+        class AnimatedSprite* animatedSprite = nullptr;
         void OnUpdate(float deltaTime) override;
     
     private:
-        float lifetime;
+        float lifetime = 0.0f;
 };
 #endif /* Effect_hpp */

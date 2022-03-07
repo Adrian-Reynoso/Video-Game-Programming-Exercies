@@ -16,7 +16,7 @@ class Collider : public Actor
     public:
         //Constructor
         Collider(class Game* game, float width, float height);
-        class CollisionComponent* collisionComponent;
+        class CollisionComponent* collisionComponent = nullptr;
 };
 
 #endif /* Collider_hpp */

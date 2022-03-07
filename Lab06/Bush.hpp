@@ -17,11 +17,11 @@ class Bush : public Actor
         //Constructor
         Bush(class Game* game);
         ~Bush();
-        class SpriteComponent* spriteComponent;
-        class CollisionComponent* collisionComponent;
-        class EnemyComponent* enemyComponent;
+        class SpriteComponent* spriteComponent = nullptr;
+        class CollisionComponent* collisionComponent = nullptr;
+        class EnemyComponent* enemyComponent = nullptr;
         void PushOnCallback();
-        class Effect* effect;
+        class Effect* effect = nullptr;
 };
 
 #endif /* Bush_hpp */

@@ -16,11 +16,11 @@ class Soldier : public Actor
     public:
         //Constructor
         Soldier(class Game* game, class PathNode* start, class PathNode* end);
-        class AnimatedSprite* spriteComponent;
-        class CollisionComponent* collisionComponent;
-        class SoldierAI* soldierAI;
-        class EnemyComponent* enemyComponent;
-        class Effect* effect;
+        class AnimatedSprite* spriteComponent = nullptr;
+        class CollisionComponent* collisionComponent = nullptr;
+        class SoldierAI* soldierAI = nullptr;
+        class EnemyComponent* enemyComponent = nullptr;
+        class Effect* effect = nullptr;
 };
 
 #endif /* Soldier_hpp */

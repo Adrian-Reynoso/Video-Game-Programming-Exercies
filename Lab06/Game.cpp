@@ -216,7 +216,7 @@ void Game::UpdateGame()
     }
     
     //Check to see if intro music has finished, if it has, then play the looping music
-    if (Mix_Playing(soundMusicLoop1) == false && Mix_Playing(soundMusicLoop2) == false)
+    if (!Mix_Playing(soundMusicLoop1) && !Mix_Playing(soundMusicLoop2))
     {
         soundMusicLoop2 = Mix_PlayChannel(-1, GetSound("Assets/Sounds/MusicLoop.ogg"), -1);
     }
@@ -391,6 +391,9 @@ void Game::LoadInObjects()
     //Create your ifstream
     std::ifstream filein("Assets/Map/Objects.csv");
     
+    //Make a variable that will skip the Header line of the CSV file
+    int lineNumber = 0;
+    
     //Make a for-loop that goes through the file and takes each line
     while (filein)
     {
@@ -399,30 +402,40 @@ void Game::LoadInObjects()
         std::getline(filein, line);
         std::vector<std::string> temp;
         
+        //Update lineNumber
+        lineNumber++;
+        
         //Check if string is empty, if so don't try to split it
         if (!line.empty())
         {
             temp = CSVHelper::Split(line);
+            
+            //Declare position variables
+            float tempX;
+            float tempY;
+            float tempWidth;
+            float tempHeight;
+            
+            if (lineNumber != 1)
+            {
+                //Calculate the position
+                tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
+                tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
+                tempWidth = (float)std::stoi(temp[3]);
+                tempHeight = (float)std::stoi(temp[4]);
+            }
             
             //If the object is of type player
             if (temp[0] == "Player")
             {
                 //Create an instance of type player and set it to the right position
                 player = new Player(this);
-                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
-                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
                 player->SetPosition(Vector2{tempX, tempY});
             }
             
             //If the object is of type Collider
             else if (temp[0] == "Collider")
             {
-                //Gather the values necessary for collider and cast them as floating point numbers
-                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
-                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
-                float tempWidth = (float)std::stoi(temp[3]);
-                float tempHeight = (float)std::stoi(temp[4]);
-                
                 //Create an instance of type collider and set it to the right position
                 Collider* tempCollider = new Collider(this, tempWidth, tempHeight);
                 tempCollider->SetPosition(Vector2{tempX, tempY});
@@ -436,8 +449,6 @@ void Game::LoadInObjects()
             {
                 //Create an instance of type Bush and set it to the right position
                 Bush* bush = new Bush(this);
-                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
-                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
                 bush->SetPosition(Vector2{tempX, tempY});
             }
             
@@ -451,8 +462,6 @@ void Game::LoadInObjects()
                 Soldier* soldier = new Soldier(this, start, end);
                 
                 //Fix positioning of the soldier
-                float tempX = (float)std::stoi(temp[1]) + (float)(std::stoi(temp[3])/2);
-                float tempY = (float)std::stoi(temp[2]) + (float)(std::stoi(temp[4])/2);
                 soldier->SetPosition(Vector2{tempX, tempY});
             }
 

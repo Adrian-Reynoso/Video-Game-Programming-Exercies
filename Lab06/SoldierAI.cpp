@@ -17,14 +17,13 @@ SoldierAI::SoldierAI(Actor* owner)
 
 void SoldierAI::Setup(PathNode* start, PathNode* end)
 {
-	// TODO: Implement
     //Set the mPatrolStart and mPatrolEnd member variables to start/end respectively
     mPatrolStart = start;
     mPatrolEnd = end;
     
     //Add a call to CalculatePath to compute the path from mPatrolStart to mPatrolEnd. For the outPath parameter, pass in mPath
-    pathFinder->CalculatePath(mPatrolStart, mPatrolEnd, mPath);
-    
+    mOwner->GetGame()->GetPathFinder()->CalculatePath(mPatrolStart, mPatrolEnd, mPath);
+        
     //Initialize mPrev, mNext, and mPath
     mPrev = mPatrolStart;
     mNext = mPath.back();
@@ -36,13 +35,11 @@ void SoldierAI::Setup(PathNode* start, PathNode* end)
 
 void SoldierAI::Update(float deltaTime)
 {
-	// TODO: Implement
-    
     //Make a temp variable for Soldier Position
     Vector2 tempPos {mOwner->GetPosition()};
     
     //If Soldier is stunned, update stunned counter and set state to paused
-    if (isStunned == true)
+    if (isStunned)
     {
         stunCounter += deltaTime;
         mSoldier->spriteComponent->SetIsPaused(true);
@@ -57,7 +54,7 @@ void SoldierAI::Update(float deltaTime)
     }
     
     //Update Soldiers Position if not stunned
-    if (isStunned == false)
+    if (!isStunned)
     {
         tempPos += (currDirection * SOLDIER_SPEED * deltaTime);
     }

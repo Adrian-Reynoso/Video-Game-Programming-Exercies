@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     bool check = gameVar.Initialize();
     
     //Check if initialize returns true. If so, call RunLoop and Shutdown
-    if (check == true)
+    if (check)
     {
         gameVar.RunLoop();
         gameVar.Shutdown();

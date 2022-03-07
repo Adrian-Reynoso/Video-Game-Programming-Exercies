@@ -11,8 +11,6 @@
 
 bool PathFinder::CalculatePath(class PathNode* start, class PathNode* end, std::vector<class PathNode*>& outPath)
 {
-	// TODO: Implement A* algorithm
-    
     //Make a NodeInfo map that takes the PathNode as the key and the NodeInfo as value
     //as well as an "Open Set" vector that holds all nodes that are open
     std::vector<PathNode*> openSet;

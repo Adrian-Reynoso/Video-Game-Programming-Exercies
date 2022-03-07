@@ -21,7 +21,6 @@ public:
     
     void StunSoldier();
 	
-	// TODO: Add any public functions as needed
 private:
 	// The start path node for the patrol path
 	PathNode* mPatrolStart = nullptr;
@@ -42,10 +41,9 @@ private:
 	// How long the soldier gets stunned when hit
 	const float STUN_DURATION = 1.0f;
 	
-	// TODO: Add any private data/functions as needed
-    class PathFinder* pathFinder;
+    class PathFinder* pathFinder = nullptr;
     Vector2 currDirection {0.0f, 0.0f};
-    class Soldier* mSoldier;
+    class Soldier* mSoldier = nullptr;
     
     void calculateDirection();
     bool isStunned = false;
