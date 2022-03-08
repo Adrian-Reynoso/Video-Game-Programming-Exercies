@@ -175,6 +175,12 @@ void Game::LoadData()
         blockFileNumber++;
         LoadBlocks("Assets/Blocks/"+ stringBlockFileNumber +".txt");
     }
+    
+    //Load in Looping music
+    Mix_PlayChannel(-1, GetSound("Assets/Sounds/Music.ogg"), -1);
+    soundChannel1 = Mix_PlayChannel(-1, GetSound("Assets/Sounds/ShipLoop.ogg"), -1);
+    soundChannel2 = Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/DamageAlert.ogg"), -1);
+    Mix_Pause(soundChannel2);
 }
 
 void Game::UnloadData()

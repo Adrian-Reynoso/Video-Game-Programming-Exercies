@@ -42,6 +42,9 @@ public:
     //For loading blocks
     void LoadBlocks(std::string fileName);
     
+    int soundChannel1 = 0;
+    int soundChannel2 = 0;
+    
 private:
 	void ProcessInput();
 	void UpdateGame();

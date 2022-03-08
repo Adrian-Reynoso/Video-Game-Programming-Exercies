@@ -56,6 +56,7 @@ void Bullet::OnUpdate(float deltaTime)
             {
                 //If so, call the function to destroy exploding blocks
                 DestroyExplodingBlock(block);
+                Mix_PlayChannel(-1, GetGame()->GetSound("Assets/Sounds/BlockExplode.wav"), 0);
             }
             SetState(ActorState::Destroy);
         }

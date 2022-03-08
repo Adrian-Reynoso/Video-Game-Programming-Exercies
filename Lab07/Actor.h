@@ -41,7 +41,7 @@ public:
         //Calculate the x and y components of the vector
         float vX = cos(rotation);
         float vY = sin(rotation);
-        float vZ = 1.0f;
+        float vZ = 0.0f;
         
         //Return vector
         return Vector3(vX, vY, vZ);

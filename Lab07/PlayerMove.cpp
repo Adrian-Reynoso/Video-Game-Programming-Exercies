@@ -161,7 +161,18 @@ void PlayerMove::Update(float deltaTime)
         //Check if shield Level == 0. If so, pause ship.
         if (mPlayer->shieldLevel == 0)
         {
+            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/ShipDie.wav"), 0);
+            Mix_Pause(mPlayer->GetGame()->soundChannel1);
+            Mix_Pause(mPlayer->GetGame()->soundChannel2);
             mPlayer->SetState(ActorState::Paused);
+        }
+        else if (mPlayer->shieldLevel == 1)
+        {
+            Mix_Resume(mPlayer->GetGame()->soundChannel2);
+        }
+        else
+        {
+            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/ShipHit.wav"), 0);
         }
     }
 }
@@ -214,6 +225,7 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
         //Make a bullet set to the ships position
         bullet = new Bullet(mPlayer->GetGame());
         bullet->SetPosition(mPlayer->GetPosition());
+        Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Shoot.wav"), 0);
     }
     
     //For Barrel Roll
@@ -223,10 +235,18 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
         if (mPlayer->shieldLevel < 3)
         {
             mPlayer->shieldLevel++;
+            
+            //Check if shieldLevel is greater than 1, if so halt warning sound
+            if (mPlayer->shieldLevel > 1)
+            {
+                Mix_Pause(mPlayer->GetGame()->soundChannel2);
+            }
         }
         
         //Set isRolling to true
         isRolling = true;
+        
+        Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Boost.wav"), 0);
     }
                       
     //Update bool value for space to take into account lading edges
