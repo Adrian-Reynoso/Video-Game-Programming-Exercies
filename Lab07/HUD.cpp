@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Actor.h"
+#include "Player.hpp"
 
 HUD::HUD(Actor* owner)
 	:UIComponent(owner)
@@ -84,5 +85,5 @@ void HUD::DoABarrelRoll()
 int HUD::GetPlayerHitPoints()
 {
 	// TODO: Fix this so it correctly returns the corrent hit points (0-3)
-	return 3;
+	return mOwner->GetGame()->GetPlayer()->shieldLevel;
 }

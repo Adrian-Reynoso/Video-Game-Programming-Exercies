@@ -27,6 +27,8 @@ public:
 	float GetScale() const { return mScale; }
 	void SetScale(float scale) { mScale = scale; }
 	float GetRotation() const { return mRotation; }
+    float GetRollAngle() const { return mRollAngle; }
+    void SetRollAngle(float rollAngle) { mRollAngle = rollAngle; }
 	void SetRotation(float rotation) { mRotation = rotation; }
     const Matrix4& GetWorldTransform() const { return mWorldTransform; }
     
@@ -39,7 +41,7 @@ public:
         //Calculate the x and y components of the vector
         float vX = cos(rotation);
         float vY = sin(rotation);
-        float vZ = 0.0f;
+        float vZ = 1.0f;
         
         //Return vector
         return Vector3(vX, vY, vZ);
@@ -81,6 +83,7 @@ protected:
 	Vector3 mPosition;
 	float mScale;
 	float mRotation;
+    float mRollAngle = 0.0f;
 	
 	// Components
 	std::vector<class Component*> mComponents;

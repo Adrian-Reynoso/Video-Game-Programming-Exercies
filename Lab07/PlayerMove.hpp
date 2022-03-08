@@ -23,6 +23,7 @@ class PlayerMove : public MoveComponent
     Vector3 velocity {speed, 1.0f, 1.0f};
     Vector3 direction {1.0f, 0.0f, 0.0f};
     void DestroyExplodingBlock(class Block* block);
+    float speedMultiplier = 1.0f;
     
     
     private:
@@ -36,8 +37,13 @@ class PlayerMove : public MoveComponent
     std::vector<int> topIndexPattern {6, 7};
     int indexCounter = 0;
     bool spaceIsPressed = false;
+    bool qIsPressed = false;
+    bool isRolling = false;
     bool gotDamaged = false;
     class Bullet* bullet;
+    float speedCount = 0.0f;
+    float rollCount = 0.0f;
+    float peppyCooldown = 0.0f;
 
 };
 #endif /* PlayerMove_hpp */

@@ -49,10 +49,11 @@ void Actor::Update(float deltaTime)
     //Calculate the worldTransform matrix
     //Create the Scale, Rotation, and Translation Matrices
     Matrix4 scale = Matrix4::CreateScale(mScale);
-    Matrix4 rotation = Matrix4::CreateRotationZ(mRotation);
+    Matrix4 rotationZ = Matrix4::CreateRotationZ(mRotation);
+    Matrix4 rotationX = Matrix4::CreateRotationX(mRollAngle);
     Matrix4 translation = Matrix4::CreateTranslation(mPosition);
     
-    mWorldTransform = scale * rotation * translation;
+    mWorldTransform = scale * rotationZ * rotationX * translation;
 }
 
 void Actor::OnUpdate(float deltaTime)

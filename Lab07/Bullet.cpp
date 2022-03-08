@@ -13,6 +13,7 @@
 #include "Renderer.h"
 #include "Player.hpp"
 #include "Block.hpp"
+#include "PlayerMove.hpp"
 
 Bullet::Bullet(class Game* game)
 : Actor(game)
@@ -35,6 +36,9 @@ Bullet::Bullet(class Game* game)
 
 void Bullet::OnUpdate(float deltaTime)
 {
+    //Update the forward speed of the bullet by multiplying it by the speedMultiplier in playerMove
+    moveComponent->SetForwardSpeed(900.0f * mGame->GetPlayer()->playerMove->speedMultiplier);
+    
     //Check if lifetime + deltaTime is greater than 1. If so, destroy bullet
     lifetime += deltaTime;
     if (lifetime >= 1.0f)

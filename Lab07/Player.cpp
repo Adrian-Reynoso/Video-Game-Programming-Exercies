@@ -11,6 +11,7 @@
 #include "MeshComponent.h"
 #include "CollisionComponent.h"
 #include "PlayerMove.hpp"
+#include "HUD.h"
 
 Player::Player(Game* game)
 : Actor(game)
@@ -28,5 +29,8 @@ Player::Player(Game* game)
     
     //Create Player Move
     playerMove = new PlayerMove(this);
+    
+    //Create a UIComponent
+    hud = new HUD(this);
     
 }

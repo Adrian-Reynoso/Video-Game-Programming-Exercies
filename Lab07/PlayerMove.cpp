@@ -13,6 +13,8 @@
 #include "Bullet.hpp"
 #include "CollisionComponent.h"
 #include "Block.hpp"
+#include "HUD.h"
+#include "Random.h"
 
 PlayerMove::PlayerMove(class Player* owner)
 : MoveComponent(owner)
@@ -40,11 +42,53 @@ PlayerMove::PlayerMove(class Player* owner)
 
 void PlayerMove::Update(float deltaTime)
 {
+    //Add to the speedCount and then check if it's >= 10
+    speedCount += deltaTime;
+    if (speedCount >= 10.0f)
+    {
+        //Reset speed count and increment multiplier by .15
+        speedCount = 0.0f;
+        speedMultiplier += 0.15f;
+    }
+    
+    //For Peppy to say do a barrel roll
+    //First decrement the counter by deltaTime
+    peppyCooldown -= deltaTime;
+    
+    //Check if this cooldown is less than zero and shieldHealth isn't full
+    if (peppyCooldown <= 0.0f && mPlayer->shieldLevel != 3)
+    {
+        //Make Peppy Say the line
+        mPlayer->hud->DoABarrelRoll();
+        
+        //Set the cooldown to a random float between 15 and 25
+        peppyCooldown = Random::GetFloatRange(15.0f, 25.0f);
+    }
+    
+    //Add to the rollCount if ship is rolling
+    if (isRolling)
+    {
+        rollCount += deltaTime;
+        
+        //Check if rollCount is >= 0.5. If so reset rollCount, mRollAngle, and set isRolling to false
+        if (rollCount >= 0.5f)
+        {
+            rollCount = 0.0f;
+            mPlayer->SetRollAngle(0.0f);
+            isRolling = false;
+        }
+        //If not, then update the roll angle
+        else
+        {
+            mPlayer->SetRollAngle(mPlayer->GetRollAngle() + 8.0f * Math::Pi * deltaTime);
+        }
+    }
+    
     //Make a temp variable for the position
     Vector3 tempPos = mPlayer->GetPosition();
     
     //Update the players movement
-    tempPos += (direction * velocity * deltaTime);
+    tempPos += (direction * velocity * speedMultiplier * deltaTime);
     
     //Clamp the ship position so it doesn't go off screen for y and z components
     tempPos.y = Math::Clamp(tempPos.y, -180.0f, 180.0f);
@@ -171,9 +215,23 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
         bullet = new Bullet(mPlayer->GetGame());
         bullet->SetPosition(mPlayer->GetPosition());
     }
+    
+    //For Barrel Roll
+    if (keyboardState[SDL_SCANCODE_Q] && !qIsPressed && !isRolling)
+    {
+        //When the barrel roll starts, regenerate 1 shield level
+        if (mPlayer->shieldLevel < 3)
+        {
+            mPlayer->shieldLevel++;
+        }
+        
+        //Set isRolling to true
+        isRolling = true;
+    }
                       
     //Update bool value for space to take into account lading edges
     spaceIsPressed = keyboardState[SDL_SCANCODE_SPACE];
+    qIsPressed = keyboardState[SDL_SCANCODE_Q];
 }
 
 void PlayerMove::DestroyExplodingBlock(class Block* block)

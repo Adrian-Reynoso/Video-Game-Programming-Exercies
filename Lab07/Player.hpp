@@ -22,6 +22,7 @@ class Player : public Actor
     }
     class PlayerMove* playerMove;
     int shieldLevel = 3;
+    class HUD* hud;
     
     private:
     class CollisionComponent* collisionComponent;
