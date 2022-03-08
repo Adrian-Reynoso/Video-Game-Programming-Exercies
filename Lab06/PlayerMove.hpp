@@ -51,6 +51,9 @@ class PlayerMove : public MoveComponent
         float attackCooldown = 1.0f;
         class Sword* sword = nullptr;
         Vector2 posOfSword {0.0f, 0.0f};
+        class AnimatedSprite* animatedSprite = nullptr;
+        class CollisionComponent* swordCollisionComponent = nullptr;
+        bool attacking = false;
 };
 
 #endif /* PlayerMove_hpp */

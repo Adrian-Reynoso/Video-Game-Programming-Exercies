@@ -24,6 +24,10 @@ PlayerMove::PlayerMove(class Player* owner)
     
     //Create an instance of sword
     sword = new Sword(owner->GetGame());
+    swordCollisionComponent = sword->collisionComponent;
+    
+    //Assign the player animated sprite to our member variable
+    animatedSprite = owner->spriteComponent;
 }
 
 void PlayerMove::Update(float deltaTime)
@@ -52,7 +56,7 @@ void PlayerMove::Update(float deltaTime)
         if (attackCooldown < 0.25f)
         {
             //Test whether the Sword intersects with that enemy, and if it does, call TakeDamage
-            if (enemy->GetCollisionComponent()->Intersect(sword->collisionComponent))
+            if (enemy->GetCollisionComponent()->Intersect(swordCollisionComponent))
             {
                 enemy->TakeDamage();
             }
@@ -94,44 +98,56 @@ void PlayerMove::Update(float deltaTime)
 void PlayerMove::ProcessInput(const Uint8* keyState)
 {
     //Based off the keystate, determine the direction of the our member variable which stores direction
-    //Grab the state of the entire Keyboard
-    const Uint8 *keyboardState = SDL_GetKeyboardState(nullptr);
     
     //Assume player is moving for right now (If one of the movement keys aren't pressed, then set to false)
     isMoving = true;
-
-    if (keyboardState[SDL_SCANCODE_SPACE] && !isSpacePressed && attackCooldown > 0.25)
+    
+    //Check if Link is attacking
+    if (attackCooldown > 0.25)
     {
-        playerDir.Set(0.0f, 0.0f);
-        
-        //Call ResetAnimTimer on the AnimatedSprite to ensure the attack animation will always start on the first frame
-        mPlayer->spriteComponent->ResetAnimTimer();
-        
-        //Set attack cooldown to 0 to start its phase
-        attackCooldown = 0.0f;
-        
-        //Play Sound effect for attacking
-        Mix_PlayChannel(-1, mOwner->GetGame()->GetSound("Assets/Sounds/SwordSlash.wav"), 0);
+        attacking = false;
     }
-    else if (keyboardState[SDL_SCANCODE_DOWN] && attackCooldown > 0.25f)
+    else
     {
-        playerDir.Set(0.0f, 1.0f);
-        playerState = Direction::down;
+        attacking = true;
     }
-    else if (keyboardState[SDL_SCANCODE_UP] && attackCooldown > 0.25f)
+    
+    //Specify direction based off input if link IS NOT attacking
+    if (!attacking && ((keyState[SDL_SCANCODE_SPACE] && !isSpacePressed ) || keyState[SDL_SCANCODE_UP] || keyState[SDL_SCANCODE_DOWN] || keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_RIGHT]))
     {
-        playerDir.Set(0.0f, -1.0f);
-        playerState = Direction::up;
-    }
-    else if (keyboardState[SDL_SCANCODE_LEFT] && attackCooldown > 0.25f)
-    {
-        playerDir.Set(-1.0f, 0.0f);
-        playerState = Direction::left;
-    }
-    else if (keyboardState[SDL_SCANCODE_RIGHT] && attackCooldown > 0.25f)
-    {
-        playerDir.Set(1.0f, 0.0f);
-        playerState = Direction::right;
+        if (keyState[SDL_SCANCODE_SPACE] && !isSpacePressed)
+        {
+            playerDir.Set(0.0f, 0.0f);
+            
+            //Call ResetAnimTimer on the AnimatedSprite to ensure the attack animation will always start on the first frame
+            animatedSprite->ResetAnimTimer();
+            
+            //Set attack cooldown to 0 to start its phase
+            attackCooldown = 0.0f;
+            
+            //Play Sound effect for attacking
+            Mix_PlayChannel(-1, mOwner->GetGame()->GetSound("Assets/Sounds/SwordSlash.wav"), 0);
+        }
+        else if (keyState[SDL_SCANCODE_DOWN])
+        {
+            playerDir.Set(0.0f, 1.0f);
+            playerState = Direction::down;
+        }
+        else if (keyState[SDL_SCANCODE_UP])
+        {
+            playerDir.Set(0.0f, -1.0f);
+            playerState = Direction::up;
+        }
+        else if (keyState[SDL_SCANCODE_LEFT])
+        {
+            playerDir.Set(-1.0f, 0.0f);
+            playerState = Direction::left;
+        }
+        else if (keyState[SDL_SCANCODE_RIGHT])
+        {
+            playerDir.Set(1.0f, 0.0f);
+            playerState = Direction::right;
+        }
     }
     else
     {
@@ -143,7 +159,7 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     SetAnim();
     
     //For the leading edge of Pressing space bar
-    isSpacePressed = keyboardState[SDL_SCANCODE_SPACE];
+    isSpacePressed = keyState[SDL_SCANCODE_SPACE];
 }
 
 void PlayerMove::SetAnim()
@@ -158,19 +174,19 @@ void PlayerMove::SetAnim()
             //Determine the right animation based off the direction link is facing
             if (playerState == Direction::up)
             {
-                mPlayer->spriteComponent->SetAnimation("AttackUp");
+                animatedSprite->SetAnimation("AttackUp");
             }
             else if (playerState == Direction::down)
             {
-                mPlayer->spriteComponent->SetAnimation("AttackDown");
+                animatedSprite->SetAnimation("AttackDown");
             }
             else if (playerState == Direction::left)
             {
-                mPlayer->spriteComponent->SetAnimation("AttackLeft");
+                animatedSprite->SetAnimation("AttackLeft");
             }
             else if (playerState == Direction::right)
             {
-                mPlayer->spriteComponent->SetAnimation("AttackRight");
+                animatedSprite->SetAnimation("AttackRight");
             }
         }
         //If Link is NOT attacking
@@ -179,19 +195,19 @@ void PlayerMove::SetAnim()
             //Determine the right animation based off the direction link is facing
             if (playerState == Direction::up)
             {
-                mPlayer->spriteComponent->SetAnimation("StandUp");
+                animatedSprite->SetAnimation("StandUp");
             }
             else if (playerState == Direction::down)
             {
-                mPlayer->spriteComponent->SetAnimation("StandDown");
+                animatedSprite->SetAnimation("StandDown");
             }
             else if (playerState == Direction::left)
             {
-                mPlayer->spriteComponent->SetAnimation("StandLeft");
+                animatedSprite->SetAnimation("StandLeft");
             }
             else if (playerState == Direction::right)
             {
-                mPlayer->spriteComponent->SetAnimation("StandRight");
+                animatedSprite->SetAnimation("StandRight");
             }
         }
     }
@@ -201,19 +217,19 @@ void PlayerMove::SetAnim()
         //Determine the right animation based off the direction link is facing
         if (playerState == Direction::up)
         {
-            mPlayer->spriteComponent->SetAnimation("WalkUp");
+            animatedSprite->SetAnimation("WalkUp");
         }
         else if (playerState == Direction::down)
         {
-            mPlayer->spriteComponent->SetAnimation("WalkDown");
+            animatedSprite->SetAnimation("WalkDown");
         }
         else if (playerState == Direction::left)
         {
-            mPlayer->spriteComponent->SetAnimation("WalkLeft");
+            animatedSprite->SetAnimation("WalkLeft");
         }
         else if (playerState == Direction::right)
         {
-            mPlayer->spriteComponent->SetAnimation("WalkRight");
+            animatedSprite->SetAnimation("WalkRight");
         }
     }
 }
@@ -225,21 +241,21 @@ void PlayerMove::setSwordPos()
     if (playerState == up)
     {
         sword->SetPosition(tempPos + Vector2{0.0f, -40.0f});
-        sword->collisionComponent->SetSize(20.0f, 28.0f);
+        swordCollisionComponent->SetSize(20.0f, 28.0f);
     }
     else if (playerState == down)
     {
         sword->SetPosition(tempPos + Vector2{0.0f, 40.0f});
-        sword->collisionComponent->SetSize(20.0f, 28.0f);
+        swordCollisionComponent->SetSize(20.0f, 28.0f);
     }
     else if (playerState == left)
     {
         sword->SetPosition(tempPos + Vector2{-32.0f, 0.0f});
-        sword->collisionComponent->SetSize(28.0f, 20.0f);
+        swordCollisionComponent->SetSize(28.0f, 20.0f);
     }
     else if (playerState == right)
     {
         sword->SetPosition(tempPos + Vector2{32.0f, 0.0f});
-        sword->collisionComponent->SetSize(28.0f, 20.0f);
+        swordCollisionComponent->SetSize(28.0f, 20.0f);
     }
 }
