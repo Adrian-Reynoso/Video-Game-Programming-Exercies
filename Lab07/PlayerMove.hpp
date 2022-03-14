@@ -30,13 +30,14 @@ class PlayerMove : public MoveComponent
     void trackBarrelRoll(float deltaTime);
     void loadBlock(float pos1, float pos2, int indexPattern, bool isRotated);
     void isShipDamaged();
+    void damageEffects();
     
     class Player* mPlayer;
     float HDist = 300.0;
     float VDist = 0.0;
     float TargetDist = 20.0;
     float spawnCheckpoint = 0.0f;
-    float lastBlockPosition = 3500.0f;
+    float lastBlockPosition = 0.0f;
     std::vector<int> sideIndexPattern {0, 1, 2, 0};
     std::vector<int> topIndexPattern {6, 7};
     int indexCounter = 0;

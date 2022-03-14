@@ -18,10 +18,9 @@
 Bullet::Bullet(class Game* game)
 : Actor(game)
 {
-    //Set scale of 5.0f
     SetScale(5.0f);
     
-    //Initialize meshComponent and determine what texture it is from the letter being passed in
+    //Initialize meshComponent
     meshComponent = new MeshComponent(this);
     meshComponent->SetMesh(mGame->GetRenderer()->GetMesh("Assets/Laser.gpmesh"));
     
@@ -36,7 +35,7 @@ Bullet::Bullet(class Game* game)
 
 void Bullet::OnUpdate(float deltaTime)
 {
-    //Update the forward speed of the bullet by multiplying it by the speedMultiplier in playerMove
+    //Update the forward speed
     moveComponent->SetForwardSpeed(900.0f * mGame->GetPlayer()->playerMove->GetSpeedMultiplier());
     
     //Check if lifetime + deltaTime is greater than 1. If so, destroy bullet
@@ -51,10 +50,8 @@ void Bullet::OnUpdate(float deltaTime)
     {
         if (collisionComponent->Intersect(block->collisionComponent))
         {
-            //Check if the block that bullet collided with was an exploding type
             if (block->explodingType)
             {
-                //If so, call the function to destroy exploding blocks
                 DestroyExplodingBlock(block);
                 Mix_PlayChannel(-1, GetGame()->GetSound("Assets/Sounds/BlockExplode.wav"), 0);
             }
@@ -68,22 +65,18 @@ void Bullet::DestroyExplodingBlock(class Block* block)
     //Delete the exploding block and all others in a 50 unit radius
     block->SetState(ActorState::Destroy);
     
-    //Remove the current block from the blockVector so it doesn't intersect with itself
     mGame->RemoveBlock(block);
     
-    //Check if the explosion collides with any other blocks. If so, destroy the blocks
     for (Block* otherBlock : GetGame()->GetBlockVector())
     {
         if (Vector3::Distance(block->GetPosition(), otherBlock->GetPosition()) <= 50.0f)
         {
-            //Check if the block explosion collided with another exploding type, if so, recurse with the new block
             if (otherBlock->explodingType)
             {
                 DestroyExplodingBlock(otherBlock);
             }
             else
             {
-                //If it's not exploding type, then it's regular, so set the state to destroy
                 otherBlock->SetState(ActorState::Destroy);
             }
         }

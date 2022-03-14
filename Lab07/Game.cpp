@@ -132,7 +132,6 @@ void Game::UpdateGame()
         blockFileNumber++;
         LoadBlocks("Assets/Blocks/"+ stringBlockFileNumber +".txt");
         
-        //Increment spawn checkpoint by 1000
         spawnCheckpoint += 1000.0f;
         
         //If blockFileNumber is greater than 20, that means you went through the whole file, so therefore set randomize to true
@@ -151,7 +150,6 @@ void Game::UpdateGame()
 
 void Game::GenerateOutput()
 {
-	// TODO: tell renderer to draw
     mRenderer->Draw();
 }
 
@@ -226,7 +224,6 @@ void Game::Shutdown()
 {
 	UnloadData();
 	Mix_CloseAudio();
-	// TODO: Delete renderer
     mRenderer->Shutdown();
     delete mRenderer;
 	SDL_Quit();
@@ -264,27 +261,20 @@ void Game::RemoveBlock(class Block* block)
 //loadBlocks() function implementation
 void Game::LoadBlocks(std::string fileName)
 {
-    //Create your ifstream
     std::ifstream filein(fileName);
 
-    //Create z position variable
     float zPos = 237.5 + 25.0f;
 
     //Make a for-loop that goes through the file and takes each line
     for (std::string line; std::getline(filein, line); )
     {
-        //y position for variable
         float yPos = -237.5 - 25.0f;
 
-        //Add 25 to z position
         zPos -= 25.0f;
 
         //goes through the string and, if there is an actor needed to be created, create it
         for (unsigned long i = 0; i < line.size(); i++)
         {
-            //Index through line and with if statements see if an actor needs to be created
-
-            //Add 25 to y position
             yPos += 25.0f;
 
             //For spawning regular blocks
@@ -295,7 +285,7 @@ void Game::LoadBlocks(std::string fileName)
                 block->SetPosition(Vector3(blockXPos, yPos, zPos));
             }
 
-            //For Spawning Mario
+            //For Spawning Exploding Blocks
             if ((char)line[i] == 'B')
             {
                 //Call block constructor
