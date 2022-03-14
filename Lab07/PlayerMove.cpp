@@ -24,7 +24,7 @@ PlayerMove::PlayerMove(class Player* owner)
     //Initially create blocks up to 3500
     for (int i = 0; i <= 3500; i += 500)
     {
-        lastBlockPosition = i;
+        lastBlockPosition = (float)i;
         
         loadBlock(500.0f, 0.0f, sideIndexPattern[indexCounter % sideIndexPattern.size()], true);
         loadBlock(-500.0f, 0.0f, sideIndexPattern[indexCounter % sideIndexPattern.size()], false);
