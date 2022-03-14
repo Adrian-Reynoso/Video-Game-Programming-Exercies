@@ -52,37 +52,11 @@ void PlayerMove::Update(float deltaTime)
     }
     
     //For Peppy to say do a barrel roll
-    //First decrement the counter by deltaTime
     peppyCooldown -= deltaTime;
+    handlePeppyCooldown();
     
-    //Check if this cooldown is less than zero and shieldHealth isn't full
-    if (peppyCooldown <= 0.0f && mPlayer->shieldLevel != 3)
-    {
-        //Make Peppy Say the line
-        mPlayer->hud->DoABarrelRoll();
-        
-        //Set the cooldown to a random float between 15 and 25
-        peppyCooldown = Random::GetFloatRange(15.0f, 25.0f);
-    }
-    
-    //Add to the rollCount if ship is rolling
-    if (isRolling)
-    {
-        rollCount += deltaTime;
-        
-        //Check if rollCount is >= 0.5. If so reset rollCount, mRollAngle, and set isRolling to false
-        if (rollCount >= 0.5f)
-        {
-            rollCount = 0.0f;
-            mPlayer->SetRollAngle(0.0f);
-            isRolling = false;
-        }
-        //If not, then update the roll angle
-        else
-        {
-            mPlayer->SetRollAngle(mPlayer->GetRollAngle() + 8.0f * Math::Pi * deltaTime);
-        }
-    }
+    //To track if currently in a barrel roll
+    trackBarrelRoll(deltaTime);
     
     //Make a temp variable for the position
     Vector3 tempPos = mPlayer->GetPosition();
@@ -116,65 +90,18 @@ void PlayerMove::Update(float deltaTime)
         
         //Create the blocks +500 the last Block position
         lastBlockPosition += 500;
-        SideBlock* side1 = new SideBlock(mPlayer->GetGame(), sideIndexPattern[indexCounter % sideIndexPattern.size()]);
-        side1->SetPosition(Vector3{lastBlockPosition, 500.0f, 0.0f});
-        side1->SetRotation(Math::Pi);
-        SideBlock* side2 = new SideBlock(mPlayer->GetGame(), sideIndexPattern[indexCounter % sideIndexPattern.size()]);
-        side2->SetPosition(Vector3{lastBlockPosition, -500.0f, 0.0f});
-        SideBlock* side3 = new SideBlock(mPlayer->GetGame(), 5);
-        side3->SetPosition(Vector3{lastBlockPosition, 0.0f, -500.0f});
-        SideBlock* side4 = new SideBlock(mPlayer->GetGame(), topIndexPattern[indexCounter % topIndexPattern.size()]);
-        side4->SetPosition(Vector3{lastBlockPosition, 0.0f, 500.0f});
+        
+        loadBlock(500.0f, 0.0f, sideIndexPattern[indexCounter % sideIndexPattern.size()], true);
+        loadBlock(-500.0f, 0.0f, sideIndexPattern[indexCounter % sideIndexPattern.size()], false);
+        loadBlock(0.0f, -500.0f, 5, false);
+        loadBlock(0.0f, 500.0f, topIndexPattern[indexCounter % topIndexPattern.size()], false);
         
         //Update the index counter to add variation to wall texture blocks
         indexCounter++;
     }
     
-    //Firstly, make gotDamaged == false before we check
-    gotDamaged = false;
-    
-    //If the player collides with any of the blocks, those blocks get destroyed (and exploded)
-    for (Block* block : mPlayer->GetGame()->GetBlockVector())
-    {
-        if (mPlayer->GetCollisionComponent()->Intersect(block->collisionComponent))
-        {
-            //Make gotDamaged == true
-            gotDamaged = true;
-            
-            //Check to see if block is of exploding type. Damage the block respectively
-            if (block->explodingType)
-            {
-                DestroyExplodingBlock(block);
-            }
-            else
-            {
-                block->SetState(ActorState::Destroy);
-            }
-        }
-    }
-    
-    //Check if damaged. If so, decrease shieldLevel
-    if (gotDamaged)
-    {
-        mPlayer->shieldLevel--;
-        
-        //Check if shield Level == 0. If so, pause ship.
-        if (mPlayer->shieldLevel == 0)
-        {
-            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/ShipDie.wav"), 0);
-            Mix_Pause(mPlayer->GetGame()->soundChannel1);
-            Mix_Pause(mPlayer->GetGame()->soundChannel2);
-            mPlayer->SetState(ActorState::Paused);
-        }
-        else if (mPlayer->shieldLevel == 1)
-        {
-            Mix_Resume(mPlayer->GetGame()->soundChannel2);
-        }
-        else
-        {
-            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/ShipHit.wav"), 0);
-        }
-    }
+    //Call function to see if ship has collided with obstacle
+    isShipDamaged();
 }
 
 void PlayerMove::ProcessInput(const Uint8* keyState)
@@ -277,6 +204,106 @@ void PlayerMove::DestroyExplodingBlock(class Block* block)
                 //If it's not exploding type, then it's regular, so set the state to destroy
                 otherBlock->SetState(ActorState::Destroy);
             }
+        }
+    }
+}
+
+void PlayerMove::handlePeppyCooldown()
+{
+    //Check if this cooldown is less than zero and shieldHealth isn't full
+    if (peppyCooldown <= 0.0f && mPlayer->shieldLevel != 3)
+    {
+        //Make Peppy Say the line
+        mPlayer->hud->DoABarrelRoll();
+        
+        //Set the cooldown to a random float between 15 and 25
+        peppyCooldown = Random::GetFloatRange(15.0f, 25.0f);
+    }
+}
+
+void PlayerMove::trackBarrelRoll(float deltaTime)
+{
+    //Add to the rollCount if ship is rolling
+    if (isRolling)
+    {
+        rollCount += deltaTime;
+        
+        //Check if rollCount is >= 0.5. If so reset rollCount, mRollAngle, and set isRolling to false
+        if (rollCount >= 0.5f)
+        {
+            rollCount = 0.0f;
+            mPlayer->SetRollAngle(0.0f);
+            isRolling = false;
+        }
+        //If not, then update the roll angle
+        else
+        {
+            mPlayer->SetRollAngle(mPlayer->GetRollAngle() + 8.0f * Math::Pi * deltaTime);
+        }
+    }
+}
+
+void PlayerMove::loadBlock(float pos1, float pos2, int indexPattern, bool isRotated)
+{
+    //Check which type of sideBlock it is, and to the respective actions
+    SideBlock* sideBlock = new SideBlock(mPlayer->GetGame(), indexPattern);
+    
+    //Set position of block
+    sideBlock->SetPosition(Vector3{lastBlockPosition, pos1, pos2});
+    
+    //Check if needs to be rotated
+    if (isRotated)
+    {
+        sideBlock->SetRotation(Math::Pi);
+    }
+}
+
+void PlayerMove::isShipDamaged()
+{
+    //Firstly, make gotDamaged == false before we check
+    gotDamaged = false;
+    
+    //If the player collides with any of the blocks, those blocks get destroyed (and exploded)
+    for (Block* block : mPlayer->GetGame()->GetBlockVector())
+    {
+        if (mPlayer->GetCollisionComponent()->Intersect(block->collisionComponent))
+        {
+            //Make gotDamaged == true
+            gotDamaged = true;
+            
+            //Check to see if block is of exploding type. Damage the block respectively
+            if (block->explodingType)
+            {
+                DestroyExplodingBlock(block);
+            }
+            else
+            {
+                block->SetState(ActorState::Destroy);
+            }
+        }
+    }
+    
+    //Check if damaged. If so, decrease shieldLevel
+    if (gotDamaged)
+    {
+        mPlayer->shieldLevel--;
+        
+        //Check if shield Level == 0. If so, pause ship.
+        if (mPlayer->shieldLevel == 0)
+        {
+            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/ShipDie.wav"), 0);
+            Mix_Pause(mPlayer->GetGame()->soundChannel1);
+            Mix_Pause(mPlayer->GetGame()->soundChannel2);
+            mPlayer->SetState(ActorState::Paused);
+        }
+        else if (mPlayer->shieldLevel == 1)
+        {
+            Mix_Resume(mPlayer->GetGame()->soundChannel2);
+            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/ShipHit.wav"), 0);
+        }
+        else
+        {
+            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/ShipHit.wav"), 0);
         }
     }
 }

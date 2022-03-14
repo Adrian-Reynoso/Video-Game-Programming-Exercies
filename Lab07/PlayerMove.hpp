@@ -19,14 +19,24 @@ class PlayerMove : public MoveComponent
     PlayerMove(class Player* owner);
     void Update(float deltaTime) override;
     void ProcessInput(const Uint8* keyState) override;
-    float speed = 400.0f;
-    Vector3 velocity {speed, 1.0f, 1.0f};
-    Vector3 direction {1.0f, 0.0f, 0.0f};
-    void DestroyExplodingBlock(class Block* block);
-    float speedMultiplier = 1.0f;
+    float GetSpeedMultiplier()
+    {
+        return speedMultiplier;
+    }
+//    float speed = 400.0f;
+//    Vector3 velocity {speed, 1.0f, 1.0f};
+//    Vector3 direction {1.0f, 0.0f, 0.0f};
+//    void DestroyExplodingBlock(class Block* block);
+//    float speedMultiplier = 1.0f;
     
     
     private:
+    //Private functions for updating game
+    void handlePeppyCooldown();
+    void trackBarrelRoll(float deltaTime);
+    void loadBlock(float pos1, float pos2, int indexPattern, bool isRotated);
+    void isShipDamaged();
+    
     class Player* mPlayer;
     float HDist = 300.0;
     float VDist = 0.0;
@@ -44,6 +54,13 @@ class PlayerMove : public MoveComponent
     float speedCount = 0.0f;
     float rollCount = 0.0f;
     float peppyCooldown = 0.0f;
+    
+    float speed = 400.0f;
+    Vector3 velocity {speed, 1.0f, 1.0f};
+    Vector3 direction {1.0f, 0.0f, 0.0f};
+    void DestroyExplodingBlock(class Block* block);
+    float speedMultiplier = 1.0f;
+
 
 };
 #endif /* PlayerMove_hpp */
