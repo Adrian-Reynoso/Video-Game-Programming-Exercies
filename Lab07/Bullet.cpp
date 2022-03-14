@@ -37,7 +37,7 @@ Bullet::Bullet(class Game* game)
 void Bullet::OnUpdate(float deltaTime)
 {
     //Update the forward speed of the bullet by multiplying it by the speedMultiplier in playerMove
-    moveComponent->SetForwardSpeed(900.0f * mGame->GetPlayer()->playerMove->speedMultiplier);
+    moveComponent->SetForwardSpeed(900.0f * mGame->GetPlayer()->playerMove->GetSpeedMultiplier());
     
     //Check if lifetime + deltaTime is greater than 1. If so, destroy bullet
     lifetime += deltaTime;

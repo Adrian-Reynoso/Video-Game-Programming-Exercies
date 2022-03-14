@@ -23,12 +23,6 @@ class PlayerMove : public MoveComponent
     {
         return speedMultiplier;
     }
-//    float speed = 400.0f;
-//    Vector3 velocity {speed, 1.0f, 1.0f};
-//    Vector3 direction {1.0f, 0.0f, 0.0f};
-//    void DestroyExplodingBlock(class Block* block);
-//    float speedMultiplier = 1.0f;
-    
     
     private:
     //Private functions for updating game
