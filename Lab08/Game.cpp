@@ -13,6 +13,8 @@
 #include "Renderer.h"
 #include "Random.h"
 #include "Player.hpp"
+#include "MeshComponent.h"
+#include "HeightMap.hpp"
 
 Game::Game()
 :mIsRunning(true)
@@ -140,6 +142,15 @@ void Game::LoadData()
     //Initialize the view matrix and use it in renderer
     Matrix4 view = Matrix4::CreateLookAt(Vector3{-300, 0, 0}, Vector3{20, 0, 0}, Vector3::UnitZ);
     mRenderer->SetViewMatrix(view);
+    
+    //Actor and mesh component for track
+    track = new Actor(this);
+    track->SetRotation(Math::Pi);
+    MeshComponent* trackMeshComponent = new MeshComponent(track);
+    trackMeshComponent->SetMesh(mRenderer->GetMesh("Assets/Track.gpmesh"));
+    
+    //For height map
+    heightMap = new HeightMap();
     
 }
 

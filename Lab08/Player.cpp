@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "MeshComponent.h"
 #include "PlayerMove.hpp"
+#include "CameraComponent.hpp"
 
 Player::Player(Game* game)
 : Actor(game)
@@ -24,4 +25,7 @@ Player::Player(Game* game)
     //Create Player Move
     playerMove = new PlayerMove(this);
     
+    //Create a camera component
+    cameraComponent = new CameraComponent(this);
+    cameraComponent->SnapToIdeal();
 }

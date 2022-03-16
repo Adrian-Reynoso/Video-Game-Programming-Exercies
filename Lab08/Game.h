@@ -24,6 +24,8 @@ public:
     const float WINDOW_WIDTH = 1024.0f;
     const float WINDOW_HEIGHT = 768.0f;
     
+    class HeightMap* heightMap;
+    
     //Getters/Setters
     class Player* GetPlayer()
     {
@@ -49,4 +51,5 @@ private:
 	bool mIsRunning;
     
     class Player* mPlayer;
+    class Actor* track;
 };

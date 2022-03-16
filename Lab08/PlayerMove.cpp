@@ -11,15 +11,22 @@
 #include "Renderer.h"
 #include "CollisionComponent.h"
 #include "Random.h"
+#include "HeightMap.hpp"
 
 PlayerMove::PlayerMove(class Player* owner)
-: MoveComponent(owner)
+: VehicleMove(owner)
 {
     mPlayer = owner;
+    
+    //Set the position of mOwner to the result of CellToWorld(39, 58)
+    mOwner->SetPosition(owner->GetGame()->heightMap->CellToWorld(39, 58));
 }
 
 void PlayerMove::Update(float deltaTime)
 {
+    //Call the parent class Update function
+    VehicleMove::Update(deltaTime);
+    
     //Update Position
     Vector3 tempPos = mPlayer->GetPosition();
     
@@ -34,6 +41,33 @@ void PlayerMove::Update(float deltaTime)
 
 void PlayerMove::ProcessInput(const Uint8* keyState)
 {
+    //For Pedal
+    if (keyState[SDL_SCANCODE_W] || keyState[SDL_SCANCODE_UP])
+    {
+        SetPedal(true);
+    }
+    else
+    {
+        SetPedal(false);
+    }
+    
+    //For Turning
+    if ((keyState[SDL_SCANCODE_A] || keyState[SDL_SCANCODE_LEFT]) && (keyState[SDL_SCANCODE_D] || keyState[SDL_SCANCODE_RIGHT]))
+    {
+        SetDirection(None);
+    }
+    else if (keyState[SDL_SCANCODE_A] || keyState[SDL_SCANCODE_LEFT])
+    {
+        SetDirection(Left);
+    }
+    else if (keyState[SDL_SCANCODE_D] || keyState[SDL_SCANCODE_RIGHT])
+    {
+        SetDirection(Right);
+    }
+    else
+    {
+        SetDirection(None);
+    }
 
 }
 

@@ -17,5 +17,6 @@ class Player : public Actor
     Player(class Game* game);
     class MeshComponent* meshComponent;
     class PlayerMove* playerMove;
+    class CameraComponent* cameraComponent;
 };
 #endif /* Player_hpp */

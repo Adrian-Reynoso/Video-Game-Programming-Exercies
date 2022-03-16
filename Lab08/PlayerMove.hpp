@@ -10,10 +10,10 @@
 
 #include <stdio.h>
 #include "Math.h"
-#include "MoveComponent.h"
+#include "VehicleMove.hpp"
 #include <vector>
 
-class PlayerMove : public MoveComponent
+class PlayerMove : public VehicleMove
 {
     public:
     PlayerMove(class Player* owner);
