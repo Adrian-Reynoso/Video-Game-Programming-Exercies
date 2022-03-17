@@ -17,7 +17,7 @@ class HeightMap
 {
 public:
     HeightMap();
-    Vector3 CellToWorld(int row, int column);
+    const Vector3& CellToWorld (int row, int column);
     std::vector<std::vector<int>> intsFromCSV;
     
 private:
@@ -27,6 +27,9 @@ private:
     float cellSize = 40.55f;
     float gridTop = 1280.0f;
     float gridLeft = -1641.0f;
+    
+    Vector3 ifFalse {0.0f, 0.0f, 0.0f};
+    Vector3 returnVector {0.0f, 0.0f, 0.0f};
 };
 
 #endif /* HeightMap_hpp */

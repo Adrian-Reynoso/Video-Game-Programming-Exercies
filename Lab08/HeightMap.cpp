@@ -46,6 +46,11 @@ HeightMap::HeightMap()
     SDL_Log("Vector Column[1]: %i", (int)intsFromCSV[0].size());
     SDL_Log("Vector Column[2]: %i", (int)intsFromCSV[1].size());
     SDL_Log("Value at [2][2]: %i", intsFromCSV[2][2]);
+    
+    SDL_Log("Is spot on track: %i", IsCellOnTrack(39, 58));
+    Vector3 spot {gridTop - cellSize * 39, gridLeft + cellSize * 58, GetHeightFromCell(39, 58)};
+    
+    SDL_Log("X, Y, and Z Positions: %f, %f, %f", spot.x, spot.y, spot.z);
 }
 
 bool HeightMap::IsCellOnTrack(int row, int column)
@@ -59,7 +64,7 @@ bool HeightMap::IsCellOnTrack(int row, int column)
     {
         return false;
     }
-    else if (intsFromCSV[row - 1][column - 1] == -1)
+    else if (intsFromCSV[row][column] == -1)
     {
         return false;
     }
@@ -72,19 +77,24 @@ bool HeightMap::IsCellOnTrack(int row, int column)
 float HeightMap::GetHeightFromCell(int row, int column)
 {
     //Returns a float value corresponding to the height of the cell
-    return -40.0f + intsFromCSV[row-1][column-1] * 5.0f;
+    return -40.0f + intsFromCSV[row][column] * 5.0f;
 }
 
-Vector3 HeightMap::CellToWorld(int row, int column)
+const Vector3& HeightMap::CellToWorld(int row, int column)
 {
     //If the cell is not on the track
     if (IsCellOnTrack(row, column) == false)
     {
-        return Vector3::Zero;
+        return ifFalse;
     }
-    else
-    {
-        //Returns the Vector3 (x, y, z) position corresponding to that cell
-        return Vector3 {gridTop - cellSize * row, gridLeft + cellSize * column, GetHeightFromCell(row, column)};
-    }
+//    else
+//    {
+//        //Returns the Vector3 (x, y, z) position corresponding to that cell
+//        return Vector3 {gridTop - cellSize * row, gridLeft + cellSize * column, GetHeightFromCell(row, column)};
+//    }
+    
+    returnVector.x = gridTop - cellSize * row;
+    returnVector.y = gridLeft + cellSize * column;
+    returnVector.z = GetHeightFromCell(row, column);
+    return returnVector;
 }
