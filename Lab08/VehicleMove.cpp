@@ -44,7 +44,7 @@ void VehicleMove::Update(float deltaTime)
     if (mOwner->GetGame()->heightMap->IsOnTrack(temp2))
     {
         Vector3 newZPos = temp;
-        newZPos.z = mOwner->GetGame()->heightMap->GetHeight(temp2);
+        newZPos.z = (float) mOwner->GetGame()->heightMap->GetHeight(temp2);
         
         mOwner->SetPosition(Vector3::Lerp(temp, newZPos, 0.1f));
     }
