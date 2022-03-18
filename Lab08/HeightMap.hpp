@@ -18,6 +18,9 @@ class HeightMap
 public:
     HeightMap();
     const Vector3& CellToWorld (int row, int column);
+    Vector2 WorldToCell(const Vector2& pos);
+    bool IsOnTrack(const Vector2& pos);
+    int GetHeight(const Vector2& pos);
     std::vector<std::vector<int>> intsFromCSV;
     
 private:

@@ -87,14 +87,40 @@ const Vector3& HeightMap::CellToWorld(int row, int column)
     {
         return ifFalse;
     }
-//    else
-//    {
-//        //Returns the Vector3 (x, y, z) position corresponding to that cell
-//        return Vector3 {gridTop - cellSize * row, gridLeft + cellSize * column, GetHeightFromCell(row, column)};
-//    }
-    
+
     returnVector.x = gridTop - cellSize * row;
     returnVector.y = gridLeft + cellSize * column;
     returnVector.z = GetHeightFromCell(row, column);
     return returnVector;
+}
+
+Vector2 HeightMap::WorldToCell(const Vector2& pos)
+{
+    //Returns the row/col of the cell corresponding to the x, y coordinate
+    Vector2 rowCol;
+    rowCol.x = (Math::Abs(pos.x - gridTop) + cellSize / 2.0f) / cellSize;
+    rowCol.y = (Math::Abs(pos.y - gridLeft) + cellSize / 2.0f) / cellSize;
+    return rowCol;
+}
+
+bool HeightMap::IsOnTrack(const Vector2& pos)
+{
+    //Returns true if the cell of that (x, y) coordinate is on the track, false if not
+    Vector2 temp = WorldToCell(pos);
+    return IsCellOnTrack((int)temp.x, (int)temp.y);
+}
+
+int HeightMap::GetHeight(const Vector2& pos)
+{
+    //Returns the height of the cell at that coordinate, or -1000 if that cell is not on the track
+    Vector2 temp = WorldToCell(pos);
+    
+    if (!IsCellOnTrack((int)temp.x, (int)temp.y))
+    {
+        return -1000;
+    }
+    else
+    {
+        return (int) GetHeightFromCell((int)temp.x, (int)temp.y);
+    }
 }

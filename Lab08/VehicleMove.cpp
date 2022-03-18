@@ -7,6 +7,8 @@
 
 #include "VehicleMove.hpp"
 #include "Actor.h"
+#include "HeightMap.hpp"
+#include "Game.h"
 
 
 VehicleMove::VehicleMove(class Actor* owner)
@@ -36,6 +38,16 @@ void VehicleMove::Update(float deltaTime)
     Vector3 temp = mOwner->GetPosition();
     temp += velocity * deltaTime;
     mOwner->SetPosition(temp);
+    
+    //Check if your (x, y) coordinate is on the track, and if so, set the z-position to the result of GetHeight
+    Vector2 temp2 {temp.x, temp.y};
+    if (mOwner->GetGame()->heightMap->IsOnTrack(temp2))
+    {
+        Vector3 newZPos = temp;
+        newZPos.z = mOwner->GetGame()->heightMap->GetHeight(temp2);
+        
+        mOwner->SetPosition(Vector3::Lerp(temp, newZPos, 0.1f));
+    }
     
     //Apply linear drag to velocity
     if (isPedalPressed)

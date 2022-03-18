@@ -19,9 +19,7 @@ PlayerMove::PlayerMove(class Player* owner)
     mPlayer = owner;
     
     //Set the position of mOwner to the result of CellToWorld(39, 58)
-    mOwner->SetPosition(owner->GetGame()->heightMap->CellToWorld(39, 58));
-//    Vector3 spot {-301.449951f, 710.899902f, -5.000000f};
-//    mOwner->SetPosition(spot);
+    mOwner->SetPosition(mOwner->GetGame()->heightMap->CellToWorld(39, 58));
 }
 
 void PlayerMove::Update(float deltaTime)

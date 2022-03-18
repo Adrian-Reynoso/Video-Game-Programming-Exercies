@@ -132,6 +132,9 @@ void Game::GenerateOutput()
 
 void Game::LoadData()
 {
+    //For height map
+    heightMap = new HeightMap();
+    
     //Create a player
     mPlayer = new Player(this);
     
@@ -148,10 +151,6 @@ void Game::LoadData()
     track->SetRotation(Math::Pi);
     MeshComponent* trackMeshComponent = new MeshComponent(track);
     trackMeshComponent->SetMesh(mRenderer->GetMesh("Assets/Track.gpmesh"));
-    
-    //For height map
-    heightMap = new HeightMap();
-    
 }
 
 void Game::UnloadData()
