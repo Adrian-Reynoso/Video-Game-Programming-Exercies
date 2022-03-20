@@ -52,4 +52,5 @@ private:
     
     class Player* mPlayer;
     class Actor* track;
+    class Enemy* enemy;
 };

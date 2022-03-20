@@ -42,15 +42,6 @@ HeightMap::HeightMap()
         }
     }
     
-    SDL_Log("Vector Rows: %i", (int)intsFromCSV.size());
-    SDL_Log("Vector Column[1]: %i", (int)intsFromCSV[0].size());
-    SDL_Log("Vector Column[2]: %i", (int)intsFromCSV[1].size());
-    SDL_Log("Value at [2][2]: %i", intsFromCSV[2][2]);
-    
-    SDL_Log("Is spot on track: %i", IsCellOnTrack(39, 58));
-    Vector3 spot {gridTop - cellSize * 39, gridLeft + cellSize * 58, GetHeightFromCell(39, 58)};
-    
-    SDL_Log("X, Y, and Z Positions: %f, %f, %f", spot.x, spot.y, spot.z);
 }
 
 bool HeightMap::IsCellOnTrack(int row, int column)

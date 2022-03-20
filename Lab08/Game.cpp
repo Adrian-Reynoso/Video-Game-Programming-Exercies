@@ -15,6 +15,7 @@
 #include "Player.hpp"
 #include "MeshComponent.h"
 #include "HeightMap.hpp"
+#include "Enemy.hpp"
 
 Game::Game()
 :mIsRunning(true)
@@ -137,6 +138,9 @@ void Game::LoadData()
     
     //Create a player
     mPlayer = new Player(this);
+    
+    //Create Enemy
+    enemy = new Enemy(this);
     
     //Initialize the projection matrix and use it in renderer
     Matrix4 projection = Matrix4::CreatePerspectiveFOV(1.22f, WINDOW_WIDTH, WINDOW_HEIGHT, 10.0f, 10000.0f);
