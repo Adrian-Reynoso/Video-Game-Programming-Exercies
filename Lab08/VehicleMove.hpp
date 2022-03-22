@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "Math.h"
 #include "Component.h"
+#include <vector>
 
 class VehicleMove : public Component
 {
@@ -50,6 +51,9 @@ protected:
     float linDragCoeff_NotPressed = 0.975f;
     float angDragCoeff = 0.9f;
     Direction mDirection = Direction::None;
+    std::vector<std::vector<int>> checkpointInfo;
+    int currLap = 0;
+    int lastCheckpoint = -1;
     
 };
 #endif /* VehicleMove_hpp */

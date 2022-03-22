@@ -9,11 +9,42 @@
 #include "Actor.h"
 #include "HeightMap.hpp"
 #include "Game.h"
+#include <fstream>
+#include "CSVHelper.h"
 
 
 VehicleMove::VehicleMove(class Actor* owner)
 : Component(owner, 50)
 {
+    //Load in checkpoints
+    //Create your ifstream
+    std::string fileName = "Assets/HeightMap/Checkpoints.csv";
+    std::ifstream filein(fileName);
+    
+    //Make a for-loop that goes through the file and takes each line
+    while (filein)
+    {
+        //Use the CSVHelper::split function to turn the
+        std::string line;
+        std::getline(filein, line);
+        std::vector<std::string> temp;
+        temp = CSVHelper::Split(line);
+        
+        //Check if string is empty and it's of type Node, if not don't continue
+        if (!line.empty() && temp[0] == "Checkpoint")
+        {
+            //Convert the strings to integer values
+            std::vector<int> temp2;
+            temp2.push_back(std::stoi(temp[1]));
+            temp2.push_back(std::stoi(temp[2]));
+            temp2.push_back(std::stoi(temp[3]));
+            temp2.push_back(std::stoi(temp[4]));
+            
+            //Push the worldspace from the height map to the pointsOnRoute vector
+            checkpointInfo.push_back(temp2);
+            
+        }
+    }
 }
 
 void VehicleMove::Update(float deltaTime)
@@ -76,5 +107,31 @@ void VehicleMove::Update(float deltaTime)
     
     //Apply Angular Drag
     angularVelocity *= angDragCoeff;
+    
+    //Figure out if you made it to the “next” checkpoint
+    HeightMap heightMap;
+    
+    Vector3 pPos = mOwner->GetPosition();
+    Vector2 pPosCell = heightMap.WorldToCell(Vector2{pPos.x, pPos.y});
+    
+    Vector2 minPointCell {(float)checkpointInfo[lastCheckpoint + 1][0], (float) checkpointInfo[lastCheckpoint + 1][2]};
+    Vector2 maxPointCell {(float)checkpointInfo[lastCheckpoint + 1][1], (float)checkpointInfo[lastCheckpoint + 1][3]};
+    
+    if (((int)pPosCell.y <= (int)maxPointCell.y && (int)pPosCell.y >= (int)minPointCell.y) && ((int)pPosCell.x <= (int)maxPointCell.x && (int)pPosCell.x >= (int)minPointCell.x))
+    {
+        lastCheckpoint++;
+        
+        //For wrap around
+        if (lastCheckpoint == (int)checkpointInfo.size() - 1)
+        {
+            lastCheckpoint = -1;
+        }
+        
+        if (lastCheckpoint == 0)
+        {
+            //Increment lap
+            currLap++;
+        }
+    }
     
 }
