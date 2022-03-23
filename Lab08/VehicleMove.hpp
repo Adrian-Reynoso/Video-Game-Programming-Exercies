@@ -37,6 +37,16 @@ public:
     {
         mDirection = direction;
     }
+    virtual void OnLapChange(int newLap) { }
+    int GetCurrLap()
+    {
+        return currLap;
+    }
+    int GetLastCheckpoint()
+    {
+        return lastCheckpoint;
+    }
+    float DistNextCheckpoint();
     
 protected:
     bool isPedalPressed = false;

@@ -12,6 +12,9 @@
 #include "CollisionComponent.h"
 #include "Random.h"
 #include "HeightMap.hpp"
+#include "PlayerUI.h"
+#include "Enemy.hpp"
+#include "EnemyMove.hpp"
 
 PlayerMove::PlayerMove(class Player* owner)
 : VehicleMove(owner)
@@ -69,5 +72,30 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
         SetDirection(None);
     }
 
+}
+
+void PlayerMove::OnLapChange(int newLap)
+{
+    Enemy* enemy = mOwner->GetGame()->GetEnemy();
+
+    if (newLap == 5)
+    {
+        //Determine if player won or enemy won
+        if (newLap > enemy->enemyMove->GetCurrLap())
+        {
+            mPlayer->playerUI->SetRaceState(PlayerUI::Won);
+        }
+        else
+        {
+            mPlayer->playerUI->SetRaceState(PlayerUI::Lost);
+        }
+        
+        mPlayer->SetState(ActorState::Paused);
+        enemy->SetState(ActorState::Paused);
+    }
+    else
+    {
+        mPlayer->playerUI->OnLapChange(newLap);
+    }
 }
 

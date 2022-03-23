@@ -11,6 +11,7 @@
 #include "MeshComponent.h"
 #include "PlayerMove.hpp"
 #include "CameraComponent.hpp"
+#include "PlayerUI.h"
 
 Player::Player(Game* game)
 : Actor(game)
@@ -28,4 +29,9 @@ Player::Player(Game* game)
     //Create a camera component
     cameraComponent = new CameraComponent(this);
     cameraComponent->SnapToIdeal();
+    
+    //Create a player UI
+    playerUI = new PlayerUI(this);
 }
+
+

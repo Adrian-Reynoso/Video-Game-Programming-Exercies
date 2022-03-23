@@ -29,6 +29,6 @@ protected:
 	class Texture* mSecondTexture;
 	int mLapIndex = 0;
 	float mLapDisplayTimer = 0.0f;
-	float mGoDisplayTimer = 0.0f; // TODO: Change to 2.0f when done
+	float mGoDisplayTimer = 2.0f; // TODO: Change to 2.0f when done
 	RaceState mRaceState = Active;
 };

@@ -4,6 +4,11 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Actor.h"
+#include "Enemy.hpp"
+#include "EnemyMove.hpp"
+#include "Player.hpp"
+#include "PlayerMove.hpp"
+
 
 PlayerUI::PlayerUI(Actor* owner)
 	:UIComponent(owner)
@@ -81,6 +86,32 @@ void PlayerUI::OnLapChange(int lapNum)
 bool PlayerUI::IsPlayerInFirst() const
 {
 	// TODO: Implement correctly!!
-	return false;
+    Enemy* enemy = mOwner->GetGame()->GetEnemy();
+    Player* player = mOwner->GetGame()->GetPlayer();
+    
+    //Compare lap numbers
+    if (enemy->enemyMove->GetCurrLap() < player->playerMove->GetCurrLap())
+    {
+        return true;
+    }
+    else if (enemy->enemyMove->GetCurrLap() > player->playerMove->GetCurrLap())
+    {
+        return false;
+    }
+    
+    //Compare checkpoints and distance
+    if ((enemy->enemyMove->GetLastCheckpoint() < player->playerMove->GetLastCheckpoint() && enemy->enemyMove->GetLastCheckpoint() != -1) || (player->playerMove->GetLastCheckpoint() == -1 && enemy->enemyMove->GetLastCheckpoint() != -1))
+    {
+        return true;
+    }
+    else if (enemy->enemyMove->GetLastCheckpoint() == player->playerMove->GetLastCheckpoint())
+    {
+        if (enemy->enemyMove->DistNextCheckpoint() > player->playerMove->DistNextCheckpoint())
+        {
+            return true;
+        }
+    }
+    
+    return false;
 }
 

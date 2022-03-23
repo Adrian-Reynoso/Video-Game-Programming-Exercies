@@ -31,6 +31,10 @@ public:
     {
         return mPlayer;
     }
+    class Enemy* GetEnemy()
+    {
+        return enemy;
+    }
     
 private:
 	void ProcessInput();
@@ -53,4 +57,7 @@ private:
     class Player* mPlayer;
     class Actor* track;
     class Enemy* enemy;
+    
+    float clock = 8.5f;
+    bool gameStarted = false;
 };

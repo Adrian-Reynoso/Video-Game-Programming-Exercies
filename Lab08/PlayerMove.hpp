@@ -19,6 +19,7 @@ class PlayerMove : public VehicleMove
     PlayerMove(class Player* owner);
     void Update(float deltaTime) override;
     void ProcessInput(const Uint8* keyState) override;
+    virtual void OnLapChange(int newLap) override;
     
     private:
     //Private functions for updating game

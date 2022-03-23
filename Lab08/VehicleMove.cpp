@@ -131,7 +131,20 @@ void VehicleMove::Update(float deltaTime)
         {
             //Increment lap
             currLap++;
+            OnLapChange(currLap);
         }
     }
     
+}
+
+float VehicleMove::DistNextCheckpoint()
+{
+    Vector2 minPointCell {(float)checkpointInfo[lastCheckpoint + 1][0], (float) checkpointInfo[lastCheckpoint + 1][2]};
+    Vector2 maxPointCell {(float)checkpointInfo[lastCheckpoint + 1][1], (float)checkpointInfo[lastCheckpoint + 1][3]};
+    
+    //Convert one of them to world position
+    HeightMap heightMap;
+    Vector3 checkpoint = heightMap.CellToWorld((int)minPointCell.x, (int)minPointCell.y);
+    
+    return Vector3::Distance(mOwner->GetPosition(), checkpoint);
 }
