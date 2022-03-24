@@ -35,6 +35,7 @@ public:
     {
         return enemy;
     }
+    int beginningSound;
     
 private:
 	void ProcessInput();

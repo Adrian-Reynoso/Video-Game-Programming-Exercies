@@ -132,6 +132,9 @@ void Game::UpdateGame()
         gameStarted = true;
         enemy->SetState(ActorState::Active);
         mPlayer->SetState(ActorState::Active);
+        
+        //Player Music
+        beginningSound = Mix_PlayChannel(-1, GetSound("Assets/Sounds/Music.ogg"), -1);
     }
 }
 
@@ -164,6 +167,16 @@ void Game::LoadData()
     track->SetRotation(Math::Pi);
     MeshComponent* trackMeshComponent = new MeshComponent(track);
     trackMeshComponent->SetMesh(mRenderer->GetMesh("Assets/Track.gpmesh"));
+    
+    //Call GetSound once for each file in Assets/Sounds
+    GetSound("Assets/Sounds/RaceStart.wav");
+    GetSound("Assets/Sounds/Music.ogg");
+    GetSound("Assets/Sounds/FinalLap.wav");
+    GetSound("Assets/Sounds/MusicFast.ogg");
+    GetSound("Assets/Sounds/Won.wav");
+    GetSound("Assets/Sounds/Lost.wav");
+    
+    Mix_PlayChannel(-1, GetSound("Assets/Sounds/RaceStart.wav"), 0);
 }
 
 void Game::UnloadData()

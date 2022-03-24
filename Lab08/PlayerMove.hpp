@@ -12,6 +12,7 @@
 #include "Math.h"
 #include "VehicleMove.hpp"
 #include <vector>
+#include "SDL2/SDL_mixer.h"
 
 class PlayerMove : public VehicleMove
 {
@@ -33,5 +34,6 @@ class PlayerMove : public VehicleMove
     float speed = 400.0f;
     Vector3 velocity {speed, 1.0f, 1.0f};
     Vector3 direction {1.0f, 0.0f, 0.0f};
+    bool hasPlayedFinal = false;
 };
 #endif /* PlayerMove_hpp */

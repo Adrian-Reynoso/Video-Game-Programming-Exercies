@@ -40,6 +40,16 @@ void PlayerMove::Update(float deltaTime)
     //create Matrix4::CreateLookAt and call on renderer
     Matrix4 lookAt = Matrix4::CreateLookAt(eyePos, targetPos, Vector3::UnitZ);
     mPlayer->GetGame()->GetRenderer()->SetViewMatrix(lookAt);
+    
+    //If it's the final lap
+    if (currLap == 4 && !hasPlayedFinal)
+    {
+        Mix_FadeOutChannel(mPlayer->GetGame()->beginningSound, 250);
+        Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/FinalLap.wav"), 0);
+        mPlayer->GetGame()->beginningSound = Mix_FadeInChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/MusicFast.ogg"), -1, 4000);
+        
+        hasPlayedFinal = true;
+    }
 }
 
 void PlayerMove::ProcessInput(const Uint8* keyState)
@@ -80,14 +90,18 @@ void PlayerMove::OnLapChange(int newLap)
 
     if (newLap == 5)
     {
+        Mix_FadeOutChannel(mPlayer->GetGame()->beginningSound, 250);
+        
         //Determine if player won or enemy won
         if (newLap > enemy->enemyMove->GetCurrLap())
         {
             mPlayer->playerUI->SetRaceState(PlayerUI::Won);
+            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Won.wav"), 0);
         }
         else
         {
             mPlayer->playerUI->SetRaceState(PlayerUI::Lost);
+            Mix_PlayChannel(-1, mPlayer->GetGame()->GetSound("Assets/Sounds/Lost.wav"), 0);
         }
         
         mPlayer->SetState(ActorState::Paused);
