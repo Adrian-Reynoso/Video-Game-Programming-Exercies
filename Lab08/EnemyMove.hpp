@@ -21,6 +21,7 @@ public:
 private:
     int nextTargetIndex = 0;
     float pointThreshold = 60.0f;
-    float turnThreshold = 0.01f;
+    float turnThreshold = 1.0f - 0.01f;
+    float crossProdMin = 0.0f;
 };
 #endif /* EnemyMove_hpp */

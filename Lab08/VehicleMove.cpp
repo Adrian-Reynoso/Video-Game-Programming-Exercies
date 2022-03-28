@@ -49,21 +49,7 @@ VehicleMove::VehicleMove(class Actor* owner)
 
 void VehicleMove::Update(float deltaTime)
 {
-    if (isPedalPressed)
-    {
-        //Update Acceleration time
-        accelerationTracker += deltaTime;
-        
-        //Find acceleration Magnitude and velocity through Euler integreation
-        float temp = Math::Clamp(accelerationTracker / accelRampTime, 0.0f, 1.0f);
-        float accelMagnitude = Math::Lerp(minLinAccelMag, maxLinAccelMag, temp);
-        velocity += mOwner->GetForward() * accelMagnitude * deltaTime;
-    }
-    else
-    {
-        //Reset acceleration time
-        accelerationTracker = 0.0f;
-    }
+    MovingKart(deltaTime);
     
     //Calculate the position
     Vector3 temp = mOwner->GetPosition();
@@ -109,6 +95,24 @@ void VehicleMove::Update(float deltaTime)
     angularVelocity *= angDragCoeff;
     
     //Figure out if you made it to the “next” checkpoint
+    AtNextCheckpoint();
+
+}
+
+float VehicleMove::DistNextCheckpoint()
+{
+    Vector2 minPointCell {(float)checkpointInfo[lastCheckpoint + 1][0], (float) checkpointInfo[lastCheckpoint + 1][2]};
+    Vector2 maxPointCell {(float)checkpointInfo[lastCheckpoint + 1][1], (float)checkpointInfo[lastCheckpoint + 1][3]};
+    
+    //Convert one of them to world position
+    HeightMap heightMap;
+    Vector3 checkpoint = heightMap.CellToWorld((int)minPointCell.x, (int)minPointCell.y);
+    
+    return Vector3::Distance(mOwner->GetPosition(), checkpoint);
+}
+
+void VehicleMove::AtNextCheckpoint()
+{
     HeightMap heightMap;
     
     Vector3 pPos = mOwner->GetPosition();
@@ -134,17 +138,23 @@ void VehicleMove::Update(float deltaTime)
             OnLapChange(currLap);
         }
     }
-    
 }
 
-float VehicleMove::DistNextCheckpoint()
+void VehicleMove::MovingKart(float deltaTime)
 {
-    Vector2 minPointCell {(float)checkpointInfo[lastCheckpoint + 1][0], (float) checkpointInfo[lastCheckpoint + 1][2]};
-    Vector2 maxPointCell {(float)checkpointInfo[lastCheckpoint + 1][1], (float)checkpointInfo[lastCheckpoint + 1][3]};
-    
-    //Convert one of them to world position
-    HeightMap heightMap;
-    Vector3 checkpoint = heightMap.CellToWorld((int)minPointCell.x, (int)minPointCell.y);
-    
-    return Vector3::Distance(mOwner->GetPosition(), checkpoint);
+    if (isPedalPressed)
+    {
+        //Update Acceleration time
+        accelerationTracker += deltaTime;
+        
+        //Find acceleration Magnitude and velocity through Euler integreation
+        float temp = Math::Clamp(accelerationTracker / accelRampTime, 0.0f, 1.0f);
+        float accelMagnitude = Math::Lerp(minLinAccelMag, maxLinAccelMag, temp);
+        velocity += mOwner->GetForward() * accelMagnitude * deltaTime;
+    }
+    else
+    {
+        //Reset acceleration time
+        accelerationTracker = 0.0f;
+    }
 }

@@ -53,9 +53,6 @@ EnemyMove::EnemyMove(Actor* owner)
     //Modify tunable parameters to make Enemy more challenging
     minLinAccelMag = 2750.0f;
     maxLinAccelMag = 3000.0f;
-//    accelRampTime = 1.5f;
-//    angDragCoeff = 0.9f;
-//    linDragCoeff_NotPressed = 0.9f;
 }
 
 void EnemyMove::Update(float deltaTime)
@@ -76,7 +73,7 @@ void EnemyMove::Update(float deltaTime)
     Vector3 v = pointsOnRoute[nextTargetIndex] - mOwner->GetPosition();
     v = Vector3::Normalize(v);
     //If dot product b/w my forward and normalized v is close enough to 1, press the pedal
-    if (Vector3::Dot(mOwner->GetForward(), v) >= 1.0f-turnThreshold)
+    if (Vector3::Dot(mOwner->GetForward(), v) >= turnThreshold)
     {
         SetPedal(true);
     }
@@ -86,7 +83,7 @@ void EnemyMove::Update(float deltaTime)
     }
     
     //Figure out if you think you need to turn, and if so, whether it’s left or right, and set the turn state based on this
-    if (Vector3::Dot(mOwner->GetForward(), v) >= 1.0f-turnThreshold)
+    if (Vector3::Dot(mOwner->GetForward(), v) >= turnThreshold)
     {
         SetDirection(None);
     }
@@ -95,7 +92,7 @@ void EnemyMove::Update(float deltaTime)
         //Do the cross product to determine which direction the kart needs to turn
         Vector3 c = Vector3::Cross(mOwner->GetForward(), v);
         
-        if (c.z >= 0.0f)
+        if (c.z >= crossProdMin)
         {
             SetDirection(Right);
         }

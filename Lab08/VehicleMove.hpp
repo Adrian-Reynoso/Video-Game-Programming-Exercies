@@ -47,6 +47,8 @@ public:
         return lastCheckpoint;
     }
     float DistNextCheckpoint();
+    void AtNextCheckpoint();
+    void MovingKart(float deltaTime);
     
 protected:
     bool isPedalPressed = false;
