@@ -19,15 +19,19 @@ CameraComponent::CameraComponent(class Player* owner)
 void CameraComponent::Update(float deltaTime)
 {    
     //Update Position
-    Vector3 tempPos = mPlayer->GetPosition();
+    Vector3 tempPos = mOwner->GetPosition();
+
+    //Update pitchAngle
+    mPitchAngle += mPitchSpeed * deltaTime;
+    mPitchAngle = Math::Clamp(mPitchAngle, -Math::Pi / 4.0f, Math::Pi / 4.0f);
     
     //Edit the eye position and then use that for the target position
-    Vector3 camForward = Vector3::Transform(Vector3(1.0f, 0.0f, 0.0f), Matrix4::CreateRotationY(0) * Matrix4::CreateRotationZ(0));
+    Vector3 camForward = Vector3::Transform(Vector3(1.0f, 0.0f, 0.0f), Matrix4::CreateRotationY(mPitchAngle) * Matrix4::CreateRotationZ(mOwner->GetRotation()));
     
-    Vector3 targetPos = calcIdealPos() + camForward * 1;
+    Vector3 target = mOwner->GetPosition() + camForward * 10.0f;
     
     //create Matrix4::CreateLookAt and call on renderer
-    Matrix4 lookAt = Matrix4::CreateLookAt(tempPos, targetPos, Vector3::UnitZ);
+    Matrix4 lookAt = Matrix4::CreateLookAt(tempPos, target, Vector3::UnitZ);
     mPlayer->GetGame()->GetRenderer()->SetViewMatrix(lookAt);
 }
 

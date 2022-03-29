@@ -23,7 +23,7 @@ Player::Player(Game* game)
     
     //Create a collision Component
     collisionComponent = new CollisionComponent(this);
-    collisionComponent->SetSize(50, 175, 50);
+    collisionComponent->SetSize(50.0f, 175.0f, 50.0f);
     
 }
 

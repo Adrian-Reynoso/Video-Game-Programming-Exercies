@@ -32,6 +32,20 @@ public:
 	void SetRotation(float rotation) { mRotation = rotation; }
     const Matrix4& GetWorldTransform() const { return mWorldTransform; }
     
+    const Vector3 GetRight() const
+    {
+        //Get the rotation in radians
+        float rotation = GetRotation();
+        
+        //Calculate the x and y components of the vector
+        float vX = cos(rotation + Math::PiOver2);
+        float vY = sin(rotation + Math::PiOver2);
+        float vZ = 0.0f;
+        
+        //Return vector
+        return Vector3(vX, vY, vZ);
+    }
+    
     //Returns the forward direction vector
     const Vector3 GetForward() const
     {

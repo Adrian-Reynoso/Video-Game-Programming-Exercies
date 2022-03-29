@@ -29,5 +29,6 @@ class PlayerMove : public MoveComponent
     float TargetDist = 50.0;
     std::vector<int> sideIndexPattern {0, 1, 2, 0};
     std::vector<int> topIndexPattern {6, 7};
+    float forwardSpeed = 350.0f;
 };
 #endif /* PlayerMove_hpp */

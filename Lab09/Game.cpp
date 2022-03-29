@@ -40,6 +40,11 @@ bool Game::Initialize()
         return false;
     }
     
+    // Enable relative mouse mode
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    // Clear any saved values
+    SDL_GetRelativeMouseState(nullptr, nullptr);
+    
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
 	LoadData();

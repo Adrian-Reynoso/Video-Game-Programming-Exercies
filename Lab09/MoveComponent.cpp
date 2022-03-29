@@ -18,4 +18,8 @@ void MoveComponent::Update(float deltaTime)
     //find velocity
     Vector3 velocity = mOwner->GetForward() * mForwardSpeed;
     mOwner->SetPosition(mOwner->GetPosition() + (velocity * deltaTime));
+    
+    //3.Updates the owning actor’s position based on the owning actor’s right vector
+    velocity = mOwner->GetRight() * mStrafeSpeed;
+    mOwner->SetPosition(mOwner->GetPosition() + (velocity * deltaTime));
 }

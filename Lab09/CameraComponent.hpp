@@ -18,6 +18,8 @@ public:
     CameraComponent(class Player* owner);
     void Update(float deltaTime) override;
     Vector3 calcIdealPos();
+    float GetPitchSpeed() const { return mPitchSpeed; }
+    void SetPitchSpeed(float speed) { mPitchSpeed = speed; }
     
 private:
     class Player* mPlayer;
@@ -30,6 +32,8 @@ private:
     float dampeningConstant = 0.0f;
     Vector3 cameraPosition {0.0f, 0.0f, 0.0f};
     Vector3 cameraVelocity {0.0f, 0.0f, 0.0f};
+    float mPitchAngle = 0.0f;
+    float mPitchSpeed = 0.0f;
 };
 
 #endif /* CameraComponent_hpp */
