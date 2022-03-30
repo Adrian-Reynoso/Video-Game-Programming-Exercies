@@ -24,6 +24,12 @@ class PlayerMove : public MoveComponent
     void UpdateOnGround(float deltaTime);
     void UpdateJump(float deltaTime);
     void UpdateFalling(float deltaTime);
+    void PhysicsUpdate(float deltaTime);
+    void FixXYVelocity();
+    void AddForce(const Vector3& force)
+    {
+        mPendingForces += force;
+    }
     
     enum MoveState
     {
@@ -38,6 +44,11 @@ class PlayerMove : public MoveComponent
     CollSide FixCollision(class CollisionComponent* self, class CollisionComponent* block);
     
     private:
+    bool oppositeSigns(int x, int y)
+    {
+        return ((x ^ y) < 0);
+    }
+    
     //Private functions for updating game
     class Player* mPlayer;
     float HDist = 60.0;
@@ -47,9 +58,16 @@ class PlayerMove : public MoveComponent
     std::vector<int> topIndexPattern {6, 7};
     float forwardSpeed = 350.0f;
     MoveState mCurrentState;
-    float mZSpeed = 0.0f;
-    const float GRAVITY = -980.0f;
-    const float JUMP_SPEED = 500.0f;
+//    float mZSpeed = 0.0f;
+//    const float GRAVITY = -980.0f;
+//    const float JUMP_SPEED = 500.0f;
     bool spaceWasPressed = false;
+    Vector3 mVelocity;
+    Vector3 mAcceleration;
+    Vector3 mPendingForces;
+    float mMass = 1.0f;
+    Vector3 mGravity {0.0f, 0.0f, -980.0f};
+    Vector3 mJumpForce{0.0f, 0.0f, 35000.0f};
+    float maxSpeed = 400.0f;
 };
 #endif /* PlayerMove_hpp */

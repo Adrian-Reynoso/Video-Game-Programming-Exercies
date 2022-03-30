@@ -43,11 +43,11 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     //Forward/Backward
     if (keyState[SDL_SCANCODE_W])
     {
-        SetForwardSpeed(forwardSpeed);
+        AddForce(mOwner->GetForward() * 700.0f);
     }
     else if (keyState[SDL_SCANCODE_S])
     {
-        SetForwardSpeed(forwardSpeed * -1);
+        AddForce(mOwner->GetForward() * -700.0f);
     }
     else if ((keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_S]) ||(!keyState[SDL_SCANCODE_W] && !keyState[SDL_SCANCODE_S]))
     {
@@ -57,11 +57,11 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     //Strafing
     if (keyState[SDL_SCANCODE_D])
     {
-        SetStrafeSpeed(forwardSpeed);
+        AddForce(mOwner->GetRight() * 700.0f);
     }
     else if (keyState[SDL_SCANCODE_A])
     {
-        SetStrafeSpeed(forwardSpeed * -1);
+        AddForce(mOwner->GetRight() * -700.0f);
     }
     else if ((keyState[SDL_SCANCODE_D] && keyState[SDL_SCANCODE_A]) ||(!keyState[SDL_SCANCODE_D] && !keyState[SDL_SCANCODE_A]))
     {
@@ -71,7 +71,7 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     //For jumping
     if (keyState[SDL_SCANCODE_SPACE] && !spaceWasPressed && mCurrentState == OnGround)
     {
-        mZSpeed = JUMP_SPEED;
+        AddForce(mJumpForce);
         ChangeState(Jump);
     }
     
@@ -98,7 +98,7 @@ void PlayerMove::ChangeState(MoveState state)
 
 void PlayerMove::UpdateOnGround(float deltaTime)
 {
-    MoveComponent::Update(deltaTime);
+    PhysicsUpdate(deltaTime);
     
     //Loop over all the blocks in the game and call FixCollision on each
     bool isOnBlock = false;
@@ -122,15 +122,8 @@ void PlayerMove::UpdateOnGround(float deltaTime)
 
 void PlayerMove::UpdateJump(float deltaTime)
 {
-    MoveComponent::Update(deltaTime);
-    
-    //Update mZSpeed based on gravity and delta time
-    mZSpeed += GRAVITY * deltaTime;
-    
-    //Update the owner’s z position based on mZSpeed and delta time
-    Vector3 tempPos = mOwner->GetPosition();
-    tempPos.z += mZSpeed * deltaTime;
-    mOwner->SetPosition(tempPos);
+    AddForce(mGravity);
+    PhysicsUpdate(deltaTime);
     
     //Loop over all the blocks in the game and call FixCollision on each
     for (Actor* obstacle : mOwner->GetGame()->GetBlockVector())
@@ -141,13 +134,13 @@ void PlayerMove::UpdateJump(float deltaTime)
         //If ANY of the FixCollision calls return Top, this means you landed
         if (onBlock == CollSide::Bottom)
         {
-            mZSpeed = 0.0f;
+            mVelocity.z = 0.0f;
             ChangeState(OnGround);
         }
     }
     
     //If the mZSpeed <= 0.0f. If it is, that means you reached the apex of your jump, and should start falling
-    if (mZSpeed <= 0.0f)
+    if (mVelocity.z <= 0.0f)
     {
         ChangeState(Falling);
     }
@@ -155,15 +148,8 @@ void PlayerMove::UpdateJump(float deltaTime)
 
 void PlayerMove::UpdateFalling(float deltaTime)
 {
-    MoveComponent::Update(deltaTime);
-    
-    //Update mZSpeed based on gravity and delta time
-    mZSpeed += GRAVITY * deltaTime;
-    
-    //Update the owner’s z position based on mZSpeed and delta time
-    Vector3 tempPos = mOwner->GetPosition();
-    tempPos.z += mZSpeed * deltaTime;
-    mOwner->SetPosition(tempPos);
+    AddForce(mGravity);
+    PhysicsUpdate(deltaTime);
     
     //Loop over all the blocks in the game and call FixCollision on each
     for (Actor* obstacle : mOwner->GetGame()->GetBlockVector())
@@ -174,7 +160,7 @@ void PlayerMove::UpdateFalling(float deltaTime)
         //If ANY of the FixCollision calls return Top, this means you landed
         if (onBlock == CollSide::Top)
         {
-            mZSpeed = 0.0f;
+            mVelocity.z = 0.0f;
             ChangeState(OnGround);
         }
     }
@@ -199,4 +185,64 @@ CollSide PlayerMove::FixCollision(class CollisionComponent* self, class Collisio
         }
     
     return onBlock;
+}
+
+void PlayerMove::PhysicsUpdate(float deltaTime)
+{
+    //acceleration = Force / mass
+    mAcceleration = mPendingForces * (1.0f / mMass);
+    
+    //Update velocity
+    mVelocity += mAcceleration * deltaTime;
+    
+    //Fix x/y velocity
+    FixXYVelocity();
+    
+    //Update position
+    Vector3 tempPos = mOwner->GetPosition();
+    tempPos += mVelocity * deltaTime;
+    mOwner->SetPosition(tempPos);
+    
+    //Update rotation
+    mOwner->SetRotation(mOwner->GetRotation() + (mAngularSpeed * deltaTime));
+    
+    //Set mPendingForces to Vector3::Zero
+    mPendingForces = Vector3::Zero;
+}
+
+void PlayerMove::FixXYVelocity()
+{
+    Vector2 xyVelocity {mVelocity.x, mVelocity.y};
+    
+    //If the length of xyVelocity is greater than a max speed of 400.0f, you want to change the length of xyVelocity to be exactly max speed
+    float xComp = xyVelocity.x * xyVelocity.x;
+    float yComp = xyVelocity.y * xyVelocity.y;
+    float squareSum = xComp + yComp;
+    squareSum = Math::Sqrt(squareSum);
+    
+    if (squareSum > maxSpeed)
+    {
+        xyVelocity = Vector2::Normalize(xyVelocity);
+        xyVelocity *= maxSpeed;
+    }
+    
+    //If the current state is OnGround, you also need to apply braking
+    if (mCurrentState == OnGround)
+    {
+        //If the x-component of mAcceleration is near zero, multiply xyVelocity.x by a braking factor of 0.9f
+        if (Math::NearZero(mAcceleration.x) || oppositeSigns((int) mAcceleration.x, (int) xyVelocity.x))
+        {
+            xyVelocity.x *= 0.9f;
+        }
+        
+        //Same for y component
+        if (Math::NearZero(mAcceleration.y) || oppositeSigns((int) mAcceleration.y, (int) xyVelocity.y))
+        {
+            xyVelocity.y *= 0.9f;
+        }
+    }
+    
+    //Finally, update mVelocity.x/y to be xyVelocity.x/y
+    mVelocity.x = xyVelocity.x;
+    mVelocity.y = xyVelocity.y;
 }
