@@ -6,8 +6,8 @@
 #include <sstream>
 #include "Actor.h"
 #include "MeshComponent.h"
-#include "Block.h"
-#include "Player.h"
+#include "Block.hpp"
+#include "Player.hpp"
 #include "Game.h"
 
 namespace
@@ -37,6 +37,9 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 		else if (type == "Player")
 		{
 			// TODO: Handle construction of a player!
+            Player* player = new Player(game);
+            actor = player;
+            game->SetPlayer(player);
 		}
 		// TODO: Add else ifs for other actor types
 
