@@ -36,12 +36,10 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 		}
 		else if (type == "Player")
 		{
-			// TODO: Handle construction of a player!
             Player* player = new Player(game);
             actor = player;
             game->SetPlayer(player);
 		}
-		// TODO: Add else ifs for other actor types
 
 		// Set properties of actor
 		if (actor)
@@ -67,7 +65,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			Quaternion q;
 			if (GetQuaternionFromJSON(actorValue, "quat", q))
 			{
-				// TODO: Set actor's quaternion member to q
+                
 			}
 
 			int textureIdx = 0;

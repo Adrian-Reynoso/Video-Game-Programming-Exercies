@@ -32,7 +32,6 @@ bool Game::Initialize()
 		return false;
 	}
 
-	// TODO: Create renderer
     mRenderer = new Renderer(this);
     if (!mRenderer->Initialize(WINDOW_WIDTH, WINDOW_HEIGHT))
     {

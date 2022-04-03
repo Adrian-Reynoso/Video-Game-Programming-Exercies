@@ -59,7 +59,6 @@ CollSide CollisionComponent::GetMinOverlap(
 	const CollisionComponent* other, Vector3& offset)
 {
 	offset = Vector3::Zero;
-	// TODO: Implement
 
     //If they do intersect, the function returns the CollSide that is the minimum overlap side.
     if (Intersect(other))
