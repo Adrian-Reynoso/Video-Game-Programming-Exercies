@@ -45,13 +45,9 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     {
         AddForce(mOwner->GetForward() * 700.0f);
     }
-    else if (keyState[SDL_SCANCODE_S])
+    if (keyState[SDL_SCANCODE_S])
     {
         AddForce(mOwner->GetForward() * -700.0f);
-    }
-    else if ((keyState[SDL_SCANCODE_W] && keyState[SDL_SCANCODE_S]) ||(!keyState[SDL_SCANCODE_W] && !keyState[SDL_SCANCODE_S]))
-    {
-        SetForwardSpeed(0.0f);
     }
     
     //Strafing
@@ -59,20 +55,19 @@ void PlayerMove::ProcessInput(const Uint8* keyState)
     {
         AddForce(mOwner->GetRight() * 700.0f);
     }
-    else if (keyState[SDL_SCANCODE_A])
+    if (keyState[SDL_SCANCODE_A])
     {
         AddForce(mOwner->GetRight() * -700.0f);
-    }
-    else if ((keyState[SDL_SCANCODE_D] && keyState[SDL_SCANCODE_A]) ||(!keyState[SDL_SCANCODE_D] && !keyState[SDL_SCANCODE_A]))
-    {
-        SetStrafeSpeed(0.0f);
-    }
+    } 
     
     //For jumping
-    if (keyState[SDL_SCANCODE_SPACE] && !spaceWasPressed && mCurrentState == OnGround)
+    if ((keyState[SDL_SCANCODE_SPACE] && !spaceWasPressed))
     {
-        AddForce(mJumpForce);
-        ChangeState(Jump);
+        if  (mCurrentState == OnGround)
+        {
+            AddForce(mJumpForce);
+            ChangeState(Jump);
+        }
     }
     
     //Relative Mouse Movement
@@ -114,7 +109,7 @@ void PlayerMove::UpdateOnGround(float deltaTime)
         }
     }
     
-    if (isOnBlock)
+    if (!isOnBlock)
     {
         ChangeState(Falling);
     }
@@ -131,11 +126,10 @@ void PlayerMove::UpdateJump(float deltaTime)
         Block* otherBlock = (Block*) obstacle;
         CollSide onBlock = FixCollision(mPlayer->collisionComponent, otherBlock->collisionComponent);
         
-        //If ANY of the FixCollision calls return Top, this means you landed
+        //If ANY of the FixCollision calls return Bottom, this means you hit your head
         if (onBlock == CollSide::Bottom)
         {
             mVelocity.z = 0.0f;
-            ChangeState(OnGround);
         }
     }
     
@@ -215,12 +209,8 @@ void PlayerMove::FixXYVelocity()
     Vector2 xyVelocity {mVelocity.x, mVelocity.y};
     
     //If the length of xyVelocity is greater than a max speed of 400.0f, you want to change the length of xyVelocity to be exactly max speed
-    float xComp = xyVelocity.x * xyVelocity.x;
-    float yComp = xyVelocity.y * xyVelocity.y;
-    float squareSum = xComp + yComp;
-    squareSum = Math::Sqrt(squareSum);
     
-    if (squareSum > maxSpeed)
+    if (xyVelocity.Length() > maxSpeed)
     {
         xyVelocity = Vector2::Normalize(xyVelocity);
         xyVelocity *= maxSpeed;

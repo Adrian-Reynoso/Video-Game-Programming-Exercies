@@ -21,15 +21,6 @@ class PlayerMove : public MoveComponent
     PlayerMove(class Player* owner);
     void Update(float deltaTime) override;
     void ProcessInput(const Uint8* keyState) override;
-    void UpdateOnGround(float deltaTime);
-    void UpdateJump(float deltaTime);
-    void UpdateFalling(float deltaTime);
-    void PhysicsUpdate(float deltaTime);
-    void FixXYVelocity();
-    void AddForce(const Vector3& force)
-    {
-        mPendingForces += force;
-    }
     
     enum MoveState
     {
@@ -50,6 +41,16 @@ class PlayerMove : public MoveComponent
     }
     
     //Private functions for updating game
+    void UpdateOnGround(float deltaTime);
+    void UpdateJump(float deltaTime);
+    void UpdateFalling(float deltaTime);
+    void PhysicsUpdate(float deltaTime);
+    void FixXYVelocity();
+    void AddForce(const Vector3& force)
+    {
+        mPendingForces += force;
+    }
+    
     class Player* mPlayer;
     float HDist = 60.0;
     float VDist = 70.0;
@@ -58,9 +59,6 @@ class PlayerMove : public MoveComponent
     std::vector<int> topIndexPattern {6, 7};
     float forwardSpeed = 350.0f;
     MoveState mCurrentState;
-//    float mZSpeed = 0.0f;
-//    const float GRAVITY = -980.0f;
-//    const float JUMP_SPEED = 500.0f;
     bool spaceWasPressed = false;
     Vector3 mVelocity;
     Vector3 mAcceleration;
