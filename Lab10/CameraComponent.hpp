@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "Math.h"
 #include "Component.h"
+#include "CollisionComponent.h"
 
 class CameraComponent : public Component
 {
@@ -34,6 +35,10 @@ private:
     Vector3 cameraVelocity {0.0f, 0.0f, 0.0f};
     float mPitchAngle = 0.0f;
     float mPitchSpeed = 0.0f;
+    Vector3 upVector = Vector3::UnitZ;
+    float upVectorAngle = 0.0f;
+    float upVectorSpeed = 3.0f;
+    CollSide runningOn = CollSide::None;
 };
 
 #endif /* CameraComponent_hpp */
