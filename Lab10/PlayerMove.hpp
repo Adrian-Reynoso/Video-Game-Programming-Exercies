@@ -25,6 +25,7 @@ class PlayerMove : public MoveComponent
     void UpdateJump(float deltaTime);
     void UpdateFalling(float deltaTime);
     void UpdateWallClimb(float deltaTime);
+    void UpdateWallRun(float deltaTime);
     void PhysicsUpdate(float deltaTime);
     void FixXYVelocity();
     void AddForce(const Vector3& force)
@@ -37,11 +38,15 @@ class PlayerMove : public MoveComponent
         OnGround,
         Jump,
         Falling,
-        WallClimb
+        WallClimb,
+        WallRun
     };
     
     void ChangeState(MoveState state);
     bool CanWallClimb(CollSide collSide);
+    bool CanWallRun(CollSide collSide);
+    bool isWallRunning = false;
+    CollSide isRunningOn = CollSide::None;
     
     protected:
     CollSide FixCollision(class CollisionComponent* self, class CollisionComponent* block);
@@ -61,9 +66,6 @@ class PlayerMove : public MoveComponent
     std::vector<int> topIndexPattern {6, 7};
     float forwardSpeed = 350.0f;
     MoveState mCurrentState;
-//    float mZSpeed = 0.0f;
-//    const float GRAVITY = -980.0f;
-//    const float JUMP_SPEED = 500.0f;
     bool spaceWasPressed = false;
     Vector3 mVelocity;
     Vector3 mAcceleration;
@@ -73,5 +75,8 @@ class PlayerMove : public MoveComponent
     Vector3 mJumpForce{0.0f, 0.0f, 35000.0f};
     Vector3 wallClimbForce{0.0f, 0.0f, 1800.0f};
     float maxSpeed = 400.0f;
+    float mWallClimbTimer = 0.0f;
+    Vector3 mWallRunForce {0.0f, 0.0f, 1200.0f};
+    float mWallRunTimer = 0.0f;
 };
 #endif /* PlayerMove_hpp */

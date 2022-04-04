@@ -7,6 +7,7 @@
 
 #include "CameraComponent.hpp"
 #include "Player.hpp"
+#include "PlayerMove.hpp"
 #include "Game.h"
 #include "Renderer.h"
 
@@ -30,8 +31,27 @@ void CameraComponent::Update(float deltaTime)
     
     Vector3 target = mOwner->GetPosition() + camForward * 10.0f;
     
+    //Create the up vector as the third parameter for our lookAt Matrix (When wall running)
+    Vector3 upVector;
+    if (mPlayer->playerMove->isWallRunning)
+    {
+        //Check which CollSide player is running on
+        if (mPlayer->playerMove->isRunningOn == CollSide::Front || mPlayer->playerMove->isRunningOn == CollSide::Back)
+        {
+            camForward = Vector3::Transform(Vector3(1.0f, 0.0f, 1.0f), Matrix4::CreateRotationY(Math::PiOver2));
+        }
+        else if (mPlayer->playerMove->isRunningOn == CollSide::Left || mPlayer->playerMove->isRunningOn == CollSide::Right)
+        {
+            camForward = Vector3::Transform(Vector3(0.0f, 1.0f, 1.0f), Matrix4::CreateRotationX(Math::PiOver2));
+        }
+    }
+    else
+    {
+        upVector = Vector3::UnitZ;
+    }
+    
     //create Matrix4::CreateLookAt and call on renderer
-    Matrix4 lookAt = Matrix4::CreateLookAt(tempPos, target, Vector3::UnitZ);
+    Matrix4 lookAt = Matrix4::CreateLookAt(tempPos, target, upVector);
     mPlayer->GetGame()->GetRenderer()->SetViewMatrix(lookAt);
 }
 
