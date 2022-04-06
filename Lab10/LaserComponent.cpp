@@ -50,74 +50,54 @@ void LaserComponent::Update(float deltaTime)
 {
     //Clear out lineSegment Vector
     lineSegmentVector.clear();
-
+    
     //Set the LineSegment member variable’s mStart and mEnd points
     LineSegment lineSegment;
     lineSegment.mStart = mOwner->GetPosition();
     lineSegment.mEnd = lineSegment.mStart + (mOwner->GetQuatForward() * 500.0f);
-
-    //Check if player collides with lineSegment
-    CastInfo castInfo;
-    if (SegmentCast((Actor*)mOwner->GetGame()->GetPlayer(), lineSegment, castInfo))
-    {
-        //Change the line segment’s end point to the mPoint you can get from the CastInfo
-        lineSegment.mEnd = castInfo.mPoint;
-        lineSegmentVector.push_back(lineSegment);
-    }
-    //Check if block collides with lineSegment
-    else if (SegmentCast(mOwner->GetGame()->GetBlockVector(), lineSegment, castInfo))
-    {
-        lineSegment.mEnd = castInfo.mPoint;
-        lineSegmentVector.push_back(lineSegment);
-
-        //Check if block is a mirror to then add ANOTHER line segment
-        Block* currentBlock = reinterpret_cast <Block*>(castInfo.mActor);
-        if (currentBlock->GetIsMirror())
-        {
-            //Make make the new line segment start point mPoint of castInfo
-            LineSegment lineSegment2;
-            lineSegment2.mStart = castInfo.mPoint;
-
-            //Make forward vector reflection of previous forward vector line segment
-            LineSegment prevLineSeg = lineSegmentVector.back();
-            Vector3 prevForward = prevLineSeg.mEnd - prevLineSeg.mStart;
-            prevForward.Normalize(); 
-            Vector3 newDir = Vector3::Reflect(prevForward, castInfo.mNormal);
-            lineSegment2.mEnd = lineSegment2.mStart + (newDir * 500.0f);
-
-            //Push the new lineSegment into the vector
-            lineSegmentVector.push_back(lineSegment2);
-            
-            CastInfo castInfo2;
-            //Do an additional SegmentCast ignoring the block actor
-            if (SegmentCast(mOwner->GetGame()->GetBlockVector(), lineSegment2, castInfo2, currentBlock))
-            {
-                //Check if block is a mirror to then add ANOTHER line segment
-                Block* currentBlock2 = reinterpret_cast <Block*>(castInfo2.mActor);
-                if (currentBlock2->GetIsMirror())
-                {
-                    //Make a new line segment start point mPoint of castInfo
-                    LineSegment lineSegment3;
-                    lineSegment3.mStart = castInfo2.mPoint;
-
-                    //Make forward vector reflection of previous forward vector line segment
-                    prevForward = lineSegment2.mEnd - lineSegment2.mStart;
-                    prevForward.Normalize();
-                    newDir = Vector3::Reflect(prevForward, castInfo2.mNormal);
-                    lineSegment3.mEnd = lineSegment3.mStart + (newDir * 500.0f);
-
-                    //Push the new lineSegment into the vector
-                    lineSegmentVector.push_back(lineSegment3);
-                }
-            }
-
-        }
-    }
-    else
-    {
-        lineSegmentVector.push_back(lineSegment);
-    }
+    Actor* ignoreBlock = NULL;
     
+    do{
+        //Check if player collides with lineSegment
+        CastInfo castInfo;
+        hitMirror = false;
+        if (SegmentCast((Actor*)mOwner->GetGame()->GetPlayer(), lineSegment, castInfo))
+        {
+            //Change the line segment’s end point to the mPoint you can get from the CastInfo
+            lineSegment.mEnd = castInfo.mPoint;
+            lineSegmentVector.push_back(lineSegment);
+        }
+        //Check if block collides with lineSegment
+        else if (SegmentCast(mOwner->GetGame()->GetBlockVector(), lineSegment, castInfo, ignoreBlock))
+        {
+            lineSegment.mEnd = castInfo.mPoint;
+            lineSegmentVector.push_back(lineSegment);
+
+            //Check if block is a mirror to then add ANOTHER line segment
+            Block* currentBlock = reinterpret_cast <Block*>(castInfo.mActor);
+            ignoreBlock = currentBlock;
+            if (currentBlock->GetIsMirror())
+            {
+                //Make make the new line segment start point mPoint of castInfo
+                lineSegment.mStart = castInfo.mPoint;
+
+                //Make forward vector reflection of previous forward vector line segment
+                LineSegment prevLineSeg = lineSegmentVector.back();
+                Vector3 prevForward = prevLineSeg.mEnd - prevLineSeg.mStart;
+                prevForward.Normalize();
+                Vector3 newDir = Vector3::Reflect(prevForward, castInfo.mNormal);
+                lineSegment.mEnd = lineSegment.mStart + (newDir * 500.0f);
+
+                //Push the new lineSegment into the vector
+                hitMirror = true;
+            }
+        }
+        else
+        {
+            lineSegmentVector.push_back(lineSegment);
+        }
+    } while (hitMirror);
+
 }
 
 //Returns a world transform matrix that transforms the red laser mesh to start and end at the desired LineSegment points

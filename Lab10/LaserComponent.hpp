@@ -24,6 +24,5 @@ class LaserComponent : public MeshComponent
     private:
     std::vector<LineSegment> lineSegmentVector;
     bool hitMirror = false;
-    int iteration = 1;
 };
 #endif /* LaserComponent_hpp */
