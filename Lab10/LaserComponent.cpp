@@ -79,31 +79,37 @@ void LaserComponent::Update(float deltaTime)
             lineSegment2.mStart = castInfo.mPoint;
 
             //Make forward vector reflection of previous forward vector line segment
-            Vector3 prevForward = lineSegment.mEnd - lineSegment.mStart;
-            prevForward.Normalize();
+            LineSegment prevLineSeg = lineSegmentVector.back();
+            Vector3 prevForward = prevLineSeg.mEnd - prevLineSeg.mStart;
+            prevForward.Normalize(); 
             Vector3 newDir = Vector3::Reflect(prevForward, castInfo.mNormal);
             lineSegment2.mEnd = lineSegment2.mStart + (newDir * 500.0f);
 
             //Push the new lineSegment into the vector
             lineSegmentVector.push_back(lineSegment2);
             
-//            CastInfo castInfo2;
-//            //Do an additional SegmentCast ignoring the block actor
-//            if (SegmentCast(mOwner->GetGame()->GetBlockVector(), lineSegment, castInfo2, currentBlock))
-//            {
-//                //Make a new line segment start point mPoint of castInfo
-//                LineSegment lineSegment3;
-//                lineSegment3.mStart = castInfo2.mPoint;
-//
-//                //Make forward vector reflection of previous forward vector line segment
-//                prevForward = lineSegment2.mEnd - lineSegment2.mStart;
-//                prevForward.Normalize();
-//                newDir = Vector3::Reflect(mOwner->GetQuatForward(), castInfo2.mNormal);
-//                lineSegment3.mEnd = lineSegment3.mStart + (newDir * 500.0f);
-//
-//                //Push the new lineSegment into the vector
-//                lineSegmentVector.push_back(lineSegment3);
-//            }
+            CastInfo castInfo2;
+            //Do an additional SegmentCast ignoring the block actor
+            if (SegmentCast(mOwner->GetGame()->GetBlockVector(), lineSegment2, castInfo2, currentBlock))
+            {
+                //Check if block is a mirror to then add ANOTHER line segment
+                Block* currentBlock2 = reinterpret_cast <Block*>(castInfo2.mActor);
+                if (currentBlock2->GetIsMirror())
+                {
+                    //Make a new line segment start point mPoint of castInfo
+                    LineSegment lineSegment3;
+                    lineSegment3.mStart = castInfo2.mPoint;
+
+                    //Make forward vector reflection of previous forward vector line segment
+                    prevForward = lineSegment2.mEnd - lineSegment2.mStart;
+                    prevForward.Normalize();
+                    newDir = Vector3::Reflect(prevForward, castInfo2.mNormal);
+                    lineSegment3.mEnd = lineSegment3.mStart + (newDir * 500.0f);
+
+                    //Push the new lineSegment into the vector
+                    lineSegmentVector.push_back(lineSegment3);
+                }
+            }
 
         }
     }
@@ -124,7 +130,7 @@ Matrix4 LaserComponent::LaserHelper(LineSegment m_lineSegment)
     Matrix4 rotation;
     Vector3 oldFacing = Vector3::UnitX;
     oldFacing.Normalize();
-    Vector3 newFacing = mOwner->GetQuatForward();
+    Vector3 newFacing = m_lineSegment.mEnd - m_lineSegment.mStart;
     newFacing.Normalize();
     
     //Check dot product to see if it's 1 or -1
