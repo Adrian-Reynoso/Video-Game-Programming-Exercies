@@ -51,9 +51,10 @@ void Actor::Update(float deltaTime)
     Matrix4 scale = Matrix4::CreateScale(mScale);
     Matrix4 rotationZ = Matrix4::CreateRotationZ(mRotation);
     Matrix4 rotationX = Matrix4::CreateRotationX(mRollAngle);
+    Matrix4 rotationQ = Matrix4::CreateFromQuaternion(mQuaternion);
     Matrix4 translation = Matrix4::CreateTranslation(mPosition);
     
-    mWorldTransform = scale * rotationZ * rotationX * translation;
+    mWorldTransform = scale * rotationZ * rotationX * rotationQ * translation;
 }
 
 void Actor::OnUpdate(float deltaTime)
@@ -86,4 +87,11 @@ void Actor::AddComponent(Component* c)
 	std::sort(mComponents.begin(), mComponents.end(), [](Component* a, Component* b) {
 		return a->GetUpdateOrder() < b->GetUpdateOrder();
 	});
+}
+
+Vector3 Actor::GetQuatForward()
+{
+    Vector3 forward = Vector3::Transform(Vector3::UnitX, mQuaternion);
+    forward.Normalize();
+    return forward;
 }

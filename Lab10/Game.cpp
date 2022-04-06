@@ -142,7 +142,7 @@ void Game::LoadData()
     mRenderer->SetProjectionMatrix(projection);
     
     //Load the level
-    LevelLoader::Load(this, "Assets/Level03.json");
+    LevelLoader::Load(this, "Assets/Level05.json");
 }
 
 void Game::UnloadData()

@@ -9,6 +9,7 @@
 #define LaserComponent_hpp
 
 #include <stdio.h>
+#include <vector>
 #include "MeshComponent.h"
 #include "SegmentCast.h"
 
@@ -21,6 +22,7 @@ class LaserComponent : public MeshComponent
     Matrix4 LaserHelper(LineSegment lineSegement);
     
     private:
-    LineSegment lineSegment;
+    std::vector<LineSegment> lineSegmentVector;
+//    LineSegment lineSegment;
 };
 #endif /* LaserComponent_hpp */

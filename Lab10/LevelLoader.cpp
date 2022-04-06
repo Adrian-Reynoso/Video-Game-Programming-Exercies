@@ -33,7 +33,15 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 		if (type == "Block")
 		{
 			Block* block = new Block(game);
-			actor = block;
+            
+            //Check to see if it's a mirror
+            bool result;
+            if (GetBoolFromJSON(actorValue, "mirror", result))
+            {
+                block->SetIsMirror(result);
+            }
+            
+            actor = block;
 		}
 		else if (type == "Player")
 		{
@@ -74,6 +82,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			if (GetQuaternionFromJSON(actorValue, "quat", q))
 			{
 				// TODO: Set actor's quaternion member to q
+                actor->SetQuaternion(q);
 			}
 
 			int textureIdx = 0;

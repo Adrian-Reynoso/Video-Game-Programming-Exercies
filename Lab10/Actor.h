@@ -28,9 +28,12 @@ public:
 	void SetScale(float scale) { mScale = scale; }
 	float GetRotation() const { return mRotation; }
     float GetRollAngle() const { return mRollAngle; }
+    Quaternion GetQuaternion() const { return mQuaternion; }
+    void SetQuaternion(Quaternion q) { mQuaternion = q; }
     void SetRollAngle(float rollAngle) { mRollAngle = rollAngle; }
 	void SetRotation(float rotation) { mRotation = rotation; }
     const Matrix4& GetWorldTransform() const { return mWorldTransform; }
+    Vector3 GetQuatForward();
     
     const Vector3 GetRight() const
     {
@@ -106,6 +109,7 @@ private:
 	// Adds component to Actor (this is automatically called
 	// in the component constructor)
 	void AddComponent(class Component* c);
+    Quaternion mQuaternion;
     
     Matrix4 mWorldTransform;
 };
