@@ -11,6 +11,10 @@
 #include "Actor.h"
 #include <fstream>
 #include "Renderer.h"
+#include "Random.h"
+#include "Player.hpp"
+#include "MeshComponent.h"
+#include "LevelLoader.h"
 
 Game::Game()
 :mIsRunning(true)
@@ -20,6 +24,8 @@ Game::Game()
 
 bool Game::Initialize()
 {
+	Random::Init();
+
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0)
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -27,7 +33,18 @@ bool Game::Initialize()
 	}
 
 	// TODO: Create renderer
-
+    mRenderer = new Renderer(this);
+    if (!mRenderer->Initialize(WINDOW_WIDTH, WINDOW_HEIGHT))
+    {
+        SDL_Log("Renderer Failed to Initialize");
+        return false;
+    }
+    
+    // Enable relative mouse mode
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    // Clear any saved values
+    SDL_GetRelativeMouseState(nullptr, nullptr);
+    
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
 	LoadData();
@@ -115,51 +132,17 @@ void Game::UpdateGame()
 
 void Game::GenerateOutput()
 {
-	// TODO: tell renderer to draw
+    mRenderer->Draw();
 }
 
 void Game::LoadData()
 {
-	LoadLevel("Assets/Level.txt");
-}
-
-void Game::LoadLevel(const std::string& fileName)
-{
-	std::ifstream file(fileName);
-	if (!file.is_open())
-	{
-		SDL_Log("Failed to load level: %s", fileName.c_str());
-	}
-
-	const float topLeftX = -512.0f + 32.0f;
-	const float topLeftY = -384.0f + 32.0f;
-	size_t row = 0;
-	std::string line;
-	while (!file.eof())
-	{
-		std::getline(file, line);
-		for (size_t col = 0; col < line.size(); col++)
-		{
-			// Calculate position at this row/column
-			Vector3 pos;
-			pos.x = topLeftX + 64.0f * col;
-			pos.y = topLeftY + 64.0f * row;
-
-			if (line[col] == 'B')
-			{
-				// TODO: Create block
-			}
-			else if (line[col] == 'P')
-			{
-				// TODO: Create player 1
-			}
-			else if (line[col] == 'Q')
-			{
-				// TODO: Create player 2
-			}
-		}
-		row++;
-	}
+    //Initialize the projection matrix and use it in renderer
+    Matrix4 projection = Matrix4::CreatePerspectiveFOV(1.22f, WINDOW_WIDTH, WINDOW_HEIGHT, 10.0f, 10000.0f);
+    mRenderer->SetProjectionMatrix(projection);
+    
+    //Load the level
+    LevelLoader::Load(this, "Assets/Level06.json");
 }
 
 void Game::UnloadData()
@@ -170,13 +153,6 @@ void Game::UnloadData()
 	{
 		delete mActors.back();
 	}
-
-	// Destroy textures
-	for (auto i : mTextures)
-	{
-		SDL_DestroyTexture(i.second);
-	}
-	mTextures.clear();
 
 	// Destroy sounds
 	for (auto s : mSounds)
@@ -212,7 +188,8 @@ void Game::Shutdown()
 {
 	UnloadData();
 	Mix_CloseAudio();
-	// TODO: Delete renderer
+    mRenderer->Shutdown();
+    delete mRenderer;
 	SDL_Quit();
 }
 
@@ -232,3 +209,23 @@ void Game::RemoveActor(Actor* actor)
 		mActors.pop_back();
 	}
 }
+
+void Game::AddBlock(class Actor* block)
+{
+    //Add asteroid to the asteroid vector
+    blockVector.push_back(block);
+}
+
+void Game::RemoveBlock(class Actor* block)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Block*
+    auto it = std::find(blockVector.begin(), blockVector.end(), block);
+    
+    //then erase to remove the element the iterator points to
+    if (it != blockVector.end())
+    {
+        blockVector.erase(it);
+    }
+}
+
+
