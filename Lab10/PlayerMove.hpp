@@ -45,6 +45,7 @@ class PlayerMove : public MoveComponent
     void ChangeState(MoveState state);
     bool CanWallClimb(CollSide collSide);
     bool CanWallRun(CollSide collSide);
+    Vector3 GetNormal(CollSide collside);
     bool isWallRunning = false;
     CollSide isRunningOn = CollSide::None;
     

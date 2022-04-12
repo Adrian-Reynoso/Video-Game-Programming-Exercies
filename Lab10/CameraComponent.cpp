@@ -40,24 +40,6 @@ void CameraComponent::Update(float deltaTime)
         //Update WallRun angle with deltaTime
         upVectorAngle += upVectorSpeed * deltaTime;
         upVectorAngle = Math::Clamp(upVectorAngle, -Math::Pi / 4.0f, Math::Pi / 4.0f);
-        
-        //Check which CollSide player is running on
-        if (mPlayer->playerMove->isRunningOn == CollSide::Front)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationY(upVectorAngle));
-        }
-        else if (mPlayer->playerMove->isRunningOn == CollSide::Back)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationY(-upVectorAngle));
-        }
-        else if (mPlayer->playerMove->isRunningOn == CollSide::Left)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationX(upVectorAngle));
-        }
-        else if (mPlayer->playerMove->isRunningOn == CollSide::Right)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationX(-upVectorAngle));
-        }
     }
     else
     {
@@ -67,24 +49,24 @@ void CameraComponent::Update(float deltaTime)
             upVectorAngle = 0.0f;
         }
         
-        //Check which CollSide player is running on
-        if (runningOn == CollSide::Front)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationY(upVectorAngle));
-        }
-        else if (runningOn == CollSide::Back)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationY(-upVectorAngle));
-        }
-        else if (runningOn == CollSide::Left)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationX(upVectorAngle));
-        }
-        else if (runningOn == CollSide::Right)
-        {
-            upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationX(-upVectorAngle));
-        }
-        
+    }
+    
+    //Check which CollSide player is running on
+    if (runningOn == CollSide::Front)
+    {
+        upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationY(upVectorAngle));
+    }
+    else if (runningOn == CollSide::Back)
+    {
+        upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationY(-upVectorAngle));
+    }
+    else if (runningOn == CollSide::Left)
+    {
+        upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationX(upVectorAngle));
+    }
+    else if (runningOn == CollSide::Right)
+    {
+        upVector = Vector3::Transform(Vector3::UnitZ, Matrix4::CreateRotationX(-upVectorAngle));
     }
     
     //create Matrix4::CreateLookAt and call on renderer

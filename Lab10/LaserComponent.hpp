@@ -19,7 +19,7 @@ class LaserComponent : public MeshComponent
     LaserComponent(class Actor* owner);
     void Draw(class Shader* shader) override;
     void Update(float deltaTime) override;
-    Matrix4 LaserHelper(LineSegment lineSegement);
+    Matrix4 CreateLaserWorldTransform(LineSegment lineSegement);
     
     private:
     std::vector<LineSegment> lineSegmentVector;

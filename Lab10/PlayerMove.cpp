@@ -382,23 +382,7 @@ bool PlayerMove::CanWallClimb(CollSide collSide)
     bool checker = true;
 
     //Find the normal of the collSide
-    Vector3 normal;
-    if (collSide == CollSide::Left)
-    {
-        normal.Set(0.0f, -1.0f, 0.0f);
-    }
-    else if (collSide == CollSide::Right)
-    {
-        normal.Set(0.0f, 1.0f, 0.0f);
-    }
-    else if (collSide == CollSide::Front)
-    {
-        normal.Set(1.0f, 0.0f, 0.0f);
-    }
-    else if (collSide == CollSide::Back)
-    {
-        normal.Set(-1.0f, 0.0f, 0.0f);
-    }
+    Vector3 normal = GetNormal(collSide);
 
 
     //Test for three things:
@@ -432,23 +416,7 @@ bool PlayerMove::CanWallRun(CollSide collSide)
     bool checker = true;
 
     //Find the normal of the collSide
-    Vector3 normal;
-    if (collSide == CollSide::Left)
-    {
-        normal.Set(0.0f, -1.0f, 0.0f);
-    }
-    else if (collSide == CollSide::Right)
-    {
-        normal.Set(0.0f, 1.0f, 0.0f);
-    }
-    else if (collSide == CollSide::Front)
-    {
-        normal.Set(1.0f, 0.0f, 0.0f);
-    }
-    else if (collSide == CollSide::Back)
-    {
-        normal.Set(-1.0f, 0.0f, 0.0f);
-    }
+    Vector3 normal = GetNormal(collSide);
     
     //Test for three things:
     //1) The player is “roughly” perpendicular towards that side
@@ -476,4 +444,27 @@ bool PlayerMove::CanWallRun(CollSide collSide)
     return checker;
 }
 
+Vector3 PlayerMove::GetNormal(CollSide collSide)
+{
+    //Find the normal of the collSide
+    Vector3 normal;
+    if (collSide == CollSide::Left)
+    {
+        normal.Set(0.0f, -1.0f, 0.0f);
+    }
+    else if (collSide == CollSide::Right)
+    {
+        normal.Set(0.0f, 1.0f, 0.0f);
+    }
+    else if (collSide == CollSide::Front)
+    {
+        normal.Set(1.0f, 0.0f, 0.0f);
+    }
+    else if (collSide == CollSide::Back)
+    {
+        normal.Set(-1.0f, 0.0f, 0.0f);
+    }
+    
+    return normal;
+}
 
