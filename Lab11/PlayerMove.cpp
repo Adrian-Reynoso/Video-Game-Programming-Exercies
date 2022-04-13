@@ -44,6 +44,17 @@ void PlayerMove::Update(float deltaTime)
     {
         UpdateWallRun(deltaTime);
     }
+    
+    //Check if player needs to be respawned
+    if (mOwner->GetPosition().z < -750.0f || mPlayer->GetToBeRespawned())
+    {
+        mPlayer->SetToBeRespawned(false);
+        mOwner->SetPosition(mPlayer->GetRespawnPosition());
+        mOwner->SetRotation(0.0f);
+        mVelocity = Vector3::Zero;
+        mPendingForces = Vector3::Zero;
+        ChangeState(Falling);
+    }
 }
 
 void PlayerMove::ProcessInput(const Uint8* keyState)

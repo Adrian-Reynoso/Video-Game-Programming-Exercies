@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <queue>
 #include "Math.h"
 
 class Game
@@ -39,8 +40,16 @@ public:
     {
         mPlayer = player;
     }
+    void SetNextLevel(std::string name)
+    {
+        mNextLevel = name;
+    }
     void RemoveBlock(class Actor* block);
     void AddBlock(class Actor* block);
+    
+    void LoadNextLevel();
+    
+    std::queue<class Checkpoint*> checkpointQueue;
     
 private:
 	void ProcessInput();
@@ -62,4 +71,6 @@ private:
     
     class Player* mPlayer;
     class Actor* track;
+    
+    std::string mNextLevel = "";
 };

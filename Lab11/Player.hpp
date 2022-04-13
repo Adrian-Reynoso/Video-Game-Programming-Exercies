@@ -17,7 +17,16 @@ class Player : public Actor
     Player(class Game* game, Actor* parent);
     class PlayerMove* playerMove;
     class CameraComponent* cameraComponent;
+    class Arrow* arrow;
     class CollisionComponent* collisionComponent;
+    void SetRespawnPosition(Vector3 pos) {respawnPos = pos;}
+    Vector3 GetRespawnPosition() {return respawnPos;}
+    void SetToBeRespawned(bool value) {toBeRespawned = value;}
+    bool GetToBeRespawned() {return toBeRespawned;}
+    
+    private:
+    Vector3 respawnPos;
+    bool toBeRespawned = false;
     
 };
 #endif /* Player_hpp */

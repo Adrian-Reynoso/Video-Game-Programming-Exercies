@@ -61,6 +61,13 @@ void Game::RunLoop()
 		ProcessInput();
 		UpdateGame();
 		GenerateOutput();
+        
+        //Check if we need to load the next level
+        if (mNextLevel != "")
+        {
+            LoadNextLevel();
+            mNextLevel = "";
+        }
 	}
 }
 
@@ -142,7 +149,7 @@ void Game::LoadData()
     mRenderer->SetProjectionMatrix(projection);
     
     //Load the level
-    LevelLoader::Load(this, "Assets/Level06.json");
+    LevelLoader::Load(this, "Assets/Tutorial.json");
 }
 
 void Game::UnloadData()
@@ -228,4 +235,24 @@ void Game::RemoveBlock(class Actor* block)
     }
 }
 
+void Game::LoadNextLevel()
+{
+    //Delete all the actors in the world
+    while (!mActors.empty())
+    {
+        delete mActors.back();
+    }
+    
+    //Clear out the checkpoint queue (just in case)
+    while (!checkpointQueue.empty())
+    {
+        checkpointQueue.pop();
+    }
+    
+    //Call LevelLoader::Load on mNextLevel
+    LevelLoader::Load(this, mNextLevel);
+    
+    //Call mNextLevel.clear() (so it doesn’t try to change the level again on the next frame)
+    mNextLevel.clear();
+}
 

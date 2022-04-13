@@ -15,6 +15,7 @@
 #include "VertexArray.h"
 #include "SegmentCast.h"
 #include "Block.hpp"
+#include "Player.hpp"
 
 LaserComponent::LaserComponent(class Actor* owner)
 : MeshComponent(owner, true)
@@ -66,6 +67,9 @@ void LaserComponent::Update(float deltaTime)
             //Change the line segment’s end point to the mPoint you can get from the CastInfo
             lineSegment.mEnd = castInfo.mPoint;
             lineSegmentVector.push_back(lineSegment);
+            
+            //Set the player to be respawned
+            mOwner->GetGame()->GetPlayer()->SetToBeRespawned(true);
         }
         //Check if block collides with lineSegment
         else if (SegmentCast(mOwner->GetGame()->GetBlockVector(), lineSegment, castInfo, ignoreBlock))

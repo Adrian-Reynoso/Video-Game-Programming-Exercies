@@ -11,6 +11,7 @@
 #include "PlayerMove.hpp"
 #include "CameraComponent.hpp"
 #include "CollisionComponent.h"
+#include "Arrow.hpp"
 
 Player::Player(Game* game, Actor* parent)
 : Actor(game, parent)
@@ -24,6 +25,9 @@ Player::Player(Game* game, Actor* parent)
     //Create a collision Component
     collisionComponent = new CollisionComponent(this);
     collisionComponent->SetSize(50.0f, 175.0f, 50.0f);
+    
+    //Create the arrow
+    arrow = new Arrow(game, parent);
     
 }
 

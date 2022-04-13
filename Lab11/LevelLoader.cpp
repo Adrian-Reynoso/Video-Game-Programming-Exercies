@@ -10,6 +10,8 @@
 #include "Player.hpp"
 #include "LaserMine.hpp"
 #include "Game.h"
+#include "Checkpoint.hpp"
+#include "Coin.hpp"
 
 namespace
 {
@@ -55,12 +57,41 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
             Player* player = new Player(game, parent);
             actor = player;
             game->SetPlayer(player);
+            
+            //Set the respawn position of the player
+            Vector3 pos;
+            if (GetVectorFromJSON(actorValue, "pos", pos))
+            {
+                player->SetRespawnPosition(pos);
+            }
 		}
+        else if (type == "Checkpoint")
+        {
+            Checkpoint* checkpoint = new Checkpoint(game, parent);
+            actor = checkpoint;
+            
+            //Push this checkpoint to the checkpoint queue in game
+            game->checkpointQueue.push(checkpoint);
+            
+            //Get level name if it exists
+            std::string name;
+            if (GetStringFromJSON(actorValue, "level", name))
+            {
+                checkpoint->SetLevelString(name);
+            }
+            
+        }
+        else if (type == "Coin")
+        {
+            Coin* coin = new Coin(game, parent);
+            actor = coin;
+        }
         else if (type == "LaserMine")
         {
             LaserMine* laserMine = new LaserMine(game, parent);
             actor = laserMine;
         }
+        
 		// TODO: Add else ifs for other actor types
 
 		// Set properties of actor
