@@ -12,6 +12,7 @@
 #include "Game.h"
 #include "Checkpoint.hpp"
 #include "Coin.hpp"
+#include "SecurityCamera.hpp"
 
 namespace
 {
@@ -90,6 +91,33 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
         {
             LaserMine* laserMine = new LaserMine(game, parent);
             actor = laserMine;
+        }
+        else if (type == "SecurityCamera")
+        {
+            SecurityCamera* securityCamera = new SecurityCamera(game, parent);
+            actor = securityCamera;
+            
+            //Get Start and end Quaternions
+            Quaternion q;
+            if (GetQuaternionFromJSON(actorValue, "startQ", q))
+            {
+                securityCamera->SetStartQ(q);
+            }
+            if (GetQuaternionFromJSON(actorValue, "endQ", q))
+            {
+                securityCamera->SetEndQ(q);
+            }
+            
+            //Get the interp and pause float values
+            float value;
+            if (GetFloatFromJSON(actorValue, "interpTime", value))
+            {
+                securityCamera->SetInterpTime(value);
+            }
+            if (GetFloatFromJSON(actorValue, "pauseTime", value))
+            {
+                securityCamera->SetPauseTime(value);
+            }
         }
         
 		// TODO: Add else ifs for other actor types
