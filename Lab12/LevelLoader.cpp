@@ -6,9 +6,13 @@
 #include <sstream>
 #include "Actor.h"
 #include "MeshComponent.h"
-#include "Block.h"
-#include "Player.h"
+#include "Block.hpp"
+#include "Player.hpp"
+#include "LaserMine.hpp"
 #include "Game.h"
+#include "Checkpoint.hpp"
+#include "Coin.hpp"
+#include "SecurityCamera.hpp"
 
 namespace
 {
@@ -31,13 +35,91 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 
 		if (type == "Block")
 		{
-			Block* block = new Block(game);
-			actor = block;
+			Block* block = new Block(game, parent);
+            
+            //Check to see if it's a mirror
+            bool result;
+            if (GetBoolFromJSON(actorValue, "mirror", result))
+            {
+                block->SetIsMirror(result);
+            }
+            
+            //Check to see if it rotates
+            if (GetBoolFromJSON(actorValue, "rotates", result))
+            {
+                block->SetShouldRotate(result);
+            }
+            
+            actor = block;
 		}
 		else if (type == "Player")
 		{
 			// TODO: Handle construction of a player!
+            Player* player = new Player(game, parent);
+            actor = player;
+            game->SetPlayer(player);
+            
+            //Set the respawn position of the player
+            Vector3 pos;
+            if (GetVectorFromJSON(actorValue, "pos", pos))
+            {
+                player->SetRespawnPosition(pos);
+            }
 		}
+        else if (type == "Checkpoint")
+        {
+            Checkpoint* checkpoint = new Checkpoint(game, parent);
+            actor = checkpoint;
+            
+            //Push this checkpoint to the checkpoint queue in game
+            game->checkpointQueue.push(checkpoint);
+            
+            //Get level name if it exists
+            std::string name;
+            if (GetStringFromJSON(actorValue, "level", name))
+            {
+                checkpoint->SetLevelString(name);
+            }
+            
+        }
+        else if (type == "Coin")
+        {
+            Coin* coin = new Coin(game, parent);
+            actor = coin;
+        }
+        else if (type == "LaserMine")
+        {
+            LaserMine* laserMine = new LaserMine(game, parent);
+            actor = laserMine;
+        }
+        else if (type == "SecurityCamera")
+        {
+            SecurityCamera* securityCamera = new SecurityCamera(game, parent);
+            actor = securityCamera;
+            
+            //Get Start and end Quaternions
+            Quaternion q;
+            if (GetQuaternionFromJSON(actorValue, "startQ", q))
+            {
+                securityCamera->SetStartQ(q);
+            }
+            if (GetQuaternionFromJSON(actorValue, "endQ", q))
+            {
+                securityCamera->SetEndQ(q);
+            }
+            
+            //Get the interp and pause float values
+            float value;
+            if (GetFloatFromJSON(actorValue, "interpTime", value))
+            {
+                securityCamera->SetInterpTime(value);
+            }
+            if (GetFloatFromJSON(actorValue, "pauseTime", value))
+            {
+                securityCamera->SetPauseTime(value);
+            }
+        }
+        
 		// TODO: Add else ifs for other actor types
 
 		// Set properties of actor
@@ -65,6 +147,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			if (GetQuaternionFromJSON(actorValue, "quat", q))
 			{
 				// TODO: Set actor's quaternion member to q
+                actor->SetQuaternion(q);
 			}
 
 			int textureIdx = 0;

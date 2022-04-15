@@ -118,6 +118,15 @@ void Renderer::UnloadData()
 
 void Renderer::Draw()
 {
+    // Fix for issue where "mouse grab" doesn't always work
+    Uint32 windowFlags = SDL_GetWindowFlags(mWindow);
+    if (windowFlags & SDL_WINDOW_INPUT_FOCUS)
+    {
+        int x = static_cast<int>(mScreenWidth / 2.0f);
+        int y = static_cast<int>(mScreenHeight / 2.0f);
+        SDL_WarpMouseInWindow(mWindow, x, y);
+    }
+    
 	// Set the clear color to light grey
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	// Clear the color/depth buffer buffer
