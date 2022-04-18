@@ -16,6 +16,5 @@ class Arrow : public Actor
     public:
     Arrow(class Game* game, Actor* parent);
     void OnUpdate(float deltaTime) override;
-    class MeshComponent* meshComponent;
 };
 #endif /* Arrow_hpp */

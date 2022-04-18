@@ -16,7 +16,6 @@ class SecurityCamera : public Actor
     public:
     SecurityCamera(class Game* game, Actor* parent);
     void OnUpdate(float deltaTime) override;
-    class MeshComponent* meshComponent;
     class SecurityCone* securityCone;
     void SetStartQ(Quaternion q) {startQ = q;}
     void SetEndQ(Quaternion q) {endQ = q;}

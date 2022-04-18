@@ -16,7 +16,6 @@ class Coin : public Actor
     public:
         Coin(class Game* game, Actor* parent);
         void OnUpdate(float deltaTime) override;
-        class MeshComponent* meshComponent;
         class CollisionComponent* collisionComponent;
 };
 #endif /* Coin_hpp */

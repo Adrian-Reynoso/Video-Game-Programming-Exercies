@@ -16,7 +16,7 @@
 Coin::Coin(class Game* game, Actor* parent)
 : Actor(game, parent)
 {
-    meshComponent = new MeshComponent(this);
+    MeshComponent* meshComponent = new MeshComponent(this);
     meshComponent->SetMesh(mGame->GetRenderer()->GetMesh("Assets/Coin.gpmesh"));
     
     collisionComponent = new CollisionComponent(this);
@@ -29,13 +29,9 @@ void Coin::OnUpdate(float deltaTime)
     float tempRotation = GetRotation();
     tempRotation += (Math::Pi) * deltaTime;
     SetRotation(tempRotation);
-    
-    //Check if player collides with coin by using getMinOverlap
-    Vector3 offSet {0.0f, 0.0f, 0.0f};
-    CollSide collided = collisionComponent->GetMinOverlap(mGame->GetPlayer()->collisionComponent, offSet);
 
     //If player collides with coin that is also active
-    if (collided != CollSide::None)
+    if (collisionComponent->Intersect(mGame->GetPlayer()->collisionComponent))
     {
         //Get by seting ActorState to destroy
         SetState(ActorState::Destroy);

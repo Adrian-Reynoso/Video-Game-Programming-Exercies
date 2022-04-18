@@ -15,7 +15,7 @@
 Arrow::Arrow(class Game* game, Actor* parent)
 : Actor(game, parent)
 {
-    meshComponent = new MeshComponent(this);
+    MeshComponent* meshComponent = new MeshComponent(this);
     meshComponent->SetMesh(mGame->GetRenderer()->GetMesh("Assets/Arrow.gpmesh"));
     
     SetScale(0.15f);

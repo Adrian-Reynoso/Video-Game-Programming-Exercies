@@ -35,12 +35,8 @@ void Checkpoint::OnUpdate(float deltaTime)
         meshComponent->SetTextureIndex(1);
     }
     
-    //Check if player collides with this checkpoint by using getMinOverlap
-    Vector3 offSet {0.0f, 0.0f, 0.0f};
-    CollSide collided = collisionComponent->GetMinOverlap(mGame->GetPlayer()->collisionComponent, offSet);
-
-    //If player collides with checkpoint that is also active
-    if (collided != CollSide::None && isActive)
+    //Check if player collides with this checkpoint by using getMinOverlap    
+    if (collisionComponent->Intersect(mGame->GetPlayer()->collisionComponent) && isActive)
     {
         //Get rid of checkpoint in the queue and set ActorState to destroy
         mGame->checkpointQueue.pop();

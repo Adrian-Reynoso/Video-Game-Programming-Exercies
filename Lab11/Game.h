@@ -22,9 +22,6 @@ public:
 
 	class Renderer* GetRenderer() {	return mRenderer; }
     
-    const float WINDOW_WIDTH = 1024.0f;
-    const float WINDOW_HEIGHT = 768.0f;
-    
     class HeightMap* heightMap;
     
     //Getters/Setters
@@ -52,6 +49,9 @@ public:
     std::queue<class Checkpoint*> checkpointQueue;
     
 private:
+    const float WINDOW_WIDTH = 1024.0f;
+    const float WINDOW_HEIGHT = 768.0f;
+    
 	void ProcessInput();
 	void UpdateGame();
 	void GenerateOutput();

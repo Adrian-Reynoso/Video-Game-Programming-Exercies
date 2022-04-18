@@ -16,7 +16,7 @@
 SecurityCamera::SecurityCamera(class Game* game, Actor* parent)
 : Actor(game, parent)
 {
-    meshComponent = new MeshComponent(this);
+    MeshComponent* meshComponent = new MeshComponent(this);
     meshComponent->SetMesh(mGame->GetRenderer()->GetMesh("Assets/Camera.gpmesh"));
     
     //Dynamically allocate a new SecurityCone, passing in this as the second parameter to the constructor
