@@ -46,6 +46,8 @@ bool Game::Initialize()
     SDL_GetRelativeMouseState(nullptr, nullptr);
     
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    Mix_AllocateChannels(32);
+    Mix_GroupChannels(22, 31, 1);
 
 	LoadData();
 

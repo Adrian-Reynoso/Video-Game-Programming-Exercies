@@ -37,5 +37,6 @@ class SecurityCone : public Actor
     bool playerIsDetected = false;
     float cameraCountdown = 0.0f;
     float deathCountdown = 0.0f;
+    int coneSoundChannel = -1;
 };
 #endif /* SecurityCone_hpp */

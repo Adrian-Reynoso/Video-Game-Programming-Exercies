@@ -15,6 +15,7 @@ class SecurityCamera : public Actor
 {
     public:
     SecurityCamera(class Game* game, Actor* parent);
+    ~SecurityCamera();
     void OnUpdate(float deltaTime) override;
     class MeshComponent* meshComponent;
     class SecurityCone* securityCone;
@@ -22,6 +23,7 @@ class SecurityCamera : public Actor
     void SetEndQ(Quaternion q) {endQ = q;}
     void SetInterpTime(float value) {interpTime = value;}
     void SetPauseTime(float value) {pauseTime = value;}
+    int VolumeForPlayerDist();
     
     private:
     Quaternion startQ;
@@ -31,5 +33,8 @@ class SecurityCamera : public Actor
     float pauseTime;
     float counter = 0.0f;
     bool isPaused = false;
+    int camSoundChannel = -1;
+    int camStopSoundChannel = -1;
+    bool soundWhenYellow = false;
 };
 #endif /* SecurityCamera_hpp */

@@ -80,6 +80,12 @@ void SecurityCone::OnUpdate(float deltaTime)
         //Increment the countdown
         cameraCountdown += deltaTime;
         
+        //Play cone detection sound
+        if (coneSoundChannel == -1)
+        {
+            coneSoundChannel = Mix_PlayChannel(Mix_GroupAvailable(1), mGame->GetSound("Assets/Sounds/SecurityDetected.wav"), 0);
+        }
+        
         //Check if the camera countdown is more than two seconds. If so, turn cone red
         if (cameraCountdown >= 2.0f)
         {
@@ -90,6 +96,13 @@ void SecurityCone::OnUpdate(float deltaTime)
     else
     {
         meshComponent->SetTextureIndex(0);
+        
+        //Halt cone sound if playing
+        if (coneSoundChannel != -1)
+        {
+            Mix_HaltChannel(coneSoundChannel);
+            coneSoundChannel = -1;
+        }
         
         //Reset the countdown
         cameraCountdown = 0.0f;
