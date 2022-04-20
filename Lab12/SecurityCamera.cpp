@@ -22,6 +22,9 @@ SecurityCamera::SecurityCamera(class Game* game, Actor* parent)
     //Dynamically allocate a new SecurityCone, passing in this as the second parameter to the constructor
     securityCone = new SecurityCone(game, this);
     
+    //Add this to the cameraVector in game
+    mGame->AddCamera(this);
+    
 }
 
 SecurityCamera::~SecurityCamera()
@@ -30,6 +33,9 @@ SecurityCamera::~SecurityCamera()
     {
         Mix_HaltChannel(camSoundChannel);
     }
+    
+    //Remove from the cameraVector in Game
+    mGame->RemoveCamera(this);
 }
 
 void SecurityCamera::OnUpdate(float deltaTime)

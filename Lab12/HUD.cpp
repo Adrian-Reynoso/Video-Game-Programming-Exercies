@@ -11,6 +11,10 @@
 #include "Texture.h"
 #include "Game.h"
 #include "Actor.h"
+#include "Renderer.h"
+#include "Player.hpp"
+#include "SecurityCamera.hpp"
+#include "Math.h"
 
 HUD::HUD(Actor* owner)
 : UIComponent(owner)
@@ -23,6 +27,10 @@ HUD::HUD(Actor* owner)
     mTimerText = mFont->RenderText("00:00.00");
     mCheckpointText = mFont->RenderText(" ");
     AddACoin();
+    
+    radarBackgroundTexture = mOwner->GetGame()->GetRenderer()->GetTexture("Assets/Radar.png");
+    arrowTexture = mOwner->GetGame()->GetRenderer()->GetTexture("Assets/RadarArrow.png");
+    blipTexture = mOwner->GetGame()->GetRenderer()->GetTexture("Assets/Blip.png");
 }
 
 HUD::~HUD()
@@ -112,6 +120,12 @@ void HUD::Draw(class Shader *shader)
     
     //Draw the Checkpoint text
     DrawTexture(shader, mCheckpointText, Vector2::Zero);
+    
+    //Draw Radar Texture Layers
+    DrawTexture(shader, radarBackgroundTexture, Vector2(400.0f, -280.0f));
+    DrawTexture(shader, arrowTexture, Vector2(400.0f, -280.0f));
+    RadarCalculations(shader);
+    
 }
 
 void HUD::AddACoin()
@@ -145,4 +159,57 @@ void HUD::UpdateCheckpointText(std::string text)
     mCheckpointText = mFont->RenderText(text);
     hitCheckpoint = true;
     checkpointTextTimer = 0.0f;
+}
+
+void HUD::RadarCalculations(class Shader *shader)
+{
+    //For the players forward vector, convert (x,y,z) -> (x,y)
+    Vector3 forward3D = mOwner->GetGame()->GetPlayer()->GetForward();
+    Vector2 forward2D;
+    forward2D.x = forward3D.x;
+    forward2D.y = forward3D.y;
+    
+    //Create rototation matrix
+    float rotation = Math::Atan2(forward2D.y, forward2D.x);
+    Matrix3 rotationMatrix = Matrix3::CreateRotation(rotation);
+    
+    
+    //For the players pos vector, convert (x,y,z) -> (x,y)
+    Vector3 playerPos3D = mOwner->GetGame()->GetPlayer()->GetPosition();
+    Vector2 playerPos2D;
+    playerPos2D.x = playerPos3D.y;
+    playerPos2D.y = playerPos3D.x;
+    
+    //For each security camera in the level
+    for (SecurityCamera* cam : mOwner->GetGame()->GetCameraVector())
+    {
+        //Construct 2D location from 3D
+        Vector3 objectPos3D = cam->GetPosition();
+        Vector2 objectPos2D;
+        objectPos2D.x = objectPos3D.y;
+        objectPos2D.y = objectPos3D.x;
+        
+        //Get Vector from player to object
+        Vector2 playerToObject = objectPos2D - playerPos2D;
+        
+        //If in range of radar
+        if (playerToObject.Length() <= 1500.0f)
+        {
+            playerToObject.x /= 1500.0f;
+            playerToObject.y /= 1500.0f;
+            playerToObject = playerToObject * 92.0f;
+            playerToObject = Vector2::Transform(playerToObject, rotationMatrix);
+            playerToObject += radarCenter;
+            
+            //For the blips forward vector, convert (x,y,z) -> (x,y)
+            Vector3 bforward3D = cam->GetWorldForward();
+            Vector2 bforward2D;
+            bforward2D.x = bforward3D.y;
+            bforward2D.y = bforward3D.x;
+            
+            //Create rototation matrix
+            float brotation = Math::Atan2(bforward2D.y, bforward2D.x);
+            DrawTexture(shader, blipTexture, playerToObject, 1, brotation);
+        }
+    }
 }

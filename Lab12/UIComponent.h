@@ -13,5 +13,5 @@ protected:
 	// Helper to draw a texture
 	void DrawTexture(class Shader* shader, class Texture* texture,
 					 const Vector2& offset = Vector2::Zero,
-					 float scale = 1.0f);
+					 float scale = 1.0f, float angle = 0.0f);
 };

@@ -250,6 +250,24 @@ void Game::RemoveBlock(class Actor* block)
     }
 }
 
+void Game::AddCamera(class SecurityCamera *cam)
+{
+    //Add asteroid to the asteroid vector
+    securityCamVector.push_back(cam);
+}
+
+void Game::RemoveCamera(class SecurityCamera *cam)
+{
+    //use std::find (in <algorithm>) to get an iterator of the Block*
+    auto it = std::find(securityCamVector.begin(), securityCamVector.end(), cam);
+    
+    //then erase to remove the element the iterator points to
+    if (it != securityCamVector.end())
+    {
+        securityCamVector.erase(it);
+    }
+}
+
 void Game::LoadNextLevel()
 {
     //Delete all the actors in the world

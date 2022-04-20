@@ -46,6 +46,13 @@ public:
     }
     void RemoveBlock(class Actor* block);
     void AddBlock(class Actor* block);
+    void RemoveCamera(class SecurityCamera* cam);
+    void AddCamera(class SecurityCamera* cam);
+    const std::vector<class SecurityCamera*> &GetCameraVector()
+    {
+        return securityCamVector;
+    }
+    
     
     void LoadNextLevel();
     
@@ -76,4 +83,6 @@ private:
     class Actor* track;
     
     std::string mNextLevel = "";
+    
+    std::vector<class SecurityCamera*> securityCamVector;
 };
