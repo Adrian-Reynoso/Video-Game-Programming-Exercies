@@ -12,6 +12,7 @@
 #include "CameraComponent.hpp"
 #include "CollisionComponent.h"
 #include "Arrow.hpp"
+#include "HUD.hpp"
 
 Player::Player(Game* game, Actor* parent)
 : Actor(game, parent)
@@ -29,6 +30,8 @@ Player::Player(Game* game, Actor* parent)
     //Create the arrow
     arrow = new Arrow(game, parent);
     
+    //Create a HUD
+    mHUD = new HUD(this);
 }
 
 

@@ -15,6 +15,7 @@
 #include "Player.hpp"
 #include "MeshComponent.h"
 #include "LevelLoader.h"
+#include <SDL2/SDL_ttf.h>
 
 Game::Game()
 :mIsRunning(true)
@@ -25,6 +26,7 @@ Game::Game()
 bool Game::Initialize()
 {
 	Random::Init();
+    TTF_Init();
 
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0)
 	{

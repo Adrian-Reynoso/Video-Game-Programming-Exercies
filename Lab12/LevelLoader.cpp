@@ -81,6 +81,13 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
                 checkpoint->SetLevelString(name);
             }
             
+            //Get text if it exists
+            std::string text;
+            if (GetStringFromJSON(actorValue, "text", text))
+            {
+                checkpoint->SetTextString(text);
+            }
+            
         }
         else if (type == "Coin")
         {

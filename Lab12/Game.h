@@ -51,6 +51,9 @@ public:
     
     std::queue<class Checkpoint*> checkpointQueue;
     
+    float timerIncrement = 0.0f;
+    int coinCounter = 0;
+    
 private:
 	void ProcessInput();
 	void UpdateGame();

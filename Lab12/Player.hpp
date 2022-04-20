@@ -18,6 +18,7 @@ class Player : public Actor
     class PlayerMove* playerMove;
     class CameraComponent* cameraComponent;
     class Arrow* arrow;
+    class HUD* mHUD;
     class CollisionComponent* collisionComponent;
     void SetRespawnPosition(Vector3 pos) {respawnPos = pos;}
     Vector3 GetRespawnPosition() {return respawnPos;}

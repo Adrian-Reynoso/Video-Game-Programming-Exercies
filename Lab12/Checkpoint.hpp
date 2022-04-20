@@ -18,11 +18,13 @@ class Checkpoint : public Actor
     Checkpoint(class Game* game, Actor* parent);
     void OnUpdate(float deltaTime) override;
     void SetLevelString(std::string name) { mLevelString = name;}
+    void SetTextString(std::string name) { checkpointText = name;}
     class MeshComponent* meshComponent;
     class CollisionComponent* collisionComponent;
     bool isActive = false;
     
     private:
     std::string mLevelString = "";
+    std::string checkpointText = "";
 };
 #endif /* Checkpoint_hpp */

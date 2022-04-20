@@ -12,6 +12,7 @@
 #include "Renderer.h"
 #include "Checkpoint.hpp"
 #include "Player.hpp"
+#include "HUD.hpp"
 
 Coin::Coin(class Game* game, Actor* parent)
 : Actor(game, parent)
@@ -39,6 +40,12 @@ void Coin::OnUpdate(float deltaTime)
     {
         //Play Sound
         Mix_PlayChannel(-1, mGame->GetSound("Assets/Sounds/Coin.wav"), 0);
+    
+        //Increment coin counter
+        GetGame()->coinCounter++;
+        
+        //Add a coin to the HUD
+        mGame->GetPlayer()->mHUD->AddACoin();
         
         //Get by seting ActorState to destroy
         SetState(ActorState::Destroy);

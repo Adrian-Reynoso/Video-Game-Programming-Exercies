@@ -11,6 +11,7 @@
 #include "Renderer.h"
 #include "CollisionComponent.h"
 #include "Player.hpp"
+#include "HUD.hpp"
 
 Checkpoint::Checkpoint(class Game* game, Actor* parent)
 : Actor(game, parent)
@@ -44,6 +45,12 @@ void Checkpoint::OnUpdate(float deltaTime)
     {
         //Play Sound
         Mix_PlayChannel(-1, mGame->GetSound("Assets/Sounds/Checkpoint.wav"), 0);
+        
+        //Update checkpoint text
+        if (checkpointText != "")
+        {
+            mGame->GetPlayer()->mHUD->UpdateCheckpointText(checkpointText);
+        }
         
         //Get rid of checkpoint in the queue and set ActorState to destroy
         mGame->checkpointQueue.pop();
