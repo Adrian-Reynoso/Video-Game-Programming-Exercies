@@ -209,6 +209,7 @@ void HUD::RadarCalculations(class Shader *shader)
             
             //Create rototation matrix
             float brotation = Math::Atan2(bforward2D.y, bforward2D.x);
+            brotation += rotation;
             DrawTexture(shader, blipTexture, playerToObject, 1, brotation);
         }
     }

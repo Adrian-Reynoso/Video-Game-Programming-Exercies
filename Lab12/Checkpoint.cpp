@@ -62,6 +62,10 @@ void Checkpoint::OnUpdate(float deltaTime)
         if (mLevelString != "")
         {
             mGame->SetNextLevel(mLevelString);
+            
+            //Re-Call the updateCheckpointLevel function so the message displays
+            mGame->SetCheckpointMessageAtTransiton(true);
+            mGame->SetCheckpointMessage(checkpointText);
         }
         
         SetState(ActorState::Destroy);

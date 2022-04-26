@@ -61,6 +61,26 @@ public:
     float timerIncrement = 0.0f;
     int coinCounter = 0;
     
+    bool checkpointMessageAtTransition = false;
+    std::string checkpointMessage = "";
+    
+    void SetCheckpointMessageAtTransiton(bool value)
+    {
+        checkpointMessageAtTransition = value;
+    }
+    bool GetCheckpointMessageAtTransiton()
+    {
+        return checkpointMessageAtTransition;
+    }
+    void SetCheckpointMessage(std::string text)
+    {
+        checkpointMessage = text;
+    }
+    std::string GetCheckpointMessage()
+    {
+        return checkpointMessage;
+    }
+    
 private:
 	void ProcessInput();
 	void UpdateGame();

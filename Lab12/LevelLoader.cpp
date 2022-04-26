@@ -13,6 +13,7 @@
 #include "Checkpoint.hpp"
 #include "Coin.hpp"
 #include "SecurityCamera.hpp"
+#include "HUD.hpp"
 
 namespace
 {
@@ -220,6 +221,15 @@ bool LevelLoader::Load(class Game* game, const std::string & fileName)
 			LoadActor(actors[i], game, nullptr);
 		}
 	}
+    
+    //For displaying text from the last level
+    if (game->GetCheckpointMessageAtTransiton())
+    {
+        //Call the update checkpoint text with the message that is in the string, then reset all values
+        game->GetPlayer()->mHUD->UpdateCheckpointText(game->GetCheckpointMessage());
+        game->SetCheckpointMessage("");
+        game->SetCheckpointMessageAtTransiton(false);
+    }
 
 	return true;
 }
